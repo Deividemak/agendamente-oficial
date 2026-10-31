@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agendar Horário - Agendamente</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Custom Premium Styles -->
+  <link rel="stylesheet" href="../css/style.css">
+  <!-- PWA Support -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Agendamente">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body {
+      background-attachment: fixed;
+    }
+    @keyframes slideUp {
+      from {
+        transform: translate(-50%, 100%);
+      }
+      to {
+        transform: translate(-50%, 0);
+      }
+    }
+    .animate-slide-up {
+      animation: slideUp 0.3s ease-out forwards;
+      transform: translate(-50%, 0);
+    }
+  </style>
+  <!-- Global Settings & Maintenance Interceptor -->
+  <script src="/js/global.js" defer></script>
+</head>
+<body class="bg-gradient min-h-screen text-slate-100 flex flex-col items-center justify-start px-2 sm:px-4 pt-8 sm:pt-16 pb-48">
+
+  <div class="w-full max-w-lg space-y-6 animate-fade-in">
+    
+    <!-- PROFISSIONAL HEADER -->
+    <div class="text-center space-y-2">
+      <div class="inline-flex p-2.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 mb-2">
+        <i data-lucide="sparkles" class="w-6 h-6 text-indigo-450 text-indigo-400"></i>
+      </div>
+      <h1 class="text-2xl sm:text-3xl font-black text-white" id="nome-profissional">Carregando...</h1>
+      <p class="text-xs sm:text-sm text-slate-400">Selecione o serviço e escolha o melhor horário para você</p>
+    </div>
+
+    <!-- MAIN SCHEDULING CARD -->
+    <div class="glass-card p-5 sm:p-8 rounded-2xl space-y-6">
+      
+      <!-- ERROS / AVISOS -->
+      <div id="alert-box" class="hidden p-3 rounded-lg text-sm flex items-start gap-2 bg-rose-500/10 border border-rose-500/20 text-rose-450">
+        <i data-lucide="alert-circle" class="w-5 h-5 shrink-0 text-rose-400"></i>
+        <span id="alert-message"></span>
+      </div>
+
+      <!-- PASSO 1: SELECIONAR SERVIÇO -->
+      <div class="space-y-3">
+        <h3 class="text-sm font-bold text-slate-350 text-slate-300 uppercase tracking-wider flex items-center gap-2">
+          <span class="flex items-center justify-center w-5 h-5 rounded-full bg-indigo-500 text-[10px] text-white">1</span>
+          Escolha o Serviço
+        </h3>
+        
+        <div class="grid grid-cols-1 gap-2.5" id="servicos-container">
+          <!-- Injetado por JS -->
+          <p class="text-slate-400 text-xs py-4 text-center">Buscando serviços...</p>
+        </div>
+      </div>
+
+      <!-- PASSO 1.5: SELECIONAR PROFISSIONAL (Aparece após escolher serviço se houver funcionários cadastrados) -->
+      <div class="space-y-3 hidden animate-fade-in" id="step-employee">
+        <h3 class="text-sm font-bold text-slate-350 text-slate-300 uppercase tracking-wider flex items-center gap-2">
+          <span class="flex items-center justify-center w-5 h-5 rounded-full bg-indigo-500 text-[10px] text-white" id="step-num-employee">2</span>
+          Escolha o Profissional
+        </h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5" id="employees-container">
+          <!-- Injetado por JS -->
+        </div>
+      </div>
+
+      <!-- PASSO 2: DATA E HORA (Aparece após escolher serviço e profissional) -->
+      <div class="space-y-4 hidden" id="step-date-time">
+        <div class="border-t border-white/5 pt-5 space-y-3">
+          <h3 class="text-sm font-bold text-slate-350 text-slate-300 uppercase tracking-wider flex items-center gap-2">
+            <span class="flex items-center justify-center w-5 h-5 rounded-full bg-indigo-500 text-[10px] text-white" id="step-num-date">3</span>
+            Escolha o Dia
+          </h3>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i data-lucide="calendar" class="w-4 h-4 text-slate-400"></i>
+            </span>
+            <input type="date" id="data-agendamento" class="form-input pl-10" required>
+          </div>
+        </div>
+
+        <!-- LISTA DE HORÁRIOS -->
+        <div class="space-y-3 hidden" id="step-time">
+          <h3 class="text-sm font-bold text-slate-350 text-slate-300 uppercase tracking-wider flex items-center gap-2">
+            <span class="flex items-center justify-center w-5 h-5 rounded-full bg-indigo-500 text-[10px] text-white" id="step-num-time">4</span>
+            Escolha o Horário Disponível
+          </h3>
+          
+          <div class="grid grid-cols-3 sm:grid-cols-4 gap-2" id="horarios-grid">
+            <!-- Injetado por JS -->
+          </div>
+          <p id="no-slots-msg" class="hidden text-slate-400 text-xs py-4 text-center">Nenhum horário disponível para este dia. Escolha outra data.</p>
+        </div>
+      </div>
+
+      <!-- PASSO 3: FORMULÁRIO DO CLIENTE (Aparece após escolher horário) -->
+      <div class="space-y-4 border-t border-white/5 pt-5 hidden" id="step-form-cliente">
+        <h3 class="text-sm font-bold text-slate-350 text-slate-300 uppercase tracking-wider flex items-center gap-2">
+          <span class="flex items-center justify-center w-5 h-5 rounded-full bg-indigo-500 text-[10px] text-white" id="step-num-form">5</span>
+          Seus Dados
+        </h3>
+
+        <!-- BANNER DE RESUMO DE RESERVA -->
+        <div id="booking-details-summary" class="p-4 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-slate-300 text-xs flex flex-col gap-1.5 animate-fade-in">
+          <!-- Injetado por JS -->
+        </div>
+        
+        <form id="form-agendar" class="space-y-4">
+          <div>
+            <label class="form-label" for="cliente-nome">Nome Completo</label>
+            <input type="text" id="cliente-nome" class="form-input" placeholder="Digite seu nome" required>
+          </div>
+          
+          <div>
+            <label class="form-label" for="cliente-whatsapp">WhatsApp (DDD + Número)</label>
+            <input type="text" id="cliente-whatsapp" class="form-input" placeholder="(11) 99999-9999" required>
+            <p class="text-[10px] text-slate-400 mt-1">Enviaremos a confirmação para o seu WhatsApp.</p>
+          </div>
+
+          <!-- SELETOR DE MÉTODO DE PAGAMENTO -->
+          <div class="space-y-2 pt-2">
+            <label class="form-label">Como deseja pagar?</label>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <label class="flex flex-col p-3 rounded-xl border-2 border-indigo-500 bg-indigo-500/10 cursor-pointer transition-all text-left" id="label-pay-pix">
+                <div class="flex items-center gap-2 font-bold text-sm text-indigo-400" id="title-pay-pix">
+                  <input type="radio" name="metodo-pagamento" value="pix" checked class="w-4 h-4 text-indigo-600 bg-slate-800 border-white/10 focus:ring-indigo-500" onchange="updatePaymentSelect('pix')">
+                  <span>Pagar agora (Pix)</span>
+                </div>
+                <span class="text-[10px] text-slate-400 mt-1 pl-6">Garante sua vaga na hora via Pix automático.</span>
+              </label>
+
+              <label class="flex flex-col p-3 rounded-xl border border-white/5 bg-slate-900/50 cursor-pointer hover:border-indigo-400/50 transition-all text-left" id="label-pay-local">
+                <div class="flex items-center gap-2 font-bold text-sm text-slate-300" id="title-pay-local">
+                  <input type="radio" name="metodo-pagamento" value="presencial" class="w-4 h-4 text-indigo-600 bg-slate-800 border-white/10 focus:ring-indigo-500" onchange="updatePaymentSelect('presencial')">
+                  <span>Pagar no Local</span>
+                </div>
+                <span class="text-[10px] text-slate-400 mt-1 pl-6">Pague diretamente após realizar o serviço.</span>
+              </label>
+            </div>
+          </div>
+
+          <button type="submit" id="btn-submit" class="btn btn-primary w-full mt-4 py-3 text-base">
+            <span id="btn-submit-text">Confirmar e Ir para o Pagamento</span>
+            <i data-lucide="arrow-right" class="w-5 h-5"></i>
+          </button>
+        </form>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- BARRA FLUTUANTE DE RESUMO -->
+  <div id="summary-bar" class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-lg bg-slate-900/95 backdrop-blur-md border-t border-white/10 p-4 px-6 flex items-center justify-between z-50 shadow-2xl rounded-t-2xl hidden animate-slide-up">
+    <div class="text-left">
+      <p class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider" id="summary-qty">0 serviços selecionados</p>
+      <div class="flex items-baseline gap-2">
+        <span class="text-lg font-black text-indigo-400" id="summary-total-price">R$ 0,00</span>
+        <span class="text-xs text-slate-400" id="summary-total-duration">(0 min)</span>
+      </div>
+    </div>
+    <button class="btn btn-primary px-6 py-2 text-sm flex items-center gap-1.5 shadow-lg shadow-indigo-500/20" onclick="advanceStep1()">
+      <span>Avançar</span>
+      <i data-lucide="chevron-right" class="w-4 h-4"></i>
+    </button>
+  </div>
+
+  <script>
+    function formatarDuracao(minutos) {
+      if (minutos < 60) {
+        return `${minutos} min`;
+      }
+      const horas = Math.floor(minutos / 60);
+      const minsRestantes = minutos % 60;
+      if (minsRestantes === 0) {
+        return `${horas}h`;
+      }
+      return `${horas}h ${minsRestantes}min`;
+    }
+
+    lucide.createIcons();
+
+    // Registrar visita única na sessão para a página de agendamento público
+    if (!sessionStorage.getItem('visited_booking')) {
+      fetch('/api/public/visit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pagina: 'agendamento_publico' })
+      })
+      .then(res => {
+        if (res.ok) sessionStorage.setItem('visited_booking', 'true');
+      })
+      .catch(err => console.error('Erro ao registrar visita:', err));
+    }
+
+    // Obtém o usuarioId da URL (ex: ?usuarioId=1)
+    const urlParams = new URLSearchParams(window.location.search);
+    const usuarioId = urlParams.get('usuarioId') || '1'; // Default para 1 para facilitar os testes
+
+    // Estado da seleção
+    let selectedServiceIds = [];
+    let selectedHora = null;
+    let selectedFuncionarioId = null;
+    let allEmployees = [];
+    let allServices = [];
+    let isClientExempt = false;
+
+    function canSelectTogether(serviceIds) {
+      if (serviceIds.length <= 1) return true;
+      if (allEmployees.length === 0) return true;
+
+      // Verifica se existe pelo menos um funcionário que realiza TODOS os serviços selecionados
+      const hasCommonEmployee = allEmployees.some(emp => {
+        const empServicos = (emp.servicos || []).map(Number);
+        return serviceIds.every(id => empServicos.includes(Number(id)));
+      });
+      return hasCommonEmployee;
+    }
+
+    // Configura data mínima para hoje
+    const inputData = document.getElementById('data-agendamento');
+    const hoje = new Date().toISOString().split('T')[0];
+    inputData.min = hoje;
+
+    // Carregar informações e serviços do profissional
+    async function loadPublicData() {
+      try {
+        const response = await fetch(`/api/public/services?usuarioId=${usuarioId}`);
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Profissional não cadastrado.');
+        }
+
+        // Configura cabeçalho e aplica tema dinâmico
+        document.getElementById('nome-profissional').innerText = data.profissional.nome;
+        if (data.profissional.tema) {
+          document.body.classList.remove('theme-indigo', 'theme-emerald', 'theme-amber');
+          document.body.classList.add(`theme-${data.profissional.tema}`);
+        }
+        
+        allEmployees = data.funcionarios || [];
+        allServices = data.servicos || [];
+
+        // Renderiza serviços
+        const container = document.getElementById('servicos-container');
+        container.innerHTML = data.servicos.map(s => `
+          <div id="service-card-${s.id}" class="p-4 bg-slate-900/50 border border-white/5 rounded-xl cursor-pointer hover:border-indigo-500/30 hover:shadow-sm transition-all flex items-center justify-between animate-fade-in" onclick="toggleService(${s.id})">
+            <div class="space-y-1">
+              <h4 class="font-bold text-sm text-white">${s.nome}</h4>
+              <p class="text-xs text-slate-400">${s.descricao || 'Sem descrição'}</p>
+              <div class="flex gap-2 pt-1">
+                <span class="text-[9px] font-semibold text-slate-400 bg-white/5 border border-white/5 px-2 py-0.5 rounded">${formatarDuracao(s.duracao_minutos)}</span>
+                ${s.sinal_porcentagem > 0 ? `<span class="text-[9px] font-semibold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded">Sinal: ${s.sinal_porcentagem}%</span>` : ''}
+              </div>
+            </div>
+            <div class="text-right shrink-0">
+              <span class="text-sm font-black text-indigo-400">R$ ${parseFloat(s.preco).toFixed(2)}</span>
+            </div>
+          </div>
+        `).join('');
+
+        lucide.createIcons();
+
+      } catch (err) {
+        showGlobalError(err.message);
+      }
+    }
+
+    // Exibe erros estruturais
+    function showGlobalError(msg) {
+      const alertBox = document.getElementById('alert-box');
+      const alertMsg = document.getElementById('alert-message');
+      alertBox.classList.remove('hidden');
+      alertMsg.innerText = msg;
+      
+      // Esconde o formulário inteiro
+      document.getElementById('servicos-container').innerHTML = '';
+      document.getElementById('step-employee').classList.add('hidden');
+      document.getElementById('step-date-time').classList.add('hidden');
+    }
+
+    // Alternar seleção de serviço
+    window.toggleService = function(serviceId) {
+      const index = selectedServiceIds.indexOf(serviceId);
+      let newSelection = [...selectedServiceIds];
+      
+      if (index > -1) {
+        newSelection.splice(index, 1);
+      } else {
+        newSelection.push(serviceId);
+        if (!canSelectTogether(newSelection)) {
+          alert("Estes serviços são realizados por profissionais diferentes e não podem ser agendados juntos. Por favor, faça agendamentos separados para cada profissional.");
+          return;
+        }
+      }
+
+      selectedServiceIds = newSelection;
+
+      allServices.forEach(s => {
+        const card = document.getElementById(`service-card-${s.id}`);
+        if (card) {
+          if (selectedServiceIds.includes(s.id)) {
+            card.className = "p-4 bg-indigo-500/10 border-2 border-indigo-500 rounded-xl cursor-pointer transition-all flex items-center justify-between";
+          } else {
+            card.className = "p-4 bg-slate-900/50 border border-white/5 rounded-xl cursor-pointer hover:border-indigo-500/30 hover:shadow-sm transition-all flex items-center justify-between";
+          }
+        }
+      });
+
+      updateServiceSummary();
+    };
+
+    function updateServiceSummary() {
+      const summaryBar = document.getElementById('summary-bar');
+      if (selectedServiceIds.length === 0) {
+        summaryBar.classList.add('hidden');
+        document.getElementById('step-employee').classList.add('hidden');
+        document.getElementById('step-date-time').classList.add('hidden');
+        document.getElementById('step-time').classList.add('hidden');
+        document.getElementById('step-form-cliente').classList.add('hidden');
+        return;
+      }
+
+      summaryBar.classList.remove('hidden');
+
+      const selectedServices = allServices.filter(s => selectedServiceIds.includes(s.id));
+      const qty = selectedServices.length;
+      const totalPrice = selectedServices.reduce((sum, s) => sum + Number(s.preco), 0);
+      const totalDuration = selectedServices.reduce((sum, s) => sum + s.duracao_minutos, 0);
+
+      document.getElementById('summary-qty').innerText = `${qty} ${qty === 1 ? 'serviço selecionado' : 'serviços selecionados'}`;
+      document.getElementById('summary-total-price').innerText = `R$ ${totalPrice.toFixed(2)}`;
+      document.getElementById('summary-total-duration').innerText = `(${formatarDuracao(totalDuration)})`;
+
+      selectedHora = null;
+      inputData.value = '';
+      document.getElementById('step-employee').classList.add('hidden');
+      document.getElementById('step-date-time').classList.add('hidden');
+      document.getElementById('step-time').classList.add('hidden');
+      document.getElementById('step-form-cliente').classList.add('hidden');
+    }
+
+    // Avançar para próximo passo a partir da barra de resumo
+    window.advanceStep1 = function() {
+      const serviceEmployees = allEmployees.filter(emp => {
+        const empServicos = (emp.servicos || []).map(Number);
+        return selectedServiceIds.every(id => empServicos.includes(Number(id)));
+      });
+
+      const stepEmployee = document.getElementById('step-employee');
+      const numDate = document.getElementById('step-num-date');
+      const numTime = document.getElementById('step-num-time');
+      const numForm = document.getElementById('step-num-form');
+
+      if (serviceEmployees.length > 0) {
+        stepEmployee.classList.remove('hidden');
+        document.getElementById('step-num-employee').innerText = "2";
+        numDate.innerText = "3";
+        numTime.innerText = "4";
+        numForm.innerText = "5";
+
+        const empContainer = document.getElementById('employees-container');
+        let empHtml = `
+          <div id="emp-card-any" class="p-3.5 bg-indigo-500/10 border-2 border-indigo-500 rounded-xl cursor-pointer transition-all flex items-center gap-3" onclick="selectEmployee('any')">
+            <div class="p-2 rounded-lg bg-indigo-500/15 text-indigo-400 border border-indigo-500/30">
+              <i data-lucide="sparkles" class="w-4 h-4"></i>
+            </div>
+            <div class="text-left">
+              <h4 class="font-bold text-xs text-white">Sem preferência</h4>
+              <p class="text-[10px] text-slate-400">Qualquer profissional livre</p>
+            </div>
+          </div>
+        `;
+
+        serviceEmployees.forEach(emp => {
+          empHtml += `
+            <div id="emp-card-${emp.id}" class="p-3.5 bg-slate-900/50 border border-white/5 rounded-xl cursor-pointer hover:border-indigo-500/30 hover:shadow-sm transition-all flex items-center gap-3" onclick="selectEmployee(${emp.id})">
+              <div class="p-2 rounded-lg bg-white/5 text-slate-400 border border-white/5">
+                <i data-lucide="user" class="w-4 h-4"></i>
+              </div>
+              <div class="text-left">
+                <h4 class="font-bold text-xs text-white">${emp.nome}</h4>
+                <p class="text-[10px] text-slate-400 font-medium">Profissional parceiro</p>
+              </div>
+            </div>
+          `;
+        });
+
+        empContainer.innerHTML = empHtml;
+        selectedFuncionarioId = ''; // default "Sem preferência"
+        lucide.createIcons();
+      } else {
+        stepEmployee.classList.add('hidden');
+        numDate.innerText = "2";
+        numTime.innerText = "3";
+        numForm.innerText = "4";
+        selectedFuncionarioId = null;
+      }
+
+      document.getElementById('step-date-time').classList.remove('hidden');
+      
+      const targetId = serviceEmployees.length > 0 ? 'step-employee' : 'step-date-time';
+      document.getElementById(targetId).scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+
+    // Seleção de profissional
+    window.selectEmployee = function(empId) {
+      const prevCardId = selectedFuncionarioId === 'any' || !selectedFuncionarioId ? 'emp-card-any' : `emp-card-${selectedFuncionarioId}`;
+      const prevCard = document.getElementById(prevCardId);
+      if (prevCard) {
+        prevCard.className = "p-3.5 bg-slate-900/50 border border-white/5 rounded-xl cursor-pointer hover:border-indigo-500/30 hover:shadow-sm transition-all flex items-center gap-3";
+        const iconContainer = prevCard.querySelector('div');
+        if (iconContainer) iconContainer.className = "p-2 rounded-lg bg-white/5 text-slate-400 border border-white/5";
+      }
+
+      selectedFuncionarioId = empId === 'any' ? '' : empId;
+
+      const currentCardId = empId === 'any' ? 'emp-card-any' : `emp-card-${empId}`;
+      const currentCard = document.getElementById(currentCardId);
+      if (currentCard) {
+        currentCard.className = "p-3.5 bg-indigo-500/10 border-2 border-indigo-500 rounded-xl cursor-pointer transition-all flex items-center gap-3";
+        const iconContainer = currentCard.querySelector('div');
+        if (iconContainer) iconContainer.className = "p-2 rounded-lg bg-indigo-500/15 text-indigo-400 border border-indigo-500/30";
+      }
+
+      // Se já houver data selecionada, recarrega os slots disponíveis do profissional
+      if (inputData.value) {
+        loadAvailableSlots();
+      }
+    };
+
+    // Escuta mudança de data
+    inputData.addEventListener('change', loadAvailableSlots);
+
+    // Helper: adiciona minutos a uma string "HH:MM" e retorna "HH:MM"
+    function addMinutesToTime(timeStr, minutes) {
+      const [hours, mins] = timeStr.split(':').map(Number);
+      const totalMins = hours * 60 + mins + minutes;
+      const newHours = Math.floor(totalMins / 60) % 24;
+      const newMins = totalMins % 60;
+      return `${String(newHours).padStart(2, '0')}:${String(newMins).padStart(2, '0')}`;
+    }
+
+    // Busca os horários livres para a data selecionada
+    async function loadAvailableSlots() {
+      const dataStr = inputData.value;
+      if (!dataStr || selectedServiceIds.length === 0) return;
+
+      try {
+        const queryUrl = `/api/public/slots?usuarioId=${usuarioId}&servicoId=${selectedServiceIds.join(',')}&data=${dataStr}&funcionarioId=${selectedFuncionarioId || ''}`;
+        const response = await fetch(queryUrl);
+        const slots = await response.json();
+
+        if (!response.ok) {
+          throw new Error(slots.error || 'Erro ao carregar horários livres.');
+        }
+
+        const grid = document.getElementById('horarios-grid');
+        const msgVazio = document.getElementById('no-slots-msg');
+        
+        grid.innerHTML = '';
+        selectedHora = null;
+        document.getElementById('step-form-cliente').classList.add('hidden');
+        if (selectedServiceIds.length > 0) {
+          document.getElementById('summary-bar').classList.remove('hidden');
+        }
+
+        if (slots.length === 0) {
+          grid.classList.add('hidden');
+          msgVazio.classList.remove('hidden');
+        } else {
+          grid.classList.remove('hidden');
+          msgVazio.classList.add('hidden');
+
+          const selectedServices = allServices.filter(s => selectedServiceIds.includes(s.id));
+          const totalDuration = selectedServices.reduce((sum, s) => sum + s.duracao_minutos, 0);
+
+          grid.innerHTML = slots.map(slot => {
+            const endSlot = addMinutesToTime(slot, totalDuration);
+            return `
+              <div id="slot-${slot.replace(':', '-')}" class="slot-badge py-2.5 flex flex-col items-center justify-center gap-0.5 text-xs" onclick="selectSlot('${slot}')">
+                <span class="font-black text-sm">${slot}</span>
+                <span class="text-[9px] text-slate-400 font-normal">até ${endSlot}</span>
+              </div>
+            `;
+          }).join('');
+        }
+
+        document.getElementById('step-time').classList.remove('hidden');
+
+      } catch (err) {
+        alert(err.message);
+      }
+    }
+
+    // Seleção de slot de horário
+    window.selectSlot = function(hora) {
+      if (selectedHora) {
+        const prevSlot = document.getElementById(`slot-${selectedHora.replace(':', '-')}`);
+        if (prevSlot) prevSlot.classList.remove('selected');
+      }
+
+      selectedHora = hora;
+      const slot = document.getElementById(`slot-${hora.replace(':', '-')}`);
+      slot.classList.add('selected');
+
+      // Revela formulário do cliente
+      document.getElementById('step-form-cliente').classList.remove('hidden');
+      
+      // Esconde a barra de resumo flutuante para liberar espaço para o formulário
+      document.getElementById('summary-bar').classList.add('hidden');
+
+      // Atualiza o banner de resumo de reserva
+      const selectedServices = allServices.filter(s => selectedServiceIds.includes(s.id));
+      const totalDuration = selectedServices.reduce((sum, s) => sum + s.duracao_minutos, 0);
+      const totalPreco = selectedServices.reduce((sum, s) => sum + Number(s.preco), 0);
+      const endHora = addMinutesToTime(hora, totalDuration);
+
+      const [ano, mes, dia] = inputData.value.split('-');
+      const dataFormatada = `${dia}/${mes}/${ano}`;
+
+      const summaryDiv = document.getElementById('booking-details-summary');
+      summaryDiv.innerHTML = `
+        <div class="flex items-center gap-2 font-bold text-white text-sm mb-1">
+          <i data-lucide="calendar-check" class="w-4 h-4 text-indigo-400"></i>
+          <span>Resumo da sua Reserva</span>
+        </div>
+        <div class="grid grid-cols-1 gap-1 pl-6">
+          <p class="text-slate-400">Profissional: <strong class="text-white">${selectedFuncionarioId ? (allEmployees.find(e => e.id === Number(selectedFuncionarioId))?.nome || 'Profissional') : 'Sem preferência'}</strong></p>
+          <p class="text-slate-400">Dia e Horário: <strong class="text-indigo-400">${dataFormatada} das ${hora} às ${endHora}</strong> (${formatarDuracao(totalDuration)})</p>
+          <p class="text-slate-400">Serviços: <strong class="text-white">${selectedServices.map(s => s.nome).join(', ')}</strong></p>
+          <p class="text-slate-400">Valor Total: <strong class="text-emerald-400">R$ ${totalPreco.toFixed(2)}</strong></p>
+        </div>
+      `;
+      lucide.createIcons();
+
+      // Atualiza visualização de opções de pagamento baseados na isenção
+      updatePaymentOptionsVisibility();
+    };
+
+    // Controle do estilo do seletor de pagamento
+    window.updatePaymentSelect = function(type) {
+      const labelPix = document.getElementById('label-pay-pix');
+      const labelLocal = document.getElementById('label-pay-local');
+      const titlePix = document.getElementById('title-pay-pix');
+      const titleLocal = document.getElementById('title-pay-local');
+      const btnText = document.getElementById('btn-submit-text');
+
+      if (type === 'pix') {
+        labelPix.className = "flex flex-col p-3 rounded-xl border-2 border-indigo-500 bg-indigo-500/10 cursor-pointer transition-all text-left";
+        labelLocal.className = "flex flex-col p-3 rounded-xl border border-white/5 bg-slate-900/50 cursor-pointer hover:border-indigo-400/50 transition-all text-left";
+        titlePix.className = "flex items-center gap-2 font-bold text-sm text-indigo-400";
+        titleLocal.className = "flex items-center gap-2 font-bold text-sm text-slate-350 text-slate-300";
+        btnText.innerText = "Confirmar e Ir para o Pagamento";
+      } else {
+        labelLocal.className = "flex flex-col p-3 rounded-xl border-2 border-indigo-500 bg-indigo-500/10 cursor-pointer transition-all text-left";
+        labelPix.className = "flex flex-col p-3 rounded-xl border border-white/5 bg-slate-900/50 cursor-pointer hover:border-indigo-400/50 transition-all text-left";
+        titleLocal.className = "flex items-center gap-2 font-bold text-sm text-indigo-400";
+        titlePix.className = "flex items-center gap-2 font-bold text-sm text-slate-350 text-slate-300";
+        btnText.innerText = "Confirmar Agendamento";
+      }
+    };
+
+    // Formatação de WhatsApp
+    function formatPhone(value) {
+      return value
+        .replace(/\D/g, '')
+        .replace(/^(\d{2})(\d)/g, '($1) $2')
+        .replace(/(\d{5})(\d)/, '$1-$2')
+        .substring(0, 15);
+    }
+
+    const inputWhatsapp = document.getElementById('cliente-whatsapp');
+    inputWhatsapp.addEventListener('input', async (e) => {
+      const val = e.target.value;
+      e.target.value = formatPhone(val);
+      
+      const cleanPhone = val.replace(/\D/g, '');
+      if (cleanPhone.length === 11) {
+        await checkClientExemption(cleanPhone);
+      }
+    });
+
+    async function checkClientExemption(whatsapp) {
+      try {
+        const response = await fetch(`/api/public/clients/check-exempt?usuarioId=${usuarioId}&whatsapp=${whatsapp}`);
+        const data = await response.json();
+        isClientExempt = !!data.isento;
+        updatePaymentOptionsVisibility();
+      } catch (err) {
+        console.error('Erro ao buscar isenção de sinal:', err);
+        isClientExempt = false;
+      }
+    }
+
+    function updatePaymentOptionsVisibility() {
+      if (selectedServiceIds.length === 0) return;
+
+      const selectedServices = allServices.filter(s => selectedServiceIds.includes(s.id));
+      const totalPreco = selectedServices.reduce((sum, s) => sum + Number(s.preco), 0);
+      let valorSinal = 0;
+
+      selectedServices.forEach(s => {
+        const sinalPorcentagem = s.sinal_porcentagem || 0;
+        if (sinalPorcentagem > 0) {
+          valorSinal += (s.preco * sinalPorcentagem) / 100;
+        }
+      });
+
+      const labelLocal = document.getElementById('label-pay-local');
+      const labelPix = document.getElementById('label-pay-pix');
+      const titlePixSpan = document.querySelector('#title-pay-pix span');
+      const titleLocalSpan = document.querySelector('#title-pay-local span');
+      const infoText = document.getElementById('info-sinal-obrigatorio');
+
+      // Garante que a opção local fique visível
+      labelLocal.style.display = 'flex';
+
+      if (valorSinal > 0 && !isClientExempt) {
+        // Exige sinal
+        if (titlePixSpan) titlePixSpan.innerText = `Pagar Sinal agora (Pix)`;
+        
+        const descPix = document.querySelector('#label-pay-pix > span');
+        if (descPix) descPix.innerText = `Garante a vaga pagando o sinal acumulado de R$ ${valorSinal.toFixed(2)} via Pix agora.`;
+
+        if (titleLocalSpan) titleLocalSpan.innerText = `Pagar Sinal no Local / Combinar`;
+        
+        const descLocal = document.querySelector('#label-pay-local > span');
+        if (descLocal) descLocal.innerText = `Agende e combine o pagamento do sinal de R$ ${valorSinal.toFixed(2)} diretamente com o profissional.`;
+
+        const infoMsg = `Para estes serviços, é exigido um sinal acumulado de <strong>R$ ${valorSinal.toFixed(2)}</strong>. Você pode pagar agora via Pix para confirmação automática ou combinar com o profissional para pagar no local.`;
+        
+        if (!infoText) {
+          const div = document.createElement('div');
+          div.id = 'info-sinal-obrigatorio';
+          div.className = 'p-3 bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs rounded-xl flex items-start gap-2 animate-fade-in sm:col-span-2';
+          div.innerHTML = `
+            <i data-lucide="info" class="w-4 h-4 shrink-0 mt-0.5 text-amber-400"></i>
+            <span>${infoMsg}</span>
+          `;
+          labelPix.parentNode.parentNode.insertBefore(div, labelPix.parentNode.nextSibling);
+          lucide.createIcons();
+        } else {
+          infoText.querySelector('span').innerHTML = infoMsg;
+          infoText.style.display = 'flex';
+        }
+      } else {
+        // Não exige sinal (ou é isento)
+        if (titlePixSpan) titlePixSpan.innerText = `Pagar agora (Pix)`;
+        
+        const descPix = document.querySelector('#label-pay-pix > span');
+        if (descPix) descPix.innerText = `Garante sua vaga na hora via Pix automático.`;
+
+        if (titleLocalSpan) titleLocalSpan.innerText = `Pagar no Local`;
+        
+        const descLocal = document.querySelector('#label-pay-local > span');
+        if (descLocal) descLocal.innerText = `Pague diretamente após realizar o serviço.`;
+
+        if (infoText) {
+          infoText.style.display = 'none';
+        }
+      }
+    }
+
+    function isValidCelular(phone) {
+      const digits = phone.replace(/\D/g, '');
+      if (digits.length !== 11) return false;
+      if (digits[2] !== '9') return false;
+      const ddd = parseInt(digits.substring(0, 2), 10);
+      if (ddd < 11 || ddd > 99) return false;
+      return true;
+    }
+
+    // Submissão do agendamento
+    document.getElementById('form-agendar').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const btn = document.getElementById('btn-submit');
+      const btnText = document.getElementById('btn-submit-text');
+      const originalText = btnText.innerText;
+
+      const clienteNome = document.getElementById('cliente-nome').value;
+      const clienteWhatsapp = document.getElementById('cliente-whatsapp').value;
+      const dataAgendamento = inputData.value;
+      const metodoPagamento = document.querySelector('input[name="metodo-pagamento"]:checked').value;
+
+      if (!isValidCelular(clienteWhatsapp)) {
+        alert('Número de celular inválido. Certifique-se de digitar o DDD, o dígito 9 e o restante do número (ex: (11) 99999-9999).');
+        return;
+      }
+
+      btn.disabled = true;
+      btnText.innerText = 'Enviando...';
+
+      try {
+        const response = await fetch('/api/public/book', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            servicoId: selectedServiceIds.join(','),
+            clienteNome,
+            clienteWhatsapp,
+            dataAgendamento,
+            horaInicio: selectedHora,
+            metodoPagamento,
+            funcionarioId: selectedFuncionarioId || undefined
+          })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Erro ao processar agendamento.');
+        }
+
+        // Redireciona substituindo o histórico para evitar que o cliente volte e edite os dados
+        window.location.replace(`/checkout?id=${data.checkoutId}`);
+
+      } catch (err) {
+        alert(err.message);
+        btn.disabled = false;
+        btnText.innerText = originalText;
+      }
+    });
+
+    // Inicialização
+    loadPublicData();
+
+    // Registra o Service Worker para PWA
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(err => console.error(err));
+      });
+    }
+  </script>
+</body>
+</html>

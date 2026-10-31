@@ -1,0 +1,22 @@
+# Deploy da versão de demonstração no Render (plano gratuito)
+# Render → New → Blueprint → selecione este repositório
+services:
+  - type: web
+    name: agendamente-oficial-demo
+    runtime: node
+    plan: free
+    rootDir: backend
+    buildCommand: npm install --include=dev && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/public/demo-info
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: DEMO_MODE
+        value: "true"
+      - key: DB_TYPE
+        value: sqlite
+      - key: DB_PATH
+        value: ./database.sqlite
+      - key: JWT_SECRET
+        generateValue: true

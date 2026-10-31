@@ -1,0 +1,28 @@
+# Dependências e build
+node_modules/
+backend/dist/
+
+# Variáveis de ambiente (NUNCA versionar)
+.env
+.env.*
+!.env.example
+
+# Bancos de dados locais
+*.sqlite
+*.sqlite3
+*.db
+
+# Uploads de usuários
+frontend/uploads/**
+!frontend/uploads/produtos/
+!frontend/uploads/produtos/.gitkeep
+
+# Scripts locais / rascunhos
+scratch/
+.gemini/
+
+# Sistema / editores
+.DS_Store
+Thumbs.db
+.vscode/
+*.log

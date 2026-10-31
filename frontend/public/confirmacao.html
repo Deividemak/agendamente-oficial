@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confirmação de Agendamento - Agendamente</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Custom Premium Styles -->
+  <link rel="stylesheet" href="../css/style.css">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body {
+      background-attachment: fixed;
+    }
+  </style>
+</head>
+<body class="bg-gradient min-h-screen text-slate-100 flex items-center justify-center p-4">
+
+  <div class="max-w-md w-full glass-card p-8 space-y-6 text-center animate-fade-in relative">
+    
+    <!-- HEADER -->
+    <div class="space-y-2">
+      <div class="inline-flex p-3 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 mb-1" id="status-icon-container">
+        <i data-lucide="calendar-check" class="w-8 h-8 text-indigo-400" id="status-icon"></i>
+      </div>
+      <h2 class="text-xl font-extrabold text-white tracking-tight" id="status-title">Confirmar Presença</h2>
+      <p class="text-slate-400 text-xs sm:text-sm" id="status-subtitle">Por favor, confirme ou cancele seu horário de atendimento.</p>
+    </div>
+
+    <!-- SKELETON / LOADING STATE -->
+    <div id="loading-state" class="py-12 flex flex-col items-center justify-center space-y-3">
+      <div class="w-10 h-10 border-4 border-white/10 border-t-indigo-500 rounded-full animate-spin"></div>
+      <p class="text-slate-400 text-xs">Carregando dados do agendamento...</p>
+    </div>
+
+    <!-- CONTENT STATE (HIDDEN BY DEFAULT) -->
+    <div id="booking-details" class="space-y-4 text-left hidden">
+      <div class="p-4 bg-white/5 border border-white/5 rounded-2xl space-y-3">
+        
+        <div class="flex justify-between items-center text-xs">
+          <span class="text-slate-400 font-semibold">Cliente:</span>
+          <span class="text-slate-200 font-bold" id="detail-cliente">--</span>
+        </div>
+
+        <div class="flex justify-between items-center text-xs">
+          <span class="text-slate-400 font-semibold">Serviço:</span>
+          <span class="text-indigo-400 font-bold" id="detail-servico">--</span>
+        </div>
+
+        <div class="flex justify-between items-center text-xs">
+          <span class="text-slate-400 font-semibold">Profissional:</span>
+          <span class="text-slate-200 font-bold" id="detail-profissional">--</span>
+        </div>
+
+        <div class="flex justify-between items-center text-xs">
+          <span class="text-slate-400 font-semibold">Data:</span>
+          <span class="text-slate-200 font-bold" id="detail-data">--</span>
+        </div>
+
+        <div class="flex justify-between items-center text-xs">
+          <span class="text-slate-400 font-semibold">Horário:</span>
+          <span class="text-emerald-400 font-black text-sm" id="detail-hora">--</span>
+        </div>
+
+        <div class="flex justify-between items-center text-xs">
+          <span class="text-slate-400 font-semibold">Pagamento:</span>
+          <span class="text-slate-200 font-bold" id="detail-pagamento">--</span>
+        </div>
+
+      </div>
+
+      <!-- ACTION BUTTONS -->
+      <div id="action-buttons" class="space-y-3 pt-2">
+        <button id="btn-confirmar" class="btn bg-emerald-600 hover:bg-emerald-700 text-white w-full py-3.5 font-bold text-xs rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-emerald-600/20">
+          <i data-lucide="check" class="w-4 h-4"></i> Confirmar Presença
+        </button>
+
+        <button id="btn-cancelar" class="btn btn-secondary w-full py-3 font-bold text-xs rounded-xl flex items-center justify-center gap-2 transition-all">
+          <i data-lucide="x" class="w-4 h-4"></i> Não poderei ir (Cancelar)
+        </button>
+      </div>
+
+    </div>
+
+    <!-- FOOTER LINK -->
+    <div class="pt-4 border-t border-white/5 text-center">
+      <span class="text-[10px] text-slate-400 font-semibold flex items-center justify-center gap-1">
+        <i data-lucide="shield-check" class="w-3.5 h-3.5 text-indigo-400/50"></i>
+        Agendamento 100% Seguro por Agendamente
+      </span>
+    </div>
+
+  </div>
+
+  <script>
+    // Inicializa ícones
+    lucide.createIcons();
+
+    // Utilitários de URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const bookingId = urlParams.get('id');
+    const token = urlParams.get('token');
+
+    const loadingState = document.getElementById('loading-state');
+    const bookingDetails = document.getElementById('booking-details');
+    const actionButtons = document.getElementById('action-buttons');
+
+    if (!bookingId || !token) {
+      showErrorState('Parâmetros inválidos. Verifique o link enviado no seu WhatsApp.');
+    } else {
+      loadBookingInfo();
+    }
+
+    async function loadBookingInfo() {
+      try {
+        const res = await fetch(`/api/public/bookings/${bookingId}?token=${token}`);
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.error || 'Erro ao carregar dados do agendamento.');
+        }
+
+        const booking = await res.json();
+
+        // Aplica o tema configurado pelo profissional
+        if (booking.tema) {
+          document.body.classList.remove('theme-indigo', 'theme-emerald', 'theme-amber');
+          document.body.classList.add(`theme-${booking.tema}`);
+        }
+
+        // Preenche detalhes
+        document.getElementById('detail-cliente').innerText = booking.cliente_nome;
+        document.getElementById('detail-servico').innerText = booking.servico_nome;
+        document.getElementById('detail-profissional').innerText = booking.profissional_nome;
+        document.getElementById('detail-data').innerText = formatDateBR(booking.data_agendamento);
+        document.getElementById('detail-hora').innerText = `${booking.hora_inicio}h`;
+        
+        const isPago = booking.status_pagamento === 'pago';
+        document.getElementById('detail-pagamento').innerText = isPago ? 'Pago' : booking.metodo_pagamento === 'presencial' ? 'No Local' : 'Pendente Pix';
+
+        loadingState.classList.add('hidden');
+        bookingDetails.classList.remove('hidden');
+
+        // Renderiza estado com base na presença
+        renderState(booking.presenca_confirmada);
+
+      } catch (err) {
+        showErrorState(err.message);
+      }
+    }
+
+    function renderState(presencaStatus) {
+      const icon = document.getElementById('status-icon');
+      const container = document.getElementById('status-icon-container');
+      const title = document.getElementById('status-title');
+      const subtitle = document.getElementById('status-subtitle');
+
+      // 0 = pendente, 1 = confirmado, 2 = cancelado
+      if (presencaStatus === 1) {
+        actionButtons.classList.add('hidden');
+        
+        container.className = "inline-flex p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 mb-1";
+        icon.className = "w-8 h-8 text-emerald-400";
+        icon.setAttribute('data-lucide', 'check-circle-2');
+        title.innerText = "Presença Confirmada!";
+        title.className = "text-xl font-extrabold text-emerald-400 tracking-tight";
+        subtitle.innerText = "Sua vaga está garantida. Te esperamos no horário marcado!";
+      } else if (presencaStatus === 2) {
+        actionButtons.classList.add('hidden');
+
+        container.className = "inline-flex p-3 rounded-2xl bg-rose-500/10 border border-rose-500/20 mb-1";
+        icon.className = "w-8 h-8 text-rose-400";
+        icon.setAttribute('data-lucide', 'x-circle');
+        title.innerText = "Agendamento Cancelado";
+        title.className = "text-xl font-extrabold text-rose-400 tracking-tight";
+        subtitle.innerText = "Este agendamento foi cancelado e o horário foi liberado para outros clientes.";
+      }
+
+      lucide.createIcons();
+    }
+
+    function showErrorState(msg) {
+      loadingState.classList.add('hidden');
+      bookingDetails.classList.add('hidden');
+
+      const icon = document.getElementById('status-icon');
+      const container = document.getElementById('status-icon-container');
+      const title = document.getElementById('status-title');
+      const subtitle = document.getElementById('status-subtitle');
+
+      container.className = "inline-flex p-3 rounded-2xl bg-rose-500/10 border border-rose-500/20 mb-1";
+      icon.className = "w-8 h-8 text-rose-400";
+      icon.setAttribute('data-lucide', 'alert-triangle');
+      title.innerText = "Falha ao Carregar";
+      title.className = "text-xl font-extrabold text-rose-400 tracking-tight";
+      subtitle.innerText = msg;
+
+      lucide.createIcons();
+    }
+
+    // Botão Confirmar
+    document.getElementById('btn-confirmar').addEventListener('click', async () => {
+      setButtonLoading('btn-confirmar', true);
+      try {
+        const res = await fetch(`/api/public/bookings/${bookingId}/confirm-presence`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Erro ao confirmar presença.');
+
+        alert(data.message);
+        renderState(1);
+      } catch (err) {
+        alert(err.message);
+      } finally {
+        setButtonLoading('btn-confirmar', false);
+      }
+    });
+
+    // Botão Cancelar
+    document.getElementById('btn-cancelar').addEventListener('click', async () => {
+      if (!confirm('Deseja realmente cancelar este agendamento? O horário será liberado para outros clientes.')) return;
+      
+      setButtonLoading('btn-cancelar', true);
+      try {
+        const res = await fetch(`/api/public/bookings/${bookingId}/cancel-presence`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Erro ao cancelar agendamento.');
+
+        alert(data.message);
+        renderState(2);
+      } catch (err) {
+        alert(err.message);
+      } finally {
+        setButtonLoading('btn-cancelar', false);
+      }
+    });
+
+    function setButtonLoading(btnId, isLoading) {
+      const btn = document.getElementById(btnId);
+      if (isLoading) {
+        btn.disabled = true;
+        btn.classList.add('opacity-50', 'cursor-not-allowed');
+      } else {
+        btn.disabled = false;
+        btn.classList.remove('opacity-50', 'cursor-not-allowed');
+      }
+    }
+
+    function formatDateBR(dateStr) {
+      const partes = dateStr.split('-');
+      if (partes.length === 3) return `${partes[2]}/${partes[1]}/${partes[0]}`;
+      return dateStr;
+    }
+  </script>
+</body>
+</html>

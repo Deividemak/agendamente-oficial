@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verificação de E-mail - Agendamente</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Custom Premium Styles -->
+  <link rel="stylesheet" href="../css/style.css">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body {
+      background-attachment: fixed;
+    }
+    .animate-spin-slow {
+      animation: spin 3s linear infinite;
+    }
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body class="bg-gradient min-h-screen flex items-center justify-center p-4">
+
+  <div class="w-full max-w-md animate-fade-in">
+    <!-- Logo/Header -->
+    <div class="text-center mb-8">
+      <div class="inline-flex p-3 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 mb-3">
+        <i data-lucide="mail" class="w-8 h-8 text-indigo-400"></i>
+      </div>
+      <h1 class="text-3xl font-extrabold tracking-tight text-white">
+        <span class="gradient-text font-black">Agendamente</span>
+      </h1>
+      <p class="text-slate-400 mt-2 text-sm">Confirmação de Cadastro de Profissional</p>
+    </div>
+
+    <!-- Confirm Card -->
+    <div class="glass-card p-8 rounded-2xl space-y-6 text-center">
+      <h2 id="card-title" class="text-xl font-bold text-white">Verificando Conta</h2>
+      
+      <!-- Processing State -->
+      <div id="status-processing" class="space-y-4 py-4">
+        <div class="flex justify-center">
+          <i data-lucide="loader" class="w-12 h-12 text-indigo-400 animate-spin"></i>
+        </div>
+        <p class="text-slate-400 text-sm">Aguarde enquanto confirmamos o seu e-mail e ativamos seu acesso...</p>
+      </div>
+
+      <!-- Success State (Hidden by default) -->
+      <div id="status-success" class="space-y-4 py-4 hidden">
+        <div class="flex justify-center">
+          <div class="p-3 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+            <i data-lucide="check-circle-2" class="w-12 h-12 text-emerald-400"></i>
+          </div>
+        </div>
+        <p class="text-emerald-400 font-semibold">E-mail verificado com sucesso!</p>
+        <p class="text-slate-400 text-sm">Sua conta de profissional foi ativada. Você será redirecionado para a tela de login em alguns segundos...</p>
+      </div>
+
+      <!-- Error State (Hidden by default) -->
+      <div id="status-error" class="space-y-4 py-4 hidden">
+        <div class="flex justify-center">
+          <div class="p-3 rounded-full bg-rose-500/10 border border-rose-500/20">
+            <i data-lucide="x-circle" class="w-12 h-12 text-rose-400"></i>
+          </div>
+        </div>
+        <p id="error-message" class="text-rose-400 font-semibold">Falha na verificação</p>
+        <p class="text-slate-400 text-sm">O link de ativação pode ser inválido, ter expirado ou já ter sido utilizado. Por favor, tente novamente ou cadastre-se novamente se necessário.</p>
+      </div>
+
+      <!-- Rodapé do Card -->
+      <div class="text-center pt-2">
+        <a href="/admin-login" class="text-xs text-indigo-400 hover:text-indigo-300 font-semibold hover:underline flex items-center justify-center gap-1">
+          <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> Ir para o Login
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Inicializa ícones lucide
+    lucide.createIcons();
+
+    // Elementos da UI
+    const cardTitle = document.getElementById('card-title');
+    const statusProcessing = document.getElementById('status-processing');
+    const statusSuccess = document.getElementById('status-success');
+    const statusError = document.getElementById('status-error');
+    const errorMessage = document.getElementById('error-message');
+
+    // Analisa a URL em busca do token de confirmação
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+
+    async function verifyEmail() {
+      if (!token) {
+        showError('Token de confirmação não encontrado na URL.');
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/auth/confirm-email?token=${token}`);
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Falha ao verificar e-mail.');
+        }
+
+        showSuccess();
+      } catch (err) {
+        showError(err.message);
+      }
+    }
+
+    function showSuccess() {
+      cardTitle.innerText = 'Conta Ativada!';
+      statusProcessing.classList.add('hidden');
+      statusSuccess.classList.remove('hidden');
+      
+      // Re-create icons inside dynamically shown container
+      lucide.createIcons();
+
+      setTimeout(() => {
+        window.location.href = '/admin-login';
+      }, 3500);
+    }
+
+    function showError(msg) {
+      cardTitle.innerText = 'Falha na Ativação';
+      statusProcessing.classList.add('hidden');
+      statusError.classList.remove('hidden');
+      errorMessage.innerText = msg;
+      
+      // Re-create icons inside dynamically shown container
+      lucide.createIcons();
+    }
+
+    // Dispara a verificação
+    verifyEmail();
+  </script>
+</body>
+</html>

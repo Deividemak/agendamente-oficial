@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout de Pagamento - Agendamente</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Custom Premium Styles -->
+  <link rel="stylesheet" href="../css/style.css">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body {
+      background-attachment: fixed;
+    }
+  </style>
+</head>
+<body class="bg-gradient min-h-screen text-slate-100 flex items-center justify-center p-4">
+
+  <div class="w-full max-w-md space-y-6 animate-fade-in">
+
+    <!-- CHECKOUT CARD -->
+    <div id="checkout-card" class="glass-card p-6 sm:p-8 space-y-6">
+      
+      <!-- HEADER DO CHECKOUT -->
+      <div class="text-center space-y-2">
+        <h2 class="text-xl font-extrabold text-white flex items-center justify-center gap-2">
+          <i data-lucide="wallet" class="w-5 h-5 text-indigo-400"></i>
+          Pagamento via Pix
+        </h2>
+        <p class="text-xs text-slate-400">Pague via Pix para confirmar seu horário automaticamente</p>
+      </div>
+
+      <!-- TIMER DE EXPIRAÇÃO -->
+      <div class="bg-amber-500/10 border border-amber-500/20 text-amber-400 p-3.5 rounded-xl flex items-center justify-center gap-3">
+        <i data-lucide="clock" class="w-5 h-5 text-amber-400 animate-pulse"></i>
+        <div class="text-sm font-semibold">
+          Expira em: <span id="timer" class="font-black font-mono text-base text-amber-400">10:00</span>
+        </div>
+      </div>
+
+      <!-- DETALHES DA RESERVA -->
+      <div class="bg-white/5 border border-white/5 rounded-xl p-4 text-xs sm:text-sm space-y-2">
+        <div class="flex justify-between">
+          <span class="text-slate-400">Profissional:</span>
+          <span class="font-bold text-white" id="reserva-profissional">...</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-slate-400">Serviço:</span>
+          <span class="font-bold text-white" id="reserva-servico">...</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-slate-400">Data:</span>
+          <span class="font-bold text-white" id="reserva-data">...</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-slate-400">Horário:</span>
+          <span class="font-bold text-indigo-400" id="reserva-hora">...</span>
+        </div>
+        <div class="flex justify-between border-t border-white/5 pt-2 text-base">
+          <span class="text-slate-200 font-bold">Total:</span>
+          <span class="font-black text-emerald-400" id="reserva-preco">R$ 0,00</span>
+        </div>
+      </div>
+
+      <!-- QR CODE E COPIA E COLA -->
+      <div id="pix-payment-section" class="flex flex-col items-center gap-5">
+        <!-- QR Code Container -->
+        <div class="p-2.5 bg-white rounded-xl border border-white/10 shrink-0 shadow-xl shadow-indigo-500/5">
+          <img id="qr-code-img" src="" alt="QR Code Pix" class="w-48 h-48 sm:w-56 sm:h-56">
+        </div>
+
+        <!-- Copia e Cola -->
+        <div class="w-full space-y-2">
+          <label class="form-label text-left text-xs font-semibold text-slate-400">Pix Copia e Cola:</label>
+          <div class="flex gap-2">
+            <input type="text" id="pix-copia-cola" readonly class="form-input bg-slate-900 text-xs font-mono py-2 w-full text-indigo-400 border border-white/5" value="">
+            <button id="btn-copy-pix" class="btn btn-secondary py-2 px-3 shrink-0" title="Copiar código">
+              <i data-lucide="copy" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SIMULADOR DE PAGAMENTO (Indispensável para o MVP) -->
+      <div class="border-t border-white/5 pt-4">
+        <button id="btn-simular-pagamento" class="btn btn-secondary w-full py-2.5 text-xs text-indigo-400 border border-indigo-500/20 hover:border-indigo-400 hover:bg-indigo-500/10">
+          <i data-lucide="badge-check" class="w-4 h-4 animate-pulse"></i> Simular Confirmação de Pagamento
+        </button>
+      </div>
+
+    </div>
+
+    <!-- SUCESSO CARD -->
+    <div id="success-card" class="glass-card p-6 sm:p-8 text-center space-y-6 hidden animate-fade-in">
+      <div class="inline-flex p-4 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 mx-auto">
+        <i data-lucide="check-circle" class="w-12 h-12"></i>
+      </div>
+      <div class="space-y-2">
+        <h2 class="text-2xl font-black text-white">Horário Confirmado!</h2>
+        <p class="text-sm text-slate-400" id="success-desc">Seu pagamento foi recebido e a reserva foi realizada com sucesso.</p>
+      </div>
+
+      <!-- DETALHES DE CONFIRMAÇÃO -->
+      <div id="success-details-container" class="bg-white/5 border border-white/5 rounded-xl p-4 text-xs sm:text-sm text-left space-y-2">
+        <div class="flex justify-between">
+          <span class="text-slate-400">Profissional:</span>
+          <span class="font-bold text-white" id="success-profissional">...</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-slate-400">Serviço:</span>
+          <span class="font-bold text-white" id="success-servico">...</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-slate-400">Data e Hora:</span>
+          <span class="font-bold text-indigo-400" id="success-data-hora">...</span>
+        </div>
+      </div>
+
+      <div id="whatsapp-btn-container" class="hidden pt-2">
+        <a id="btn-whatsapp-combinar" href="" target="_blank" class="btn bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 px-4 rounded-xl text-sm flex items-center justify-center gap-2 w-full transition-all">
+          <i data-lucide="message-circle" class="w-5 h-5"></i>
+          Combinar Sinal via WhatsApp
+        </a>
+      </div>
+
+      <p class="text-xs text-slate-400">Um lembrete foi agendado. Caso precise alterar, entre em contato com o profissional.</p>
+    </div>
+
+    <!-- EXPIRADO CARD -->
+    <div id="expired-card" class="glass-card p-6 sm:p-8 text-center space-y-6 hidden animate-fade-in">
+      <div class="inline-flex p-4 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-400 mx-auto">
+        <i data-lucide="x-circle" class="w-12 h-12"></i>
+      </div>
+      <div class="space-y-2">
+        <h2 class="text-2xl font-black text-white">Checkout Expirado</h2>
+        <p class="text-sm text-slate-400">O tempo de 10 minutos para pagamento acabou. O horário selecionado foi liberado para outros clientes.</p>
+      </div>
+      <button onclick="voltarParaAgendamento()" class="btn btn-primary w-full py-2.5">
+        Voltar e escolher outro horário
+      </button>
+    </div>
+
+  </div>
+
+  <script>
+    // Inicializa ícones
+    lucide.createIcons();
+
+    // Obtém o checkoutId da URL (ex: ?id=chk_...)
+    const urlParams = new URLSearchParams(window.location.search);
+    const checkoutId = urlParams.get('id');
+
+    if (!checkoutId) {
+      alert('Checkout inválido ou não informado.');
+      window.location.href = '/agendar';
+    }
+
+    let timerInterval = null;
+    let pollingInterval = null;
+    let globalProfissionalId = null;
+
+    function voltarParaAgendamento() {
+      if (globalProfissionalId) {
+        window.location.href = `/agendar?usuarioId=${globalProfissionalId}`;
+      } else {
+        window.location.href = '/agendar';
+      }
+    }
+
+    // Helper: Formata data BR
+    function formatarDataBR(dataStr) {
+      const [ano, mes, dia] = dataStr.split('-');
+      return `${dia}/${mes}/${ano}`;
+    }
+
+    // Copiar Payload Pix
+    document.getElementById('btn-copy-pix').addEventListener('click', () => {
+      const input = document.getElementById('pix-copia-cola');
+      input.select();
+      document.execCommand('copy');
+      alert('Código Copia e Cola copiado!');
+    });
+
+    // Simular webhook de confirmação
+    document.getElementById('btn-simular-pagamento').addEventListener('click', async () => {
+      try {
+        const response = await fetch(`/api/public/checkout/${checkoutId}/confirm`, {
+          method: 'POST'
+        });
+        const data = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(data.error || 'Erro ao simular pagamento.');
+        }
+
+        alert(data.message);
+        checkCheckoutStatus(); // verifica imediatamente
+
+      } catch (err) {
+        alert(err.message);
+      }
+    });
+
+    // Inicia Cronômetro
+    function startCountdown(criadoEmStr) {
+      // criadoEmStr vem no formato UTC "YYYY-MM-DD HH:MM:SS" ou ISO do SQLite
+      // Garantimos parser correto transformando espaço em 'T' e acrescentando 'Z'
+      const criadoEm = new Date(criadoEmStr.replace(' ', 'T') + 'Z');
+      const limite = criadoEm.getTime() + 10 * 60 * 1000; // +10 minutos
+
+      const timerSpan = document.getElementById('timer');
+
+      function updateTimer() {
+        const agora = Date.now();
+        const diffMs = limite - agora;
+
+        if (diffMs <= 0) {
+          clearInterval(timerInterval);
+          clearInterval(pollingInterval);
+          showExpiredState();
+          return;
+        }
+
+        const totalSegundos = Math.floor(diffMs / 1000);
+        const minutos = Math.floor(totalSegundos / 60);
+        const segundos = totalSegundos % 60;
+
+        timerSpan.innerText = `${String(minutos).padStart(2, '0')}:${String(segundos).padStart(2, '0')}`;
+      }
+
+      updateTimer();
+      timerInterval = setInterval(updateTimer, 1000);
+    }
+
+    // Altera tela para o estado de expirado
+    function showExpiredState() {
+      document.getElementById('checkout-card').classList.add('hidden');
+      document.getElementById('expired-card').classList.remove('hidden');
+    }
+
+    // Altera tela para o estado de sucesso (Pago ou Confirmado Local)
+    function showSuccessState(data) {
+      clearInterval(timerInterval);
+      clearInterval(pollingInterval);
+
+      document.getElementById('checkout-card').classList.add('hidden');
+      
+      const title = document.querySelector('#success-card h2');
+      const desc = document.getElementById('success-desc');
+      const precoTotal = parseFloat(data.preco || 0);
+      const sinalValor = parseFloat(data.sinal_valor || 0);
+      const isPresencial = data.metodo_pagamento === 'presencial';
+
+      if (isPresencial && sinalValor > 0) {
+        if (title) title.innerText = "Horário Pré-Reservado!";
+        desc.innerHTML = `Sua vaga foi pré-reservada com sucesso!<br>Como você escolheu pagar o sinal no local, combine com o profissional para realizar o pagamento do sinal de <strong>R$ ${sinalValor.toFixed(2)}</strong>.`;
+        
+        const wppContainer = document.getElementById('whatsapp-btn-container');
+        const wppLink = document.getElementById('btn-whatsapp-combinar');
+        if (wppContainer && wppLink && data.profissional_whatsapp) {
+          const cleanWpp = data.profissional_whatsapp.replace(/\D/g, '');
+          const msg = `Olá! Acabei de fazer um agendamento pré-reservado para o serviço *${data.servico_nome}* no dia *${formatarDataBR(data.data_agendamento)}* às *${data.hora_inicio}*. Gostaria de combinar o pagamento do sinal de *R$ ${sinalValor.toFixed(2)}*. Meu nome é *${data.cliente_nome}*.`;
+          wppLink.href = `https://wa.me/55${cleanWpp}?text=${encodeURIComponent(msg)}`;
+          wppContainer.classList.remove('hidden');
+        }
+      } else if (isPresencial) {
+        if (title) title.innerText = "Horário Confirmado!";
+        desc.innerText = "Sua vaga está garantida! O pagamento será realizado no local diretamente ao profissional.";
+        document.getElementById('whatsapp-btn-container').classList.add('hidden');
+      } else if (sinalValor > 0 && sinalValor < precoTotal) {
+        if (title) title.innerText = "Sinal Pago com Sucesso!";
+        desc.innerHTML = `Sinal de <strong>R$ ${sinalValor.toFixed(2)}</strong> pago via Pix com sucesso!<br>O valor restante de <strong>R$ ${(precoTotal - sinalValor).toFixed(2)}</strong> será pago no local diretamente ao profissional.`;
+        document.getElementById('whatsapp-btn-container').classList.add('hidden');
+      } else {
+        if (title) title.innerText = "Horário Confirmado!";
+        desc.innerText = "Seu pagamento foi recebido e a reserva foi realizada com sucesso.";
+        document.getElementById('whatsapp-btn-container').classList.add('hidden');
+      }
+
+      document.getElementById('success-profissional').innerText = data.profissional_nome;
+      document.getElementById('success-servico').innerText = data.servico_nome;
+      document.getElementById('success-data-hora').innerText = `${formatarDataBR(data.data_agendamento)} às ${data.hora_inicio}h`;
+      
+      const existingSuccessPrice = document.getElementById('success-preco-row');
+      if (existingSuccessPrice) existingSuccessPrice.remove();
+
+      const successPriceRow = document.createElement('div');
+      successPriceRow.id = 'success-preco-row';
+      successPriceRow.className = 'flex justify-between border-t border-white/5 pt-2';
+      
+      if (isPresencial && sinalValor > 0) {
+        successPriceRow.innerHTML = `
+          <div class="w-full space-y-1">
+            <div class="flex justify-between">
+              <span class="text-slate-400">Total do Serviço:</span>
+              <span class="font-bold text-white">R$ ${precoTotal.toFixed(2)}</span>
+            </div>
+            <div class="flex justify-between text-indigo-400 animate-pulse">
+              <span class="font-bold">Sinal a ser Pago/Combinado:</span>
+              <span class="font-black">R$ ${sinalValor.toFixed(2)}</span>
+            </div>
+            <div class="flex justify-between text-xs pt-1">
+              <span class="text-slate-400">Restante no Atendimento:</span>
+              <span class="font-bold text-slate-200">R$ ${(precoTotal - sinalValor).toFixed(2)}</span>
+            </div>
+          </div>
+        `;
+      } else if (isPresencial) {
+        successPriceRow.innerHTML = `
+          <span class="text-slate-400">Valor a ser Pago no Local:</span>
+          <span class="font-bold text-indigo-400">R$ ${precoTotal.toFixed(2)}</span>
+        `;
+      } else if (sinalValor > 0 && sinalValor < precoTotal) {
+        successPriceRow.innerHTML = `
+          <span class="text-slate-400">Preço do Serviço:</span>
+          <span class="font-bold text-white">R$ ${precoTotal.toFixed(2)} (Sinal de R$ ${sinalValor.toFixed(2)} pago)</span>
+        `;
+      } else {
+        successPriceRow.innerHTML = `
+          <span class="text-slate-400">Valor Pago:</span>
+          <span class="font-bold text-emerald-400">R$ ${precoTotal.toFixed(2)}</span>
+        `;
+      }
+      const confirmationContainer = document.getElementById('success-details-container');
+      if (confirmationContainer) {
+        confirmationContainer.appendChild(successPriceRow);
+      }
+
+      document.getElementById('success-card').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    // Consulta os detalhes e status do agendamento/checkout no backend
+    async function checkCheckoutStatus() {
+      try {
+        const response = await fetch(`/api/public/checkout/${checkoutId}`);
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Erro ao carregar checkout.');
+        }
+
+        globalProfissionalId = data.profissional_id;
+
+        // Aplica o tema configurado pelo profissional
+        if (data.tema) {
+          document.body.classList.remove('theme-indigo', 'theme-emerald', 'theme-amber');
+          document.body.classList.add(`theme-${data.tema}`);
+        }
+
+        // Se pagamento presencial (pagar no local), exibe sucesso imediatamente e para contagem/polling
+        if (data.metodo_pagamento === 'presencial') {
+          showSuccessState(data);
+          return;
+        }
+
+        // Se pago, exibe tela de sucesso
+        if (data.status_pagamento === 'pago') {
+          showSuccessState(data);
+          return;
+        }
+
+        // Se expirado, exibe tela de expirado
+        if (data.status_pagamento === 'expirado') {
+          showExpiredState();
+          return;
+        }
+
+        // Preenche dados da reserva (só roda na primeira carga, mas atualizamos para segurança)
+        document.getElementById('reserva-profissional').innerText = data.profissional_nome;
+        document.getElementById('reserva-servico').innerText = data.servico_nome;
+        document.getElementById('reserva-data').innerText = formatarDataBR(data.data_agendamento);
+        document.getElementById('reserva-hora').innerText = `${data.hora_inicio}h às ${data.hora_fim}h`;
+
+        const precoTotal = parseFloat(data.preco || 0);
+        const sinalValor = parseFloat(data.sinal_valor || 0);
+        
+        const reservaPrecoElement = document.getElementById('reserva-preco');
+        
+        const existingSinalRow = document.getElementById('reserva-sinal-row');
+        const existingRestanteRow = document.getElementById('reserva-restante-row');
+        if (existingSinalRow) existingSinalRow.remove();
+        if (existingRestanteRow) existingRestanteRow.remove();
+
+        if (sinalValor > 0 && sinalValor < precoTotal) {
+          const checkoutHeaderTitle = document.querySelector('#checkout-card h2');
+          if (checkoutHeaderTitle) {
+            checkoutHeaderTitle.innerHTML = `<i data-lucide="wallet" class="w-5 h-5 text-indigo-400"></i> Pagamento do Sinal via Pix`;
+            lucide.createIcons();
+          }
+
+          reservaPrecoElement.innerText = `R$ ${precoTotal.toFixed(2)}`;
+
+          const sinalRow = document.createElement('div');
+          sinalRow.id = 'reserva-sinal-row';
+          sinalRow.className = 'flex justify-between border-t border-white/5 pt-2 text-sm';
+          sinalRow.innerHTML = `
+            <span class="text-indigo-400 font-bold">Sinal Pago via Pix agora:</span>
+            <span class="font-black text-indigo-400">R$ ${sinalValor.toFixed(2)}</span>
+          `;
+          reservaPrecoElement.parentNode.parentNode.insertBefore(sinalRow, reservaPrecoElement.parentNode.nextSibling);
+
+          const restanteRow = document.createElement('div');
+          restanteRow.id = 'reserva-restante-row';
+          restanteRow.className = 'flex justify-between text-xs pt-1';
+          restanteRow.innerHTML = `
+            <span class="text-slate-400">Restante no Local:</span>
+            <span class="font-bold text-slate-200">R$ ${(precoTotal - sinalValor).toFixed(2)}</span>
+          `;
+          sinalRow.parentNode.insertBefore(restanteRow, sinalRow.nextSibling);
+        } else {
+          reservaPrecoElement.innerText = `R$ ${precoTotal.toFixed(2)}`;
+        }
+
+        // Pix Info
+        if (data.pixInfo) {
+          document.getElementById('qr-code-img').src = data.pixInfo.qrCodeUrl;
+          document.getElementById('pix-copia-cola').value = data.pixInfo.pixCopiaCola;
+        }
+
+        // Inicia cronômetro se ainda não foi iniciado
+        if (!timerInterval) {
+          startCountdown(data.criado_em);
+        }
+
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    // Inicializa a carga e inicia o Polling (pesquisa a cada 3 segundos)
+    checkCheckoutStatus();
+    pollingInterval = setInterval(checkCheckoutStatus, 3000);
+  </script>
+</body>
+</html>

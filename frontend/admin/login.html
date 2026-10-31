@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login / Cadastro - Agendamente</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Custom Premium Styles -->
+  <link rel="stylesheet" href="../css/style.css">
+  <!-- PWA Support -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Agendamente">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body {
+      background-attachment: fixed;
+    }
+  </style>
+  <!-- Global Settings & Maintenance Interceptor -->
+  <script src="/js/global.js" defer></script>
+</head>
+<body class="bg-gradient min-h-screen flex items-center justify-center p-4 text-slate-100">
+
+  <div class="w-full max-w-md animate-fade-in">
+    <!-- Logo/Header -->
+    <div class="text-center mb-8">
+      <div class="inline-flex p-3.5 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 mb-3 shadow-sm">
+        <i data-lucide="calendar" class="w-8 h-8 text-indigo-400"></i>
+      </div>
+      <h1 class="text-3xl font-extrabold tracking-tight text-white">
+        <span class="gradient-text font-black dynamic-system-name">Agendamente</span>
+      </h1>
+      <p class="text-slate-400 mt-2 text-sm font-medium">Agendamento automatizado com cobrança integrada</p>
+    </div>
+
+    <!-- Login/Register Card -->
+    <div class="glass-card p-8 rounded-3xl relative">
+      <!-- Tabs -->
+      <div class="flex border-b border-white/5 mb-6">
+        <button id="tab-login" class="flex-1 pb-3 text-center font-bold border-b-2 border-indigo-500 text-indigo-400 transition-all cursor-pointer">
+          Entrar
+        </button>
+        <button id="tab-register" class="flex-1 pb-3 text-center font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition-all cursor-pointer">
+          Criar Conta
+        </button>
+      </div>
+
+      <!-- Erros / Alertas -->
+      <div id="alert-box" class="hidden mb-4 p-3.5 rounded-xl text-xs font-bold flex items-start gap-2 border">
+        <i data-lucide="alert-circle" class="w-4 h-4 shrink-0"></i>
+        <span id="alert-message"></span>
+      </div>
+
+      <!-- FORMULÁRIO DE LOGIN -->
+      <form id="form-login" class="space-y-4">
+        <div>
+          <label class="form-label" for="login-email">E-mail de Trabalho</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i data-lucide="mail" class="w-4 h-4 text-slate-400"></i>
+            </span>
+            <input type="email" id="login-email" class="form-input pl-10" placeholder="exemplo@gmail.com" required>
+          </div>
+        </div>
+
+        <div>
+          <label class="form-label" for="login-senha">Senha</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i data-lucide="lock" class="w-4 h-4 text-slate-400"></i>
+            </span>
+            <input type="password" id="login-senha" class="form-input pl-10" placeholder="••••••••" required>
+          </div>
+          <div class="text-right mt-2">
+            <a href="/admin-reset-password" class="text-xs text-indigo-400 hover:text-indigo-300 font-bold hover:underline transition-all">Esqueci minha senha</a>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-full mt-2 py-3 shadow-md shadow-indigo-600/10">
+          <span>Acessar Painel</span>
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </button>
+      </form>
+
+      <!-- FORMULÁRIO DE CADASTRO -->
+      <form id="form-register" class="space-y-4 hidden">
+        <div>
+          <label class="form-label" for="reg-nome">Nome Completo (Responsável)</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i data-lucide="user" class="w-4 h-4 text-slate-400"></i>
+            </span>
+            <input type="text" id="reg-nome" class="form-input pl-10" placeholder="Seu nome completo" required>
+          </div>
+        </div>
+
+        <div>
+          <label class="form-label" for="reg-nome-estabelecimento">Nome da Empresa / Estabelecimento</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i data-lucide="store" class="w-4 h-4 text-slate-400"></i>
+            </span>
+            <input type="text" id="reg-nome-estabelecimento" class="form-input pl-10" placeholder="Ex: Barbearia do Bruno" required>
+          </div>
+        </div>
+
+        <div>
+          <label class="form-label" for="reg-nicho">Ramo de Atuação / Segmento</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i data-lucide="briefcase" class="w-4 h-4 text-slate-400"></i>
+            </span>
+            <select id="reg-nicho" class="form-input pl-10 bg-slate-900" required>
+              <option value="" disabled selected>Selecione seu ramo</option>
+              <option value="barbearia_salao">Barbearia / Salão de Beleza</option>
+              <option value="manicure_estetica">Manicure / Estética / Cílios</option>
+              <option value="saude_terapia">Psicologia / Saúde / Terapias</option>
+              <option value="educacao_aulas">Personal Trainer / Aulas / Mentorias</option>
+              <option value="outros">Outros Serviços em Geral</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="form-label" for="reg-email">E-mail Principal</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i data-lucide="mail" class="w-4 h-4 text-slate-400"></i>
+            </span>
+            <input type="email" id="reg-email" class="form-input pl-10" placeholder="exemplo@gmail.com" required>
+          </div>
+        </div>
+
+        <div>
+          <label class="form-label" for="reg-whatsapp">WhatsApp (DDD + Número)</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i data-lucide="phone" class="w-4 h-4 text-slate-400"></i>
+            </span>
+            <input type="text" id="reg-whatsapp" class="form-input pl-10" placeholder="(11) 99999-9999" required>
+          </div>
+        </div>
+
+        <div>
+          <label class="form-label">Tipo de Documento</label>
+          <div class="flex gap-4 mb-2">
+            <label class="inline-flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-300">
+              <input type="radio" name="reg-tipo-doc" value="CPF" checked class="w-4 h-4 accent-indigo-500 bg-slate-900 border-white/10 cursor-pointer">
+              <span>Pessoa Física (CPF)</span>
+            </label>
+            <label class="inline-flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-300">
+              <input type="radio" name="reg-tipo-doc" value="CNPJ" class="w-4 h-4 accent-indigo-500 bg-slate-900 border-white/10 cursor-pointer">
+              <span>Pessoa Jurídica (CNPJ)</span>
+            </label>
+          </div>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i data-lucide="credit-card" class="w-4 h-4 text-slate-400"></i>
+            </span>
+            <input type="text" id="reg-cpf" class="form-input pl-10" placeholder="000.000.000-00" required>
+          </div>
+        </div>
+
+        <div>
+          <label class="form-label" for="reg-pix">Chave Pix (Recebimentos)</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none flex-row gap-1">
+              <span class="text-[9px] font-extrabold text-slate-400 select-none">PIX</span>
+            </span>
+            <input type="text" id="reg-pix" class="form-input pl-10" placeholder="Celular, CPF, CNPJ ou e-mail" required>
+          </div>
+          <p class="text-[10px] text-slate-400 mt-1">Sua chave é necessária para a geração do Pix Copia e Cola.</p>
+        </div>
+
+        <div>
+          <label class="form-label" for="reg-mensalidade-dia">Dia de Vencimento da Mensalidade</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i data-lucide="calendar-days" class="w-4 h-4 text-slate-400"></i>
+            </span>
+            <select id="reg-mensalidade-dia" class="form-input pl-10 bg-slate-900" required>
+              <option value="" disabled selected>Selecione o melhor dia</option>
+              <option value="5">Dia 05</option>
+              <option value="10">Dia 10</option>
+              <option value="15">Dia 15</option>
+              <option value="20">Dia 20</option>
+              <option value="25">Dia 25</option>
+            </select>
+          </div>
+          <p class="text-[10px] text-slate-400 mt-1">Dia do vencimento da mensalidade do sistema (R$ 21,90/mês).</p>
+        </div>
+
+        <div>
+          <label class="form-label" for="reg-senha">Criar Senha</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i data-lucide="lock" class="w-4 h-4 text-slate-400"></i>
+            </span>
+            <input type="password" id="reg-senha" class="form-input pl-10" placeholder="Min. 6 caracteres" minlength="6" autocomplete="new-password" required>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-2.5 pt-2 text-left">
+          <input type="checkbox" id="reg-termos" class="w-4 h-4 rounded border-white/10 accent-indigo-500 bg-slate-900 mt-0.5 cursor-pointer" required>
+          <label for="reg-termos" class="text-[11px] text-slate-400 leading-normal cursor-pointer select-none">
+            Li e aceito os <a href="/termos" target="_blank" class="text-indigo-400 hover:text-indigo-300 font-bold hover:underline transition-all">Termos de Uso</a> e a <a href="/privacidade" target="_blank" class="text-indigo-400 hover:text-indigo-300 font-bold hover:underline transition-all">Política de Privacidade</a>.
+          </label>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-full mt-4 py-3 shadow-md shadow-indigo-600/10">
+          <span>Criar Minha Conta</span>
+          <i data-lucide="user-plus" class="w-4 h-4"></i>
+        </button>
+      </form>
+
+      <!-- AVISO DE CADASTROS SUSPENSOS -->
+      <div id="register-disabled-warning" class="hidden space-y-4 py-6 text-center">
+        <div class="inline-flex p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400">
+          <i data-lucide="alert-triangle" class="w-7 h-7"></i>
+        </div>
+        <h3 class="text-sm font-bold text-white">Novos Cadastros Suspensos</h3>
+        <p class="text-[11px] text-slate-400 max-w-xs mx-auto leading-relaxed">
+          No momento, novas assinaturas de profissionais estão temporariamente desabilitadas pelo administrador da plataforma. Por favor, tente novamente mais tarde.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Inicializa ícones
+    lucide.createIcons();
+
+    let novosCadastrosHabilitados = true;
+    async function checkRegistrationsStatus() {
+      try {
+        const response = await fetch('/api/public/configuracoes');
+        if (response.ok) {
+          const config = await response.json();
+          if (config.novos_cadastros_habilitados === 0) {
+            novosCadastrosHabilitados = false;
+            if (tabRegister) {
+              tabRegister.classList.add('hidden');
+            }
+          }
+        }
+      } catch (err) {
+        console.error('Erro ao consultar status de cadastros:', err);
+      }
+    }
+
+    // Chama verificação de cadastros habilitados
+    checkRegistrationsStatus().then(() => {
+      // Auto-alterna para aba de cadastro caso venha do CTA da Landing Page e limpa sessão existente
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('register') === 'true' || localStorage.getItem('redirectRegister') === 'true') {
+        localStorage.removeItem('redirectRegister');
+        localStorage.removeItem('token');
+        localStorage.removeItem('usuario');
+        setTimeout(() => {
+          tabRegister.click();
+        }, 50);
+      }
+    });
+
+    // Elementos da UI
+    const tabLogin = document.getElementById('tab-login');
+    const tabRegister = document.getElementById('tab-register');
+    const formLogin = document.getElementById('form-login');
+    const formRegister = document.getElementById('form-register');
+    const alertBox = document.getElementById('alert-box');
+    const alertMessage = document.getElementById('alert-message');
+
+    // Alternância de abas
+    tabLogin.addEventListener('click', () => {
+      tabLogin.className = 'flex-1 pb-3 text-center font-bold border-b-2 border-indigo-500 text-indigo-400 transition-all cursor-pointer';
+      tabRegister.className = 'flex-1 pb-3 text-center font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-205 hover:text-slate-200 transition-all cursor-pointer';
+      formLogin.classList.remove('hidden');
+      formRegister.classList.add('hidden');
+      hideAlert();
+    });
+
+    tabRegister.addEventListener('click', () => {
+      tabRegister.className = 'flex-1 pb-3 text-center font-bold border-b-2 border-indigo-500 text-indigo-400 transition-all cursor-pointer';
+      tabLogin.className = 'flex-1 pb-3 text-center font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-205 hover:text-slate-200 transition-all cursor-pointer';
+      if (novosCadastrosHabilitados) {
+        formRegister.classList.remove('hidden');
+        document.getElementById('register-disabled-warning').classList.add('hidden');
+      } else {
+        formRegister.classList.add('hidden');
+        document.getElementById('register-disabled-warning').classList.remove('hidden');
+      }
+      formLogin.classList.add('hidden');
+      hideAlert();
+    });
+
+    // Helpers de Alerta
+    function showAlert(message, type = 'error') {
+      alertBox.classList.remove('hidden', 'bg-rose-500/10', 'border-rose-500/20', 'text-rose-500', 'bg-emerald-500/10', 'border-emerald-500/20', 'text-emerald-600');
+      alertMessage.innerText = message;
+      
+      if (type === 'error') {
+        alertBox.classList.add('bg-rose-500/10', 'border', 'border-rose-500/20', 'text-rose-500');
+      } else {
+        alertBox.classList.add('bg-emerald-500/10', 'border', 'border-emerald-500/20', 'text-emerald-600');
+      }
+      alertBox.classList.remove('hidden');
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function hideAlert() {
+      alertBox.classList.add('hidden');
+    }
+
+    // Formulário de Login
+    formLogin.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideAlert();
+
+      const email = document.getElementById('login-email').value;
+      const senha = document.getElementById('login-senha').value;
+
+      try {
+        const response = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, senha })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Falha ao realizar login.');
+        }
+
+        // Armazena credenciais
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('usuario', JSON.stringify(data.usuario));
+
+        showAlert('Acesso autorizado! Redirecionando...', 'success');
+        
+        setTimeout(() => {
+          if (data.usuario.tipo_usuario === 'dono') {
+            window.location.href = '/super-dashboard';
+          } else {
+            window.location.href = '/admin-dashboard';
+          }
+        }, 1500);
+
+      } catch (err) {
+        showAlert(err.message);
+      }
+    });
+
+    // Máscaras e validações de input
+    function formatCPF(value) {
+      const clean = value.replace(/\D/g, '');
+      if (clean.length <= 3) return clean;
+      if (clean.length <= 6) return clean.replace(/^(\d{3})(\d)/, '$1.$2');
+      if (clean.length <= 9) return clean.replace(/^(\d{3})(\d{3})(\d)/, '$1.$2.$3');
+      return clean.replace(/^(\d{3})(\d{3})(\d{3})(\d)/, '$1.$2.$3-$4').substring(0, 14);
+    }
+
+    function formatCNPJ(value) {
+      const clean = value.replace(/\D/g, '');
+      if (clean.length <= 2) return clean;
+      if (clean.length <= 5) return clean.replace(/^(\d{2})(\d)/, '$1.$2');
+      if (clean.length <= 8) return clean.replace(/^(\d{2})(\d{3})(\d)/, '$1.$2.$3');
+      if (clean.length <= 12) return clean.replace(/^(\d{2})(\d{3})(\d{3})(\d)/, '$1.$2.$3/$4');
+      return clean.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d)/, '$1.$2.$3/$4-$5').substring(0, 18);
+    }
+
+    function formatPhone(value) {
+      return value
+        .replace(/\D/g, '')
+        .replace(/^(\d{2})(\d)/g, '($1) $2')
+        .replace(/(\d{5})(\d)/, '$1-$2')
+        .substring(0, 15);
+    }
+
+    const regWhatsapp = document.getElementById('reg-whatsapp');
+    regWhatsapp.addEventListener('input', (e) => {
+      e.target.value = formatPhone(e.target.value);
+    });
+
+    const regCpf = document.getElementById('reg-cpf');
+    const getSelectedDocType = () => {
+      const radio = document.querySelector('input[name="reg-tipo-doc"]:checked');
+      return radio ? radio.value : 'CPF';
+    };
+
+    regCpf.addEventListener('input', (e) => {
+      const type = getSelectedDocType();
+      if (type === 'CNPJ') {
+        e.target.value = formatCNPJ(e.target.value);
+      } else {
+        e.target.value = formatCPF(e.target.value);
+      }
+    });
+
+    document.querySelectorAll('input[name="reg-tipo-doc"]').forEach(radio => {
+      radio.addEventListener('change', () => {
+        const type = getSelectedDocType();
+        if (type === 'CNPJ') {
+          regCpf.placeholder = '00.000.000/0000-00';
+          regCpf.value = formatCNPJ(regCpf.value);
+        } else {
+          regCpf.placeholder = '000.000.000-00';
+          regCpf.value = formatCPF(regCpf.value);
+        }
+      });
+    });
+
+    function isValidEmail(email) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    function isValidCelular(phone) {
+      const digits = phone.replace(/\D/g, '');
+      if (digits.length !== 11) return false;
+      if (digits[2] !== '9') return false;
+      const ddd = parseInt(digits.substring(0, 2), 10);
+      if (ddd < 11 || ddd > 99) return false;
+      return true;
+    }
+
+    function isValidCPF(cpf) {
+      const cleanCpf = cpf.replace(/\D/g, '');
+      if (cleanCpf.length !== 11) return false;
+      if (/^(\d)\1{10}$/.test(cleanCpf)) return false;
+      
+      let add = 0;
+      for (let i = 0; i < 9; i++) {
+        add += parseInt(cleanCpf.charAt(i), 10) * (10 - i);
+      }
+      let rev = 11 - (add % 11);
+      if (rev === 10 || rev === 11) rev = 0;
+      if (rev !== parseInt(cleanCpf.charAt(9), 10)) return false;
+
+      add = 0;
+      for (let i = 0; i < 10; i++) {
+        add += parseInt(cleanCpf.charAt(i), 10) * (11 - i);
+      }
+      rev = 11 - (add % 11);
+      if (rev === 10 || rev === 11) rev = 0;
+      if (rev !== parseInt(cleanCpf.charAt(10), 10)) return false;
+
+      return true;
+    }
+
+    function isValidCNPJ(cnpj) {
+      const cleanCnpj = cnpj.replace(/\D/g, '');
+      if (cleanCnpj.length !== 14) return false;
+      if (/^(\d)\1{13}$/.test(cleanCnpj)) return false;
+
+      let tamanho = cleanCnpj.length - 2;
+      let numeros = cleanCnpj.substring(0, tamanho);
+      const digitos = cleanCnpj.substring(tamanho);
+      let soma = 0;
+      let pos = tamanho - 7;
+      for (let i = tamanho; i >= 1; i--) {
+        soma += parseInt(numeros.charAt(tamanho - i), 10) * pos--;
+        if (pos < 2) pos = 9;
+      }
+      let resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11);
+      if (resultado !== parseInt(digitos.charAt(0), 10)) return false;
+
+      tamanho = tamanho + 1;
+      numeros = cleanCnpj.substring(0, tamanho);
+      soma = 0;
+      pos = tamanho - 7;
+      for (let i = tamanho; i >= 1; i--) {
+        soma += parseInt(numeros.charAt(tamanho - i), 10) * pos--;
+        if (pos < 2) pos = 9;
+      }
+      resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11);
+      if (resultado !== parseInt(digitos.charAt(1), 10)) return false;
+
+      return true;
+    }
+
+    // Formulário de Cadastro
+    formRegister.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideAlert();
+
+      const termosChecked = document.getElementById('reg-termos').checked;
+      if (!termosChecked) {
+        showAlert('Você precisa aceitar os Termos de Uso e a Política de Privacidade para criar uma conta.');
+        return;
+      }
+
+      const nome = document.getElementById('reg-nome').value;
+      const nome_estabelecimento = document.getElementById('reg-nome-estabelecimento').value;
+      const nicho = document.getElementById('reg-nicho').value;
+      const email = document.getElementById('reg-email').value;
+      const whatsapp = document.getElementById('reg-whatsapp').value;
+      const cpf = document.getElementById('reg-cpf').value;
+      const pix_chave = document.getElementById('reg-pix').value;
+      const mensalidade_dia = parseInt(document.getElementById('reg-mensalidade-dia').value, 10);
+      const senha = document.getElementById('reg-senha').value;
+
+      if (!isValidEmail(email)) {
+        showAlert('Formato de e-mail inválido.');
+        return;
+      }
+      if (!isValidCelular(whatsapp)) {
+        showAlert('Número de celular inválido. Certifique-se de digitar o DDD, o dígito 9 e o restante do número (ex: 11999998888).');
+        return;
+      }
+      const type = getSelectedDocType();
+      if (type === 'CNPJ') {
+        if (!isValidCNPJ(cpf)) {
+          showAlert('CNPJ inválido. Digite um CNPJ válido.');
+          return;
+        }
+      } else {
+        if (!isValidCPF(cpf)) {
+          showAlert('CPF inválido. Digite um CPF válido.');
+          return;
+        }
+      }
+
+      try {
+        const response = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nome, nome_estabelecimento, nicho, email, whatsapp, cpf, pix_chave, mensalidade_dia, senha })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Falha ao registrar.');
+        }
+
+        // Limpa campos e foca no login
+        formRegister.reset();
+        tabLogin.click();
+
+        // Mostra o alerta após mudar de aba para evitar que seja ocultado
+        showAlert(data.message || 'Conta criada com sucesso! Por favor, verifique seu e-mail.', 'success');
+
+      } catch (err) {
+        showAlert(err.message);
+      }
+    });
+
+    // Registra o Service Worker para PWA
+    let deferredPrompt = null;
+    const installBanner = document.getElementById('pwa-install-banner');
+    const btnInstallBanner = document.getElementById('btn-pwa-install-banner');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      
+      const hasDismissed = localStorage.getItem('pwa_banner_dismissed') === 'true';
+      if (installBanner && !hasDismissed) {
+        setTimeout(() => {
+          installBanner.classList.remove('hidden');
+          setTimeout(() => {
+            installBanner.classList.remove('translate-y-20', 'opacity-0');
+            installBanner.classList.add('translate-y-0', 'opacity-100');
+          }, 50);
+        }, 3000);
+      }
+    });
+
+    window.addEventListener('appinstalled', (e) => {
+      console.log('Aplicativo instalado com sucesso!');
+      hidePwaBanner();
+      deferredPrompt = null;
+    });
+
+    async function triggerPWAInstall() {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      console.log(`User choice outcome: ${outcome}`);
+      deferredPrompt = null;
+      hidePwaBanner();
+    }
+
+    function hidePwaBanner() {
+      if (installBanner) {
+        installBanner.classList.remove('translate-y-0', 'opacity-100');
+        installBanner.classList.add('translate-y-20', 'opacity-0');
+        setTimeout(() => {
+          installBanner.classList.add('hidden');
+        }, 350);
+      }
+    }
+
+    if (btnInstallBanner) btnInstallBanner.addEventListener('click', triggerPWAInstall);
+
+    window.dismissInstallBanner = function() {
+      hidePwaBanner();
+      localStorage.setItem('pwa_banner_dismissed', 'true');
+    };
+
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    const isStandalone = window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches;
+    const isWebview = /Instagram|FBAN|FBAV/i.test(navigator.userAgent);
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Registra o Service Worker
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js')
+          .then(reg => console.log('Service Worker registrado:', reg.scope))
+          .catch(err => console.error('Erro ao registrar Service Worker:', err));
+      }
+
+      // 1.5. Instagram/Facebook Webview Instructions fallback
+      if (isWebview && !isStandalone) {
+        const hasDismissed = localStorage.getItem('pwa_banner_dismissed') === 'true';
+        if (installBanner && !hasDismissed) {
+          const instructionsText = document.getElementById('pwa-instructions-text');
+          if (instructionsText) {
+            instructionsText.innerHTML = 'Para baixar o aplicativo: clique nos <b>três pontinhos</b> no canto superior direito e selecione <b>"Abrir no navegador"</b>.';
+          }
+          const btnInstallBannerEl = document.getElementById('btn-pwa-install-banner');
+          if (btnInstallBannerEl) {
+            btnInstallBannerEl.classList.add('hidden');
+          }
+          setTimeout(() => {
+            installBanner.classList.remove('hidden');
+            setTimeout(() => {
+              installBanner.classList.remove('translate-y-20', 'opacity-0');
+              installBanner.classList.add('translate-y-0', 'opacity-100');
+              if (window.lucide) lucide.createIcons();
+            }, 50);
+          }, 3000);
+        }
+        return;
+      }
+
+      // 2. iOS Instructions fallback
+      if (isIOS && !isStandalone) {
+        const hasDismissed = localStorage.getItem('pwa_banner_dismissed') === 'true';
+        if (installBanner && !hasDismissed) {
+          const instructionsText = document.getElementById('pwa-instructions-text');
+          if (instructionsText) {
+            instructionsText.innerHTML = 'Para baixar no iPhone: clique no botão de <b>Compartilhar</b> <i data-lucide="share-2" class="inline w-3 h-3 text-indigo-400"></i> na barra inferior e selecione <b>Adicionar à Tela de Início</b> <i data-lucide="plus-square" class="inline w-3 h-3 text-indigo-400"></i>.';
+          }
+          const btnInstallBannerEl = document.getElementById('btn-pwa-install-banner');
+          if (btnInstallBannerEl) {
+            btnInstallBannerEl.classList.add('hidden');
+          }
+          
+          setTimeout(() => {
+            installBanner.classList.remove('hidden');
+            setTimeout(() => {
+              installBanner.classList.remove('translate-y-20', 'opacity-0');
+              installBanner.classList.add('translate-y-0', 'opacity-100');
+              if (window.lucide) lucide.createIcons();
+            }, 50);
+          }, 3000);
+        }
+      }
+
+      // 3. Android/General Mobile Fallback se o prompt automático não disparar
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      if (isMobile && !isIOS && !isStandalone) {
+        setTimeout(() => {
+          if (!deferredPrompt) {
+            const hasDismissed = localStorage.getItem('pwa_banner_dismissed') === 'true';
+            if (installBanner && !hasDismissed) {
+              const instructionsText = document.getElementById('pwa-instructions-text');
+              if (instructionsText) {
+                instructionsText.innerHTML = 'Para baixar no Android: clique nos <b>três pontinhos</b> <i data-lucide="more-vertical" class="inline w-3.5 h-3.5 text-indigo-400"></i> no canto superior do Chrome e escolha <b>Instalar aplicativo</b>.';
+              }
+              const btnInstallBannerEl = document.getElementById('btn-pwa-install-banner');
+              if (btnInstallBannerEl) {
+                btnInstallBannerEl.classList.add('hidden');
+              }
+              installBanner.classList.remove('hidden');
+              setTimeout(() => {
+                installBanner.classList.remove('translate-y-20', 'opacity-0');
+                installBanner.classList.add('translate-y-0', 'opacity-100');
+                if (window.lucide) lucide.createIcons();
+              }, 50);
+            }
+          }
+        }, 8000);
+      }
+    });
+
+    // Se já estiver logado, redireciona direto
+    if (localStorage.getItem('token')) {
+      const uLocal = localStorage.getItem('usuario');
+      if (uLocal) {
+        const u = JSON.parse(uLocal);
+        if (u.tipo_usuario === 'dono') {
+          window.location.href = '/super-dashboard';
+        } else {
+          window.location.href = '/admin-dashboard';
+        }
+      } else {
+        window.location.href = '/admin-dashboard';
+      }
+    }
+  </script>
+
+  <!-- PWA Install Banner -->
+  <div id="pwa-install-banner" class="hidden fixed bottom-6 left-6 right-6 md:left-auto md:max-w-sm z-50 glass-card bg-[#12131a]/95 backdrop-blur-xl border border-white/10 p-5 rounded-2xl shadow-2xl flex flex-col gap-3 text-left transition-all duration-300 transform translate-y-20 opacity-0">
+    <div class="flex items-start gap-3">
+      <div class="p-2.5 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 shrink-0">
+        <i data-lucide="download" class="w-6 h-6"></i>
+      </div>
+      <div class="space-y-1">
+        <h4 class="text-xs font-black text-white">Instalar o Agendamente</h4>
+        <p id="pwa-instructions-text" class="text-[10px] text-slate-400 leading-normal">Adicione o aplicativo à sua tela inicial para gerenciar sua agenda em tempo real.</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2" id="pwa-action-buttons">
+      <button id="btn-pwa-install-banner" class="flex-1 btn btn-primary py-2 px-4 rounded-xl text-xs font-black shadow-lg text-center flex items-center justify-center gap-1.5 cursor-pointer">
+        <i data-lucide="plus" class="w-3.5 h-3.5"></i> Instalar
+      </button>
+      <button onclick="dismissInstallBanner()" class="px-3 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-all bg-white/5 border border-white/5 hover:border-white/10">
+        Depois
+      </button>
+    </div>
+  </div>
+  <script src="/js/demo-banner.js" defer></script>
+</body>
+</html>

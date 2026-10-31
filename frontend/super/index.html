@@ -1,0 +1,1388 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Super Admin - Agendamente</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Custom Premium Styles -->
+  <link rel="stylesheet" href="../css/style.css">
+  <!-- PWA Support -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Agendamente">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body {
+      background-attachment: fixed;
+    }
+  </style>
+</head>
+<body class="bg-gradient min-h-screen text-slate-100 pb-12">
+
+  <!-- TOP NAV -->
+  <nav class="border-b border-white/5 bg-[#12131af0] backdrop-blur-md sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center gap-3">
+          <div class="p-2 rounded-xl bg-purple-500/10 border border-purple-500/20">
+            <i data-lucide="shield-check" class="w-6 h-6 text-purple-400"></i>
+          </div>
+          <span class="text-xl font-bold tracking-tight gradient-text">Agendamente</span>
+          <span class="bg-purple-500/10 text-purple-400 text-xs px-2 py-1 rounded font-bold">Painel do Administrador</span>
+        </div>
+        <div class="flex items-center gap-4">
+          <div class="text-right">
+            <p class="text-sm font-semibold text-white">Administrador</p>
+            <p class="text-[11px] text-purple-400">Administração Global</p>
+          </div>
+          <button id="btn-logout" class="p-2 rounded-xl bg-white/5 hover:bg-red-500/10 hover:text-red-400 border border-white/5 transition-all" title="Sair">
+            <i data-lucide="log-out" class="w-5 h-5"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 space-y-6 animate-fade-in">
+    
+    <!-- HEADER -->
+    <div class="glass-card p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+      <div class="space-y-1">
+        <h2 class="text-2xl font-extrabold text-white">Dashboard do <span class="text-purple-400">Administrador</span></h2>
+        <p class="text-slate-400 text-xs sm:text-sm">Monitore os profissionais cadastrados, gerencie licenças ativas e forneça suporte operacional consultando dados de banco.</p>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="loadSuperDashboard()" class="btn bg-white/5 hover:bg-white/10 text-white border border-white/5 py-2 px-4 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all">
+          <i data-lucide="refresh-cw" class="w-4 h-4"></i> Atualizar Dados
+        </button>
+      </div>
+    </div>
+
+    <!-- METRICS CARDS -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+      
+      <!-- Total Clientes -->
+      <div class="glass-card p-5 flex items-center justify-between">
+        <div class="space-y-1">
+          <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Clientes Cadastrados</span>
+          <p class="text-2xl font-black text-white" id="stat-total-clientes">0</p>
+          <span class="text-[9px] text-slate-400 block pt-1">Profissionais no SaaS</span>
+        </div>
+        <div class="p-3 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20 shrink-0">
+          <i data-lucide="users" class="w-6 h-6"></i>
+        </div>
+      </div>
+
+      <!-- Licenças Ativas -->
+      <div class="glass-card p-5 flex items-center justify-between">
+        <div class="space-y-1">
+          <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Licenças Ativas</span>
+          <p class="text-2xl font-black text-emerald-400" id="stat-clientes-ativos">0</p>
+          <span class="text-[9px] text-slate-400 block pt-1">Acesso liberado</span>
+        </div>
+        <div class="p-3 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shrink-0">
+          <i data-lucide="check-circle" class="w-6 h-6"></i>
+        </div>
+      </div>
+
+      <!-- Licenças Suspensas -->
+      <div class="glass-card p-5 flex items-center justify-between">
+        <div class="space-y-1">
+          <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Licenças Suspensas</span>
+          <p class="text-2xl font-black text-rose-400" id="stat-clientes-bloqueados">0</p>
+          <span class="text-[9px] text-slate-400 block pt-1">Bloqueados por atraso</span>
+        </div>
+        <div class="p-3 rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/20 shrink-0">
+          <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+        </div>
+      </div>
+
+      <!-- Faturamento Estimado -->
+      <div class="glass-card p-5 flex items-center justify-between">
+        <div class="space-y-1">
+          <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">SaaS MRR Estimado</span>
+          <p class="text-2xl font-black text-white" id="stat-mrr-estimado">R$ 0,00</p>
+          <span class="text-[9px] text-slate-400 block pt-1">Mensalidades projetadas</span>
+        </div>
+        <div class="p-3 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 shrink-0">
+          <i data-lucide="banknote" class="w-6 h-6"></i>
+        </div>
+      </div>
+
+      <!-- Visitas ao Site/Sistema -->
+      <div onclick="abrirModalVisitas()" class="glass-card p-5 flex items-center justify-between cursor-pointer hover:border-fuchsia-500/30 hover:shadow-lg hover:shadow-fuchsia-500/5 active:scale-[0.98] transition-all" title="Clique para ver detalhamento de acessos">
+        <div class="space-y-1">
+          <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Visitas ao Site</span>
+          <p class="text-2xl font-black text-fuchsia-400"><span id="stat-total-visitas">0</span> <span class="text-xs font-normal text-slate-400">/ <span id="stat-visitas-hoje">0</span> hoje</span></p>
+          <span class="text-[9px] text-slate-400 block pt-1">Acessos únicos na plataforma</span>
+        </div>
+        <div class="p-3 rounded-xl bg-fuchsia-500/10 text-fuchsia-400 border border-fuchsia-500/20 shrink-0">
+          <i data-lucide="eye" class="w-6 h-6"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- GRID LAYOUT: TABELA DE CLIENTES & CENTRAL DE COMUNICADOS -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      
+      <!-- TABELA DE CLIENTES (2/3 colunas) -->
+      <div class="glass-card p-6 space-y-4 lg:col-span-2">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <h3 class="text-base font-bold text-white flex items-center gap-2">
+            <i data-lucide="list" class="w-5 h-5 text-purple-400"></i>
+            Profissionais Cadastrados na Plataforma
+          </h3>
+          <div class="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
+            <select id="filter-status" onchange="filterClientes()" class="form-input bg-slate-900/60 text-xs py-2 w-full sm:w-36">
+              <option value="todos">Todos Status</option>
+              <option value="ativo">Ativos</option>
+              <option value="bloqueado">Suspensos</option>
+            </select>
+            <div class="relative w-full sm:w-60">
+              <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+              <input type="text" id="search-clientes" oninput="filterClientes()" placeholder="Buscar por nome, email ou CPF/CNPJ..." class="form-input bg-slate-900/60 text-xs pl-9 py-2">
+            </div>
+          </div>
+        </div>
+        <div class="overflow-x-auto max-h-[600px] overflow-y-auto pr-1">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="border-b border-white/10 text-[10px] text-slate-400 uppercase tracking-wider sticky top-0 bg-[#12131a] z-10">
+                <th class="py-3 px-2 font-bold">Profissional</th>
+                <th class="py-3 px-2 font-bold">CPF/CNPJ</th>
+                <th class="py-3 px-2 font-bold">WhatsApp</th>
+                <th class="py-3 px-2 font-bold text-center">Status</th>
+                <th class="py-3 px-2 font-bold text-center">Expiração</th>
+                <th class="py-3 px-2 font-bold text-right">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="lista-clientes-body">
+              <!-- Injetado via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- SIDEBAR DIREITA (1/3 coluna) - STICKY CONTAINER -->
+      <div class="space-y-6 lg:sticky lg:top-20 self-start">
+
+        <!-- CARD: CONFIGURAÇÕES DO SAAS (TABBED CONTAINER) -->
+        <div class="glass-card p-6 space-y-4">
+          <h3 class="text-base font-bold text-white flex items-center gap-2">
+            <i data-lucide="settings" class="w-5 h-5 text-purple-400"></i>
+            Configurações Globais do SaaS
+          </h3>
+          <p class="text-[11px] text-slate-400 leading-relaxed text-left">
+            Gerencie o funcionamento geral, chaves técnicas, SEO e modelos de mensagens.
+          </p>
+
+          <!-- TAB BUTTONS -->
+          <div class="flex border-b border-white/5 overflow-x-auto pb-1 gap-1 no-scrollbar">
+            <button onclick="switchTab('tab-geral')" id="btn-tab-geral" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-bold text-white bg-white/10 transition-all flex items-center gap-1.5 shrink-0">
+              <i data-lucide="sliders" class="w-3.5 h-3.5"></i> Geral
+            </button>
+            <button onclick="switchTab('tab-gateways')" id="btn-tab-gateways" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-1.5 shrink-0">
+              <i data-lucide="key" class="w-3.5 h-3.5"></i> Chaves
+            </button>
+            <button onclick="switchTab('tab-seo')" id="btn-tab-seo" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-1.5 shrink-0">
+              <i data-lucide="globe" class="w-3.5 h-3.5"></i> SEO/Suporte
+            </button>
+            <button onclick="switchTab('tab-wpp')" id="btn-tab-wpp" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-1.5 shrink-0">
+              <i data-lucide="message-square" class="w-3.5 h-3.5"></i> Templates
+            </button>
+            <button onclick="switchTab('tab-perfil')" id="btn-tab-perfil" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-1.5 shrink-0">
+              <i data-lucide="user" class="w-3.5 h-3.5"></i> Minha Conta
+            </button>
+          </div>
+
+          <!-- TAB CONTENT: GERAL -->
+          <div id="content-tab-geral" class="tab-content space-y-4 pt-2 text-left">
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="form-label text-[10px]" for="dias-gratis-input">Dias Teste Grátis</label>
+                <input type="number" id="dias-gratis-input" min="0" placeholder="Ex: 7" class="form-input bg-slate-900/60 text-xs py-2">
+              </div>
+              <div>
+                <label class="form-label text-[10px]" for="preco-promocional-input">Primeiro Mês (R$)</label>
+                <input type="number" id="preco-promocional-input" step="0.01" min="0" placeholder="Ex: 14.90" class="form-input bg-slate-900/60 text-xs py-2">
+              </div>
+            </div>
+            <div>
+              <label class="form-label text-[10px]" for="preco-mensalidade-input">Mensalidade Regular (R$)</label>
+              <input type="number" id="preco-mensalidade-input" step="0.01" min="0" placeholder="Ex: 21.90" class="form-input bg-slate-900/60 text-xs py-2">
+            </div>
+            
+            <!-- Toggles -->
+            <div class="space-y-3 pt-2">
+              <div class="flex items-center justify-between p-2.5 rounded-xl bg-white/5 border border-white/5">
+                <div>
+                  <span class="text-xs font-bold text-white block">Novos Cadastros</span>
+                  <span class="text-[9px] text-slate-400 block">Permite novas assinaturas de profissionais</span>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" id="novos-cadastros-checkbox" class="sr-only peer">
+                  <div class="w-9 h-5 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-purple-600"></div>
+                </label>
+              </div>
+
+              <div class="flex items-center justify-between p-2.5 rounded-xl bg-red-500/5 border border-red-500/10">
+                <div>
+                  <span class="text-xs font-bold text-white block text-red-300">Modo Manutenção</span>
+                  <span class="text-[9px] text-slate-400 block">Bloqueia acesso a clientes e profissionais</span>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" id="modo-manutencao-checkbox" class="sr-only peer">
+                  <div class="w-9 h-5 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-red-600"></div>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB CONTENT: GATEWAYS -->
+          <div id="content-tab-gateways" class="tab-content hidden space-y-4 pt-2 text-left">
+            <div class="border-b border-white/5 pb-2">
+              <span class="text-[10px] font-bold text-purple-400 uppercase tracking-wider block">Mercado Pago (Credenciais SaaS)</span>
+              <span class="text-[9px] text-slate-400 block mb-2">Para receber pagamentos de assinaturas.</span>
+              <div class="space-y-3">
+                <div>
+                  <label class="form-label text-[10px]" for="saas-mp-access-token">Access Token</label>
+                  <input type="password" id="saas-mp-access-token" placeholder="APP_USR-..." class="form-input bg-slate-900/60 text-xs py-2">
+                </div>
+                <div>
+                  <label class="form-label text-[10px]" for="saas-mp-public-key">Public Key</label>
+                  <input type="text" id="saas-mp-public-key" placeholder="APP_USR-..." class="form-input bg-slate-900/60 text-xs py-2">
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <span class="text-[10px] font-bold text-purple-400 uppercase tracking-wider block">Evolution API (WhatsApp Global)</span>
+              <span class="text-[9px] text-slate-400 block mb-2">Para disparar comunicados/mensagens globais.</span>
+              <div class="space-y-3">
+                <div>
+                  <label class="form-label text-[10px]" for="evolution-api-url">API URL</label>
+                  <input type="text" id="evolution-api-url" placeholder="https://api.evolution..." class="form-input bg-slate-900/60 text-xs py-2">
+                </div>
+                <div>
+                  <label class="form-label text-[10px]" for="evolution-api-key">API Key (Apikey)</label>
+                  <input type="password" id="evolution-api-key" placeholder="Chave da API Evolution" class="form-input bg-slate-900/60 text-xs py-2">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB CONTENT: SEO / SUPORTE -->
+          <div id="content-tab-seo" class="tab-content hidden space-y-4 pt-2 text-left">
+            <div class="space-y-3">
+              <div>
+                <label class="form-label text-[10px]" for="sistema-nome">Nome do Sistema</label>
+                <input type="text" id="sistema-nome" placeholder="Ex: Agendamente" class="form-input bg-slate-900/60 text-xs py-2">
+              </div>
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="form-label text-[10px]" for="suporte-email">E-mail Suporte</label>
+                  <input type="email" id="suporte-email" placeholder="suporte@..." class="form-input bg-slate-900/60 text-xs py-2">
+                </div>
+                <div>
+                  <label class="form-label text-[10px]" for="suporte-whatsapp">WhatsApp Suporte</label>
+                  <input type="text" id="suporte-whatsapp" placeholder="DD9XXXXXXXX" class="form-input bg-slate-900/60 text-xs py-2">
+                </div>
+              </div>
+              <div>
+                <label class="form-label text-[10px]" for="seo-titulo">Título SEO (Landing Page)</label>
+                <input type="text" id="seo-titulo" placeholder="Título SEO..." class="form-input bg-slate-900/60 text-xs py-2">
+              </div>
+              <div>
+                <label class="form-label text-[10px]" for="seo-descricao">Descrição SEO (Landing Page)</label>
+                <textarea id="seo-descricao" rows="3" placeholder="Descrição SEO..." class="form-input bg-slate-900/60 text-xs py-2 resize-none"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB CONTENT: TEMPLATES -->
+          <div id="content-tab-wpp" class="tab-content hidden space-y-4 pt-2 text-left">
+            <span class="text-[9px] text-slate-400 block mb-2 leading-relaxed">
+              Variáveis úteis: <strong>{nome}</strong>, <strong>{sistema_nome}</strong>, <strong>{dias}</strong>, <strong>{data}</strong>.
+            </span>
+            <div class="space-y-3">
+              <div>
+                <label class="form-label text-[10px]" for="wpp-template-boas-vindas">Template de Boas-Vindas</label>
+                <textarea id="wpp-template-boas-vindas" rows="3" placeholder="Mensagem de boas-vindas..." class="form-input bg-slate-900/60 text-[11px] py-2 resize-none"></textarea>
+              </div>
+              <div>
+                <label class="form-label text-[10px]" for="wpp-template-vencimento">Aviso de Vencimento</label>
+                <textarea id="wpp-template-vencimento" rows="3" placeholder="Aviso de vencimento..." class="form-input bg-slate-900/60 text-[11px] py-2 resize-none"></textarea>
+              </div>
+              <div>
+                <label class="form-label text-[10px]" for="wpp-template-suspensao">Conta Suspensa</label>
+                <textarea id="wpp-template-suspensao" rows="3" placeholder="Aviso de suspensão..." class="form-input bg-slate-900/60 text-[11px] py-2 resize-none"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB CONTENT: PERFIL -->
+          <div id="content-tab-perfil" class="tab-content hidden space-y-4 pt-2 text-left">
+            <span class="text-[10px] font-bold text-purple-400 uppercase tracking-wider block">Minha Conta Administrador</span>
+            
+            <!-- LOCK SCREEN -->
+            <div id="perfil-lock-screen" class="space-y-4">
+              <div class="p-3 bg-purple-500/5 border border-purple-500/10 rounded-xl flex items-start gap-2">
+                <i data-lucide="shield-alert" class="w-5 h-5 text-purple-400 shrink-0 mt-0.5"></i>
+                <div>
+                  <span class="text-xs font-bold text-white block">Área de Segurança</span>
+                  <span class="text-[9px] text-slate-400 block leading-normal">Para acessar e alterar as configurações da sua conta de administrador, digite sua senha atual abaixo.</span>
+                </div>
+              </div>
+              <div>
+                <label class="form-label text-[10px]" for="perfil-senha-atual-acesso">Senha Atual</label>
+                <input type="password" id="perfil-senha-atual-acesso" placeholder="Digite sua senha atual" class="form-input bg-slate-900/60 text-xs py-2">
+              </div>
+              <button onclick="verificarSenhaAcesso()" class="btn bg-purple-600 hover:bg-purple-500 text-white font-bold w-full py-2 text-xs rounded-xl flex items-center justify-center gap-1.5 shadow-lg shadow-purple-950/20">
+                <i data-lucide="unlock" class="w-4 h-4"></i> Confirmar Identidade
+              </button>
+            </div>
+
+            <!-- EDIT FIELDS -->
+            <div id="perfil-edit-fields" class="hidden space-y-4">
+              <span class="text-[9px] text-slate-400 block leading-relaxed">
+                Altere seu e-mail e senha oficiais para segurança na reta final.
+              </span>
+              <div class="space-y-3">
+                <div>
+                  <label class="form-label text-[10px]" for="perfil-nome-input">Nome Completo</label>
+                  <input type="text" id="perfil-nome-input" placeholder="Dono Agendamente" class="form-input bg-slate-900/60 text-xs py-2">
+                </div>
+                <div>
+                  <label class="form-label text-[10px]" for="perfil-email-input">E-mail de Login</label>
+                  <input type="email" id="perfil-email-input" placeholder="dono@agendamente.com" class="form-input bg-slate-900/60 text-xs py-2" required>
+                </div>
+                <div>
+                  <label class="form-label text-[10px]" for="perfil-senha-input">Nova Senha (deixe em branco para manter)</label>
+                  <input type="password" id="perfil-senha-input" placeholder="Mínimo 6 caracteres" class="form-input bg-slate-900/60 text-xs py-2">
+                </div>
+                <div>
+                  <label class="form-label text-[10px]" for="perfil-senha-confirm-input">Confirmar Nova Senha</label>
+                  <input type="password" id="perfil-senha-confirm-input" placeholder="Repita a nova senha" class="form-input bg-slate-900/60 text-xs py-2">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SAVE BUTTON -->
+          <button id="btn-salvar-config" onclick="salvarConfiguracoes()" class="btn btn-primary w-full py-2.5 text-xs font-bold flex items-center justify-center gap-1.5 shadow-lg shadow-purple-950/20 mt-4">
+            <i data-lucide="save" class="w-4 h-4"></i> Salvar Configurações
+          </button>
+        </div>
+
+        <!-- CENTRAL DE COMUNICADOS -->
+        <div class="glass-card p-6 space-y-4">
+          <div class="space-y-4">
+            <h3 class="text-base font-bold text-white flex items-center gap-2">
+              <i data-lucide="megaphone" class="w-5 h-5 text-purple-400"></i>
+              Central de Comunicados
+            </h3>
+            <p class="text-[11px] text-slate-400 leading-relaxed text-left">
+              Envie comunicados operacionais ou avisos de faturamento para todos os inquilinos/administradores do SaaS de uma só vez.
+            </p>
+
+            <div class="space-y-3 pt-2 text-left">
+              <div>
+                <label class="form-label text-[10px]" for="comunicado-titulo">Título do Comunicado</label>
+                <input type="text" id="comunicado-titulo" placeholder="Ex: Manutenção agendada, Novo Recurso..." class="form-input bg-slate-900/60 text-xs py-2">
+              </div>
+
+              <div>
+                <label class="form-label text-[10px]" for="comunicado-conteudo">Mensagem</label>
+                <textarea id="comunicado-conteudo" rows="4" placeholder="Digite a mensagem que os administradores verão..." class="form-input bg-slate-900/60 text-xs py-2 resize-none"></textarea>
+              </div>
+
+              <div class="space-y-2 pt-1 text-left">
+                <label class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Canais de Envio</label>
+                
+                <label class="flex items-center gap-2 text-xs text-slate-300 cursor-pointer select-none">
+                  <input type="checkbox" id="chk-canal-painel" checked class="rounded border-white/10 accent-purple-500 bg-slate-900">
+                  <span>Alerta no Painel (100% Seguro)</span>
+                </label>
+
+                <label class="flex items-start gap-2 text-xs text-slate-300 cursor-pointer select-none">
+                  <input type="checkbox" id="chk-canal-whatsapp" class="rounded border-white/10 accent-purple-500 bg-slate-900 mt-0.5">
+                  <div class="flex flex-col">
+                    <span>Simular Disparo por WhatsApp</span>
+                    <span class="text-[8px] text-amber-500/80 leading-normal">Fila com delays seguros de 5s entre disparos simulados no console.</span>
+                  </div>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <button id="btn-enviar-comunicado" onclick="enviarComunicado()" class="btn bg-purple-600 hover:bg-purple-500 text-white font-bold w-full py-2.5 text-xs rounded-xl flex items-center justify-center gap-1.5 shadow-lg shadow-purple-950/20 mt-4">
+            <i data-lucide="send" class="w-4 h-4"></i> Enviar Comunicado
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- MODAL DE DETALHES, SUPORTE E LICENÇA -->
+  <div id="modal-suporte" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm hidden">
+    <div class="max-w-2xl w-full glass-card p-6 space-y-6 border border-white/10 animate-scale-in max-h-[90vh] overflow-y-auto">
+      
+      <!-- HEADER -->
+      <div class="flex items-center justify-between border-b border-white/5 pb-3">
+        <div class="flex items-center gap-2">
+          <i data-lucide="user-cog" class="w-5 h-5 text-purple-400"></i>
+          <h3 class="text-base font-bold text-white">Suporte ao Cliente & Licença</h3>
+        </div>
+        <button onclick="fecharModalSuporte()" class="p-1 hover:bg-white/5 rounded-lg text-slate-400 hover:text-white transition-all">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- INFORMAÇÕES PESSOAIS -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 bg-white/5 p-4 rounded-xl border border-white/5 text-xs text-left">
+        <div class="min-w-0">
+          <span class="text-slate-400 font-semibold block">Nome Completo:</span>
+          <span class="text-white font-bold block break-words" id="modal-cliente-nome">--</span>
+        </div>
+        <div class="min-w-0 col-span-1">
+          <span class="text-slate-400 font-semibold block">E-mail de Cadastro:</span>
+          <span class="text-white font-bold block break-all" id="modal-cliente-email">--</span>
+        </div>
+        <div class="min-w-0">
+          <span class="text-slate-400 font-semibold block">CPF/CNPJ:</span>
+          <span class="text-white font-bold block font-mono" id="modal-cliente-cpf">--</span>
+        </div>
+        <div class="min-w-0">
+          <span class="text-slate-400 font-semibold block">Celular:</span>
+          <span class="text-white font-bold block" id="modal-cliente-whatsapp">--</span>
+        </div>
+        <div class="min-w-0 col-span-1 sm:col-span-2">
+          <span class="text-slate-400 font-semibold block">Endereço/Localização:</span>
+          <span class="text-white font-bold block break-words" id="modal-cliente-endereco">--</span>
+        </div>
+      </div>
+
+      <!-- DADOS DE UTILIZAÇÃO DO BANCO (SUPORTE OPERACIONAL) -->
+      <div class="space-y-3">
+        <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider text-left">Estatísticas de Banco de Dados (Suporte)</h4>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-center">
+          <div class="p-3 bg-slate-900/50 border border-white/5 rounded-xl">
+            <span class="text-[10px] text-slate-400 block font-semibold">Serviços Cadastrados</span>
+            <span class="text-lg font-black text-white" id="modal-db-servicos">0</span>
+          </div>
+          <div class="p-3 bg-slate-900/50 border border-white/5 rounded-xl">
+            <span class="text-[10px] text-slate-400 block font-semibold">Agendamentos Totais</span>
+            <span class="text-lg font-black text-white" id="modal-db-agendamentos">0</span>
+          </div>
+          <div class="p-3 bg-slate-900/50 border border-white/5 rounded-xl">
+            <span class="text-[10px] text-slate-400 block font-semibold">Funcionários Habilitados</span>
+            <span class="text-lg font-black text-white" id="modal-db-funcionarios">0</span>
+          </div>
+          <div class="p-3 bg-slate-900/50 border border-white/5 rounded-xl">
+            <span class="text-[10px] text-slate-400 block font-semibold">Produtos Cadastrados</span>
+            <span class="text-lg font-black text-white" id="modal-db-produtos">0</span>
+          </div>
+          <div class="p-3 bg-slate-900/50 border border-white/5 rounded-xl">
+            <span class="text-[10px] text-slate-400 block font-semibold">Despesas Lançadas</span>
+            <span class="text-lg font-black text-white" id="modal-db-despesas">0</span>
+          </div>
+          <div class="p-3 bg-slate-900/50 border border-white/5 rounded-xl">
+            <span class="text-[10px] text-slate-400 block font-semibold">Volume Comercial (Faturamento)</span>
+            <span class="text-sm sm:text-base font-black text-emerald-400 block mt-1" id="modal-db-faturamento">R$ 0,00</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- AJUSTE DE LICENÇA -->
+      <div class="space-y-4 pt-3 border-t border-white/5 text-left">
+        <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Ajuste de Status da Licença</h4>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="form-label" for="license-status">Status da Assinatura</label>
+            <select id="license-status" class="form-input py-2.5 bg-slate-900">
+              <option value="ativo">Ativo (Liberado)</option>
+              <option value="bloqueado">Bloqueado (Suspenso)</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label" for="license-validity">Data de Expiração da Assinatura</label>
+            <input type="date" id="license-validity" class="form-input py-2">
+          </div>
+        </div>
+
+        <button id="btn-save-license" class="btn btn-primary w-full py-2.5 text-xs font-bold flex items-center justify-center gap-2">
+          <i data-lucide="save" class="w-4 h-4"></i> Salvar Alterações de Licença
+        </button>
+      </div>
+
+      <!-- REDEFINIR SENHA DO PROFISSIONAL -->
+      <div class="space-y-4 pt-3 border-t border-white/5 text-left">
+        <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Redefinir Senha do Profissional</h4>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
+          <div>
+            <label class="form-label" for="reset-pwd-value">Nova Senha Temporária</label>
+            <input type="text" id="reset-pwd-value" class="form-input py-2.5" placeholder="Ex: lilian123">
+          </div>
+          <div>
+            <button id="btn-reset-password" class="btn btn-primary w-full py-2.5 text-xs font-bold flex items-center justify-center gap-2">
+              <i data-lucide="key" class="w-4 h-4"></i> Salvar Nova Senha
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ZONA DE PERIGO (DELETE CLIENTE) -->
+      <div class="pt-4 border-t border-white/5 space-y-3 text-left">
+        <span class="text-xs font-extrabold text-red-400 uppercase tracking-wider flex items-center gap-1">
+          <i data-lucide="alert-triangle" class="w-4 h-4 text-red-500"></i> Zona de Perigo
+        </span>
+        <div class="p-4 bg-red-500/5 border border-red-500/10 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h5 class="text-xs font-bold text-white">Excluir Conta do Profissional</h5>
+            <p class="text-[10px] text-slate-400">Esta ação excluirá permanentemente o profissional e todos os dados associados (serviços, agendamentos, estoque, histórico ERP).</p>
+          </div>
+          <button id="btn-delete-tenant" class="btn bg-red-600 hover:bg-red-500 text-white font-bold text-xs py-2 px-4 rounded-xl shrink-0 flex items-center gap-1 shadow-lg shadow-red-950/20">
+            <i data-lucide="trash-2" class="w-4 h-4"></i> Excluir Conta
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL DE DETALHAMENTO DE ACESSOS (DIAS, SEMANA, MÊS, TOTAL) -->
+  <div id="modal-visitas" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm hidden">
+    <div class="max-w-md w-full glass-card p-6 space-y-6 border border-white/10 animate-scale-in">
+      
+      <!-- HEADER -->
+      <div class="flex items-center justify-between border-b border-white/5 pb-3">
+        <div class="flex items-center gap-2">
+          <i data-lucide="eye" class="w-5 h-5 text-fuchsia-400"></i>
+          <h3 class="text-base font-bold text-white">Detalhamento de Acessos</h3>
+        </div>
+        <button onclick="fecharModalVisitas()" class="p-1 hover:bg-white/5 rounded-lg text-slate-400 hover:text-white transition-all">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- GRID DE MÉTRICAS POR PERÍODO -->
+      <div class="grid grid-cols-2 gap-3 text-center">
+        <!-- Hoje -->
+        <div class="p-4 bg-fuchsia-500/5 border border-fuchsia-500/10 rounded-xl">
+          <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Hoje</span>
+          <span class="text-2xl font-black text-fuchsia-400" id="modal-visitas-hoje">0</span>
+          <span class="text-[8px] text-slate-500 block mt-1">Acessos nas últimas 24h</span>
+        </div>
+        <!-- Semana -->
+        <div class="p-4 bg-white/5 border border-white/5 rounded-xl">
+          <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Esta Semana</span>
+          <span class="text-2xl font-black text-white" id="modal-visitas-semana">0</span>
+          <span class="text-[8px] text-slate-500 block mt-1">Últimos 7 dias</span>
+        </div>
+        <!-- Mês -->
+        <div class="p-4 bg-white/5 border border-white/5 rounded-xl">
+          <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Este Mês</span>
+          <span class="text-2xl font-black text-white" id="modal-visitas-mes">0</span>
+          <span class="text-[8px] text-slate-500 block mt-1">Últimos 30 dias</span>
+        </div>
+        <!-- Total Geral -->
+        <div class="p-4 bg-white/5 border border-white/5 rounded-xl">
+          <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Total Geral</span>
+          <span class="text-2xl font-black text-white" id="modal-visitas-total">0</span>
+          <span class="text-[8px] text-slate-500 block mt-1">Acumulado que não zera</span>
+        </div>
+      </div>
+
+      <!-- DIVISÃO POR PÁGINA -->
+      <div class="space-y-3 pt-3 border-t border-white/5">
+        <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider text-left">Distribuição de Acessos</h4>
+        <div class="space-y-2 text-xs">
+          <!-- Landing Page -->
+          <div class="flex items-center justify-between p-2.5 bg-slate-900/50 border border-white/5 rounded-lg">
+            <div class="flex items-center gap-2">
+              <i data-lucide="home" class="w-4 h-4 text-slate-400"></i>
+              <span class="text-slate-300">Site Principal (Landing Page)</span>
+            </div>
+            <span class="font-bold text-white" id="modal-visitas-landing">0</span>
+          </div>
+          <!-- Link de Agendamento -->
+          <div class="flex items-center justify-between p-2.5 bg-slate-900/50 border border-white/5 rounded-lg">
+            <div class="flex items-center gap-2">
+              <i data-lucide="calendar" class="w-4 h-4 text-slate-400"></i>
+              <span class="text-slate-300">Links de Agendamento (Profissionais)</span>
+            </div>
+            <span class="font-bold text-white" id="modal-visitas-booking">0</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- FOOTER -->
+      <div class="text-center pt-2">
+        <p class="text-[10px] text-slate-500">Histórico de crescimento de tráfego orgânico da plataforma SaaS.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL DE CONFIRMAÇÃO DE CÓDIGO POR E-MAIL -->
+  <div id="modal-confirmacao-email" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm hidden">
+    <div class="max-w-md w-full glass-card p-6 space-y-6 border border-white/10 animate-scale-in">
+      
+      <!-- HEADER -->
+      <div class="flex items-center justify-between border-b border-white/5 pb-3">
+        <div class="flex items-center gap-2">
+          <i data-lucide="mail-warning" class="w-5 h-5 text-purple-400"></i>
+          <h3 class="text-base font-bold text-white">Confirmação por E-mail</h3>
+        </div>
+        <button onclick="fecharModalConfirmacaoEmail()" class="p-1 hover:bg-white/5 rounded-lg text-slate-400 hover:text-white transition-all">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- CORPO -->
+      <div class="space-y-4 text-left">
+        <p class="text-xs text-slate-300 leading-relaxed">
+          Enviamos um código de confirmação de 6 dígitos para o seu e-mail de administrador cadastrado.
+        </p>
+        <p class="text-[11px] text-amber-405 font-semibold leading-normal">
+          Nota: Se o servidor de e-mail local (SMTP) não estiver configurado, verifique o código de segurança no console/terminal do servidor.
+        </p>
+        <div>
+          <label class="form-label text-[10px]" for="confirmacao-codigo-input">Código de Confirmação (6 dígitos)</label>
+          <input type="text" id="confirmacao-codigo-input" maxlength="6" placeholder="Digite o código" class="form-input bg-slate-900/60 text-xs py-2.5 font-mono text-center tracking-widest text-lg">
+        </div>
+      </div>
+
+      <!-- FOOTER -->
+      <div class="flex items-center gap-3 pt-2">
+        <button onclick="fecharModalConfirmacaoEmail()" class="btn bg-white/5 hover:bg-white/10 text-white border border-white/5 text-xs py-2.5 px-4 rounded-xl font-bold w-1/2">
+          Cancelar
+        </button>
+        <button onclick="confirmarPerfilAdmin()" id="btn-confirmar-codigo" class="btn btn-primary text-xs py-2.5 px-4 rounded-xl font-bold w-1/2 flex items-center justify-center gap-1.5 shadow-lg shadow-purple-950/20">
+          <i data-lucide="check-circle" class="w-4 h-4"></i> Confirmar Alteração
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // Configura ícones
+    lucide.createIcons();
+
+    const token = localStorage.getItem('token');
+    const userLocal = localStorage.getItem('usuario');
+    let lastDashboardStats = null;
+    let allClientes = [];
+
+    // Valida credenciais e redireciona se não for dono
+    if (!token || !userLocal) {
+      localStorage.clear();
+      window.location.href = '/admin-login';
+    }
+
+    const usuario = JSON.parse(userLocal);
+    if (usuario.tipo_usuario !== 'dono') {
+      localStorage.clear();
+      window.location.href = '/admin-login';
+    }
+
+    // Inicialização da página
+    loadSuperDashboard();
+
+    // Logout
+    document.getElementById('btn-logout').addEventListener('click', () => {
+      localStorage.clear();
+      window.location.href = '/admin-login';
+    });
+
+    window.abrirModalVisitas = function() {
+      if (!lastDashboardStats) return;
+      document.getElementById('modal-visitas-hoje').innerText = lastDashboardStats.visitasHoje || 0;
+      document.getElementById('modal-visitas-semana').innerText = lastDashboardStats.visitasSemana || 0;
+      document.getElementById('modal-visitas-mes').innerText = lastDashboardStats.visitasMes || 0;
+      document.getElementById('modal-visitas-total').innerText = lastDashboardStats.totalVisitas || 0;
+      document.getElementById('modal-visitas-landing').innerText = lastDashboardStats.visitasLanding || 0;
+      document.getElementById('modal-visitas-booking').innerText = lastDashboardStats.visitasBooking || 0;
+      
+      document.getElementById('modal-visitas').classList.remove('hidden');
+      lucide.createIcons();
+    };
+
+    window.fecharModalVisitas = function() {
+      document.getElementById('modal-visitas').classList.add('hidden');
+    };
+
+    // Função para buscar dados gerais do SaaS
+    async function loadSuperDashboard() {
+      try {
+        const response = await fetch('/api/super/dashboard', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (response.status === 401 || response.status === 403) {
+          localStorage.clear();
+          window.location.href = '/admin-login';
+          return;
+        }
+
+        if (!response.ok) throw new Error('Erro ao carregar dados do dashboard do Administrador.');
+
+        const data = await response.json();
+        lastDashboardStats = data.stats;
+        allClientes = data.clientes || [];
+        const formatBRL = val => parseFloat(val || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+        // Preenche KPI Cards
+        document.getElementById('stat-total-clientes').innerText = data.stats.totalClientes;
+        document.getElementById('stat-clientes-ativos').innerText = data.stats.clientesAtivos;
+        document.getElementById('stat-clientes-bloqueados').innerText = data.stats.clientesBloqueados;
+        document.getElementById('stat-mrr-estimado').innerText = formatBRL(data.stats.faturamentoSaaS);
+        document.getElementById('stat-total-visitas').innerText = data.stats.totalVisitas || 0;
+        document.getElementById('stat-visitas-hoje').innerText = data.stats.visitasHoje || 0;
+
+        // Preenche Tabela de forma dinâmica e limpa filtros
+        const searchInput = document.getElementById('search-clientes');
+        if (searchInput) searchInput.value = '';
+        const statusSelect = document.getElementById('filter-status');
+        if (statusSelect) statusSelect.value = 'todos';
+        renderClientes(allClientes);
+        await loadConfiguracoes();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    function renderClientes(clientesList) {
+      const body = document.getElementById('lista-clientes-body');
+      if (!clientesList || clientesList.length === 0) {
+        body.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-500 text-xs">Nenhum profissional cadastrado ou encontrado.</td></tr>`;
+      } else {
+        body.innerHTML = clientesList.map(c => {
+          const whatsAppUrl = `https://wa.me/55${c.whatsapp}`;
+          const isAtivo = c.assinatura_status === 'ativo';
+
+          return `
+            <tr class="border-b border-white/5 hover:bg-white/5 transition-all text-xs">
+              <td class="py-3 px-2 text-white font-bold flex flex-col">
+                <span>${c.nome}</span>
+                <span class="text-[10px] text-slate-450 font-normal">${c.email}</span>
+              </td>
+              <td class="py-3 px-2 font-mono text-slate-300">${formatCPF(c.cpf || '')}</td>
+              <td class="py-3 px-2 font-mono text-indigo-400">
+                <a href="${whatsAppUrl}" target="_blank" class="hover:underline flex items-center gap-1">
+                  <i data-lucide="phone" class="w-3.5 h-3.5 text-emerald-500"></i> ${formatPhone(c.whatsapp)}
+                </a>
+              </td>
+              <td class="py-3 px-2 text-center">
+                <span class="inline-block text-[9px] font-bold uppercase px-2 py-0.5 rounded-full ${
+                  isAtivo ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
+                }">${isAtivo ? 'Ativo' : 'Suspenso'}</span>
+              </td>
+              <td class="py-3 px-2 text-center text-slate-300 font-semibold">${formatDateBR(c.assinatura_valida_ate)}</td>
+              <td class="py-3 px-2 text-right">
+                <button onclick="abrirModalSuporte(${c.id})" class="btn bg-purple-600 hover:bg-purple-500 text-white font-bold px-2.5 py-1.5 text-[10px] rounded-lg transition-all flex items-center gap-1 ml-auto">
+                  <i data-lucide="user-cog" class="w-3.5 h-3.5"></i> Gerenciar
+                </button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      }
+      lucide.createIcons();
+    }
+
+    function filterClientes() {
+      const query = document.getElementById('search-clientes').value.toLowerCase().trim();
+      const statusFilter = document.getElementById('filter-status').value;
+
+      let filtered = allClientes;
+
+      // 1. Filtro por status
+      if (statusFilter !== 'todos') {
+        filtered = filtered.filter(c => c.assinatura_status === statusFilter);
+      }
+
+      // 2. Filtro por busca de texto
+      if (query) {
+        filtered = filtered.filter(c => {
+          const nome = (c.nome || '').toLowerCase();
+          const email = (c.email || '').toLowerCase();
+          const cpf = (c.cpf || '').replace(/\D/g, '');
+          const cleanQuery = query.replace(/\D/g, '');
+
+          return nome.includes(query) || 
+                 email.includes(query) || 
+                 (cleanQuery && cpf.includes(cleanQuery)) || 
+                 (c.cpf || '').includes(query);
+        });
+      }
+
+      renderClientes(filtered);
+    }
+
+    // Exporta para escopo global para que os manipuladores oninput/onclick encontrem as funções
+    window.renderClientes = renderClientes;
+    window.filterClientes = filterClientes;
+
+    // Modal de Suporte/Licença
+    let currentSelectedUserId = null;
+
+    window.abrirModalSuporte = async function(id) {
+      currentSelectedUserId = id;
+      document.getElementById('modal-suporte').classList.remove('hidden');
+
+      // Limpa dados anteriores no modal
+      document.getElementById('modal-cliente-nome').innerText = 'Carregando...';
+      document.getElementById('modal-cliente-email').innerText = '--';
+      document.getElementById('modal-cliente-cpf').innerText = '--';
+      document.getElementById('modal-cliente-whatsapp').innerText = '--';
+      document.getElementById('modal-cliente-endereco').innerText = '--';
+      document.getElementById('modal-db-servicos').innerText = '0';
+      document.getElementById('modal-db-agendamentos').innerText = '0';
+      document.getElementById('modal-db-funcionarios').innerText = '0';
+      document.getElementById('modal-db-produtos').innerText = '0';
+      document.getElementById('modal-db-despesas').innerText = '0';
+      document.getElementById('modal-db-faturamento').innerText = 'R$ 0,00';
+      document.getElementById('reset-pwd-value').value = '';
+
+      try {
+        const response = await fetch(`/api/super/users/${id}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!response.ok) throw new Error('Erro ao carregar detalhes do suporte.');
+
+        const data = await response.json();
+        const formatBRL = val => parseFloat(val || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+        // Informações
+        document.getElementById('modal-cliente-nome').innerText = data.cliente.nome;
+        document.getElementById('modal-cliente-email').innerText = data.cliente.email;
+        document.getElementById('modal-cliente-cpf').innerText = formatCPF(data.cliente.cpf || '');
+        document.getElementById('modal-cliente-whatsapp').innerText = formatPhone(data.cliente.whatsapp);
+        document.getElementById('modal-cliente-endereco').innerText = data.cliente.endereco || 'Não cadastrado';
+
+        // Stats DB
+        document.getElementById('modal-db-servicos').innerText = data.stats.totalServicos;
+        document.getElementById('modal-db-agendamentos').innerText = data.stats.totalAgendamentos;
+        document.getElementById('modal-db-funcionarios').innerText = data.stats.totalFuncionarios;
+        document.getElementById('modal-db-produtos').innerText = data.stats.totalProdutos;
+        document.getElementById('modal-db-despesas').innerText = data.stats.totalDespesas;
+        document.getElementById('modal-db-faturamento').innerText = formatBRL(data.stats.faturamentoEstabelecimento);
+
+        // Formulário de Licença
+        document.getElementById('license-status').value = data.cliente.assinatura_status;
+        document.getElementById('license-validity').value = data.cliente.assinatura_valida_ate || '';
+
+      } catch (err) {
+        alert(err.message);
+        fecharModalSuporte();
+      }
+    };
+
+    window.fecharModalSuporte = function() {
+      document.getElementById('modal-suporte').classList.add('hidden');
+      document.getElementById('reset-pwd-value').value = '';
+      currentSelectedUserId = null;
+    };
+
+    // Salvar alterações de licença
+    document.getElementById('btn-save-license').addEventListener('click', async () => {
+      const status = document.getElementById('license-status').value;
+      const validity = document.getElementById('license-validity').value;
+
+      if (!status || !validity) {
+        alert('Por favor, preencha todos os campos da licença.');
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/super/users/${currentSelectedUserId}/subscription`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            assinatura_status: status,
+            assinatura_valida_ate: validity
+          })
+        });
+
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'Erro ao atualizar licença.');
+
+        alert(data.message);
+        fecharModalSuporte();
+        loadSuperDashboard();
+      } catch (err) {
+        alert(err.message);
+      }
+    });
+
+    // Redefinir senha do inquilino
+    document.getElementById('btn-reset-password').addEventListener('click', async () => {
+      const senha = document.getElementById('reset-pwd-value').value;
+
+      if (!senha || senha.trim().length < 6) {
+        alert('A senha deve conter no mínimo 6 caracteres.');
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/super/users/${currentSelectedUserId}/reset-password`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ senha: senha.trim() })
+        });
+
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'Erro ao redefinir senha.');
+
+        alert('Senha redefinida com sucesso! Você pode repassar a nova senha para o profissional.');
+        document.getElementById('reset-pwd-value').value = '';
+        fecharModalSuporte();
+      } catch (err) {
+        alert(err.message);
+      }
+    });
+
+    // Excluir conta
+    document.getElementById('btn-delete-tenant').addEventListener('click', async () => {
+      if (!confirm('ATENÇÃO: Deseja realmente excluir permanentemente a conta deste profissional e todos os dados associados? Esta ação não tem volta.')) {
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/super/users/${currentSelectedUserId}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'Erro ao excluir conta.');
+
+        alert(data.message);
+        fecharModalSuporte();
+        loadSuperDashboard();
+      } catch (err) {
+        alert(err.message);
+      }
+    });
+
+    // Utilitários de Máscaras e Formatação
+    function formatPhone(phone) {
+      if (!phone) return '';
+      const clean = phone.replace(/\D/g, '');
+      if (clean.length === 11) {
+        return `(${clean.substring(0, 2)}) ${clean.substring(2, 7)}-${clean.substring(7)}`;
+      }
+      return phone;
+    }
+
+    function formatCPF(cpf) {
+      if (!cpf) return '';
+      const clean = cpf.replace(/\D/g, '');
+      if (clean.length === 11) {
+        return `${clean.substring(0, 3)}.${clean.substring(3, 6)}.${clean.substring(6, 9)}-${clean.substring(9)}`;
+      }
+      if (clean.length === 14) {
+        return `${clean.substring(0, 2)}.${clean.substring(2, 5)}.${clean.substring(5, 8)}/${clean.substring(8, 12)}-${clean.substring(12)}`;
+      }
+      return cpf;
+    }
+
+    function formatDateBR(dateStr) {
+      if (!dateStr) return '--';
+      const parts = dateStr.split('-');
+      if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
+      return dateStr;
+    }
+
+    async function enviarComunicado() {
+      const tituloInput = document.getElementById('comunicado-titulo');
+      const conteudoInput = document.getElementById('comunicado-conteudo');
+      const canalPainel = document.getElementById('chk-canal-painel').checked;
+      const canalWhatsapp = document.getElementById('chk-canal-whatsapp').checked;
+
+      const titulo = tituloInput.value.trim();
+      const conteudo = conteudoInput.value.trim();
+
+      if (!titulo || !conteudo) {
+        alert('Por favor, preencha o título e o conteúdo do comunicado.');
+        return;
+      }
+
+      if (!canalPainel && !canalWhatsapp) {
+        alert('Selecione pelo menos um canal de envio (Alerta no Painel ou WhatsApp).');
+        return;
+      }
+
+      const btn = document.getElementById('btn-enviar-comunicado');
+      const originalHTML = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = `<i data-lucide="loader" class="w-4 h-4 animate-spin"></i> Enviando...`;
+      lucide.createIcons();
+
+      try {
+        const response = await fetch('/api/super/comunicados', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            titulo,
+            conteudo,
+            dispararPainel: canalPainel,
+            dispararWhatsapp: canalWhatsapp
+          })
+        });
+
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'Erro ao enviar comunicado.');
+
+        alert(data.message || 'Comunicado enviado com sucesso!');
+        tituloInput.value = '';
+        conteudoInput.value = '';
+      } catch (err) {
+        alert(err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalHTML;
+        lucide.createIcons();
+      }
+    }
+
+    let currentTab = 'tab-geral';
+    let perfilDesbloqueado = false;
+
+    window.switchTab = function(tabId) {
+      currentTab = tabId;
+      // Oculta todas as abas
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      // Remove classes ativas de todos os botões
+      document.querySelectorAll('.tab-btn').forEach(el => {
+        el.classList.remove('text-white', 'bg-white/10');
+        el.classList.add('text-slate-400');
+      });
+
+      // Mostra a aba selecionada
+      const targetContent = document.getElementById('content-' + tabId);
+      if (targetContent) targetContent.classList.remove('hidden');
+
+      // Adiciona classes ativas ao botão selecionado
+      const targetBtn = document.getElementById('btn-' + tabId);
+      if (targetBtn) {
+        targetBtn.classList.remove('text-slate-400');
+        targetBtn.classList.add('text-white', 'bg-white/10');
+      }
+
+      // Controla a exibição do botão salvar e seções de segurança
+      const btnSalvar = document.getElementById('btn-salvar-config');
+      if (tabId === 'tab-perfil') {
+        if (perfilDesbloqueado) {
+          btnSalvar.classList.remove('hidden');
+          document.getElementById('perfil-lock-screen').classList.add('hidden');
+          document.getElementById('perfil-edit-fields').classList.remove('hidden');
+        } else {
+          btnSalvar.classList.add('hidden');
+          document.getElementById('perfil-lock-screen').classList.remove('hidden');
+          document.getElementById('perfil-edit-fields').classList.add('hidden');
+        }
+      } else {
+        btnSalvar.classList.remove('hidden');
+      }
+    };
+
+    async function loadConfiguracoes() {
+      try {
+        const response = await fetch('/api/super/configuracoes', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (response.ok) {
+          const data = await response.json();
+          
+          // Geral
+          document.getElementById('preco-mensalidade-input').value = data.preco_mensalidade !== undefined ? data.preco_mensalidade : '';
+          document.getElementById('preco-promocional-input').value = data.preco_primeiro_mes !== undefined ? data.preco_primeiro_mes : '';
+          document.getElementById('dias-gratis-input').value = data.dias_gratis_teste !== undefined ? data.dias_gratis_teste : '';
+          document.getElementById('novos-cadastros-checkbox').checked = data.novos_cadastros_habilitados === 1;
+          document.getElementById('modo-manutencao-checkbox').checked = data.modo_manutencao_habilitado === 1;
+
+          // Gateways
+          document.getElementById('saas-mp-access-token').value = data.saas_mp_access_token || '';
+          document.getElementById('saas-mp-public-key').value = data.saas_mp_public_key || '';
+          document.getElementById('evolution-api-url').value = data.evolution_api_url || '';
+          document.getElementById('evolution-api-key').value = data.evolution_api_key || '';
+
+          // SEO / Suporte
+          document.getElementById('sistema-nome').value = data.sistema_nome || '';
+          document.getElementById('suporte-email').value = data.suporte_email || '';
+          document.getElementById('suporte-whatsapp').value = data.suporte_whatsapp || '';
+          document.getElementById('seo-titulo').value = data.seo_titulo || '';
+          document.getElementById('seo-descricao').value = data.seo_descricao || '';
+
+          // Templates
+          document.getElementById('wpp-template-boas-vindas').value = data.wpp_template_boas_vindas || '';
+          document.getElementById('wpp-template-vencimento').value = data.wpp_template_vencimento || '';
+          document.getElementById('wpp-template-suspensao').value = data.wpp_template_suspensao || '';
+
+          // Perfil do Admin
+          const userObj = JSON.parse(localStorage.getItem('usuario') || '{}');
+          document.getElementById('perfil-nome-input').value = userObj.nome || '';
+          document.getElementById('perfil-email-input').value = userObj.email || '';
+        }
+      } catch (err) {
+        console.error('Erro ao carregar configurações:', err);
+      }
+    }
+
+    async function salvarConfiguracoes() {
+      if (currentTab === 'tab-perfil') {
+        return salvarPerfilAdmin();
+      }
+
+      const preco = parseFloat(document.getElementById('preco-mensalidade-input').value);
+      const promo = parseFloat(document.getElementById('preco-promocional-input').value);
+      const trial = parseInt(document.getElementById('dias-gratis-input').value, 10);
+      
+      const novosCadastros = document.getElementById('novos-cadastros-checkbox').checked ? 1 : 0;
+      const modoManutencao = document.getElementById('modo-manutencao-checkbox').checked ? 1 : 0;
+
+      const mpAccessToken = document.getElementById('saas-mp-access-token').value.trim();
+      const mpPublicKey = document.getElementById('saas-mp-public-key').value.trim();
+      const evoUrl = document.getElementById('evolution-api-url').value.trim();
+      const evoKey = document.getElementById('evolution-api-key').value.trim();
+
+      const sistemaNome = document.getElementById('sistema-nome').value.trim();
+      const suporteEmail = document.getElementById('suporte-email').value.trim();
+      const suporteWpp = document.getElementById('suporte-whatsapp').value.trim();
+      const seoTitulo = document.getElementById('seo-titulo').value.trim();
+      const seoDescricao = document.getElementById('seo-descricao').value.trim();
+
+      const tplBoasVindas = document.getElementById('wpp-template-boas-vindas').value.trim();
+      const tplVencimento = document.getElementById('wpp-template-vencimento').value.trim();
+      const tplSuspensao = document.getElementById('wpp-template-suspensao').value.trim();
+
+      if (isNaN(preco) || preco < 0) {
+        alert('Por favor, informe um valor de mensalidade regular válido maior ou igual a zero.');
+        return;
+      }
+
+      const btn = document.getElementById('btn-salvar-config');
+      const originalHTML = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = `<i data-lucide="loader" class="w-4 h-4 animate-spin"></i> Salvando...`;
+      lucide.createIcons();
+
+      try {
+        const response = await fetch('/api/super/configuracoes', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ 
+            preco_mensalidade: preco,
+            preco_primeiro_mes: promo,
+            dias_gratis_teste: trial,
+            novos_cadastros_habilitados: novosCadastros,
+            modo_manutencao_habilitado: modoManutencao,
+            saas_mp_access_token: mpAccessToken,
+            saas_mp_public_key: mpPublicKey,
+            evolution_api_url: evoUrl,
+            evolution_api_key: evoKey,
+            sistema_nome: sistemaNome,
+            suporte_email: suporteEmail,
+            suporte_whatsapp: suporteWpp,
+            seo_titulo: seoTitulo,
+            seo_descricao: seoDescricao,
+            wpp_template_boas_vindas: tplBoasVindas,
+            wpp_template_vencimento: tplVencimento,
+            wpp_template_suspensao: tplSuspensao
+          })
+        });
+
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'Erro ao salvar configurações.');
+
+        alert(data.message || 'Configurações salvas com sucesso!');
+        loadSuperDashboard(); // Recarrega para atualizar o faturamento (MRR) projetado
+      } catch (err) {
+        alert(err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalHTML;
+        lucide.createIcons();
+      }
+    }
+
+    async function verificarSenhaAcesso() {
+      const senha = document.getElementById('perfil-senha-atual-acesso').value;
+      if (!senha) {
+        alert('Por favor, insira sua senha atual.');
+        return;
+      }
+
+      const btn = document.querySelector('#perfil-lock-screen button');
+      const originalHTML = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = `<i data-lucide="loader" class="w-4 h-4 animate-spin"></i> Verificando...`;
+      lucide.createIcons();
+
+      try {
+        const response = await fetch('/api/super/profile/verify-password', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ senha })
+        });
+
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'Senha incorreta.');
+
+        perfilDesbloqueado = true;
+        document.getElementById('perfil-senha-atual-acesso').value = '';
+        switchTab('tab-perfil');
+      } catch (err) {
+        alert(err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalHTML;
+        lucide.createIcons();
+      }
+    }
+
+    async function salvarPerfilAdmin() {
+      const nome = document.getElementById('perfil-nome-input').value.trim();
+      const email = document.getElementById('perfil-email-input').value.trim();
+      const senha = document.getElementById('perfil-senha-input').value;
+      const senhaConfirm = document.getElementById('perfil-senha-confirm-input').value;
+
+      if (!nome || !email) {
+        alert('Por favor, preencha os campos nome e e-mail.');
+        return;
+      }
+
+      if (senha) {
+        if (senha.length < 6) {
+          alert('A nova senha deve ter no mínimo 6 caracteres.');
+          return;
+        }
+        if (senha !== senhaConfirm) {
+          alert('As senhas não coincidem.');
+          return;
+        }
+      }
+
+      const btn = document.getElementById('btn-salvar-config');
+      const originalHTML = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = `<i data-lucide="loader" class="w-4 h-4 animate-spin"></i> Solicitando...`;
+      lucide.createIcons();
+
+      try {
+        const response = await fetch('/api/super/profile/request-change', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ nome, email, senha })
+        });
+
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'Erro ao solicitar alteração de perfil.');
+
+        alert(data.message || 'Código de confirmação enviado para o e-mail do administrador.');
+        document.getElementById('modal-confirmacao-email').classList.remove('hidden');
+        document.getElementById('confirmacao-codigo-input').value = '';
+        lucide.createIcons();
+      } catch (err) {
+        alert(err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalHTML;
+        lucide.createIcons();
+      }
+    }
+
+    async function confirmarPerfilAdmin() {
+      const codigo = document.getElementById('confirmacao-codigo-input').value.trim();
+      if (!codigo) {
+        alert('Por favor, insira o código de confirmação.');
+        return;
+      }
+
+      const btn = document.getElementById('btn-confirmar-codigo');
+      const originalHTML = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = `<i data-lucide="loader" class="w-4 h-4 animate-spin"></i> Confirmando...`;
+      lucide.createIcons();
+
+      try {
+        const response = await fetch('/api/super/profile/confirm-change', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ codigo })
+        });
+
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'Erro ao confirmar alteração.');
+
+        localStorage.setItem('usuario', JSON.stringify(data.usuario));
+        alert('Dados da sua conta de administrador atualizados com sucesso!');
+
+        document.getElementById('perfil-senha-input').value = '';
+        document.getElementById('perfil-senha-confirm-input').value = '';
+        
+        perfilDesbloqueado = false;
+        fecharModalConfirmacaoEmail();
+        switchTab('tab-perfil');
+        loadSuperDashboard();
+      } catch (err) {
+        alert(err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalHTML;
+        lucide.createIcons();
+      }
+    }
+
+    window.fecharModalConfirmacaoEmail = function() {
+      document.getElementById('modal-confirmacao-email').classList.add('hidden');
+    };
+
+    window.verificarSenhaAcesso = verificarSenhaAcesso;
+    window.confirmarPerfilAdmin = confirmarPerfilAdmin;
+
+    window.enviarComunicado = enviarComunicado;
+    window.loadConfiguracoes = loadConfiguracoes;
+    window.salvarConfiguracoes = salvarConfiguracoes;
+
+    // Registra o Service Worker para PWA
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(err => console.error(err));
+      });
+    }
+  </script>
+  <script src="/js/demo-banner.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,312 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --font-title: 'Plus Jakarta Sans', 'Outfit', 'Inter', sans-serif;
+  --font-body: 'Inter', sans-serif;
+
+  /* Palette: Dark Mode & Premium Indigo Theme */
+  --bg-primary: #0a0b10;
+  --bg-secondary: #12131a;
+  --bg-tertiary: #1b1c26;
+  
+  --primary: #6366f1;
+  --primary-hover: #4f46e5;
+  --primary-light: rgba(99, 102, 241, 0.15);
+  
+  --accent: #a855f7;
+  --accent-hover: #9333ea;
+  
+  --success: #10b981;
+  --success-light: rgba(16, 185, 129, 0.1);
+  --warning: #f59e0b;
+  --warning-light: rgba(245, 158, 11, 0.1);
+  --danger: #ef4444;
+  --danger-light: rgba(239, 68, 68, 0.1);
+  
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  
+  --border: rgba(255, 255, 255, 0.08);
+  --border-focus: rgba(99, 102, 241, 0.4);
+  
+  --glass-bg: rgba(18, 19, 26, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.05);
+  --glass-shadow: rgba(0, 0, 0, 0.3);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Gradients */
+.bg-gradient {
+  background: radial-gradient(circle at top right, rgba(99, 102, 241, 0.06), transparent 45%),
+              radial-gradient(circle at bottom left, rgba(99, 102, 241, 0.03), transparent 45%),
+              var(--bg-primary);
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gradient-bg {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-title);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  color: var(--text-primary);
+}
+
+/* Premium White Cards with Soft Shadows */
+.glass-card {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border);
+  box-shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.05), 0 10px 10px -5px rgba(15, 23, 42, 0.02);
+  border-radius: 24px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card:hover {
+  border-color: rgba(79, 70, 229, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 25px 30px -5px rgba(15, 23, 42, 0.08), 0 15px 15px -5px rgba(15, 23, 42, 0.04);
+}
+
+/* Inputs and Forms */
+.form-input {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  outline: none;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.form-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+/* Style for native date inputs calendar icon in dark mode */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1) brightness(0.9);
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
+.form-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+/* Buttons */
+.btn {
+  font-family: var(--font-title);
+  font-weight: 700;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+  font-size: 0.95rem;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+  color: #ffffff;
+  box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
+}
+
+.btn-primary:hover {
+  filter: brightness(1.05);
+  box-shadow: 0 15px 20px -3px rgba(79, 70, 229, 0.4);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+}
+
+.btn-secondary:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-color: var(--text-secondary);
+}
+
+.btn-danger {
+  background-color: var(--danger-light);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: var(--danger);
+}
+
+.btn-danger:hover {
+  background-color: var(--danger);
+  color: #ffffff;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Micro-animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease forwards;
+}
+
+/* Slot selection style */
+.slot-badge {
+  cursor: pointer;
+  padding: 0.75rem;
+  text-align: center;
+  border-radius: 12px;
+  font-weight: 700;
+  transition: all 0.2s ease;
+  border: 1px solid var(--border);
+  background-color: var(--bg-secondary);
+  color: var(--text-secondary);
+}
+
+.slot-badge:hover:not(.disabled) {
+  border-color: var(--primary);
+  background-color: var(--primary-light);
+  color: var(--primary);
+}
+
+.slot-badge.selected {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+  color: #ffffff;
+  border-color: transparent;
+}
+
+.slot-badge.disabled {
+  opacity: 0.25;
+  cursor: not-allowed;
+  background-color: var(--bg-tertiary);
+  border-color: transparent;
+}
+
+/* ========================================================================= */
+/* THEMES SYSTEM (Indigo, Emerald, Amber) */
+/* ========================================================================= */
+
+/* Emerald Theme Override */
+body.theme-emerald {
+  --primary: #10b981;
+  --primary-hover: #059669;
+  --primary-light: rgba(16, 185, 129, 0.12);
+  --accent: #06b6d4;
+  --accent-hover: #0891b2;
+  --border-focus: rgba(16, 185, 129, 0.4);
+}
+body.theme-emerald .text-indigo-400 {
+  color: #10b981 !important;
+}
+body.theme-emerald .text-indigo-500 {
+  color: #10b981 !important;
+}
+body.theme-emerald .bg-indigo-500\/10 {
+  background-color: rgba(16, 185, 129, 0.1) !important;
+}
+body.theme-emerald .border-indigo-500\/20 {
+  border-color: rgba(16, 185, 129, 0.2) !important;
+}
+body.theme-emerald .bg-indigo-600 {
+  background-color: #10b981 !important;
+}
+body.theme-emerald .text-indigo-600 {
+  color: #059669 !important;
+}
+body.theme-emerald .focus\:ring-indigo-500:focus {
+  --tw-ring-color: #10b981 !important;
+}
+body.theme-emerald .shadow-indigo-600\/10 {
+  box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.1), 0 2px 4px -1px rgba(16, 185, 129, 0.06) !important;
+}
+
+/* Amber Theme Override */
+body.theme-amber {
+  --primary: #f59e0b;
+  --primary-hover: #d97706;
+  --primary-light: rgba(245, 158, 11, 0.12);
+  --accent: #ec4899;
+  --accent-hover: #db2777;
+  --border-focus: rgba(245, 158, 11, 0.4);
+}
+body.theme-amber .text-indigo-400 {
+  color: #f59e0b !important;
+}
+body.theme-amber .text-indigo-500 {
+  color: #f59e0b !important;
+}
+body.theme-amber .bg-indigo-500\/10 {
+  background-color: rgba(245, 158, 11, 0.1) !important;
+}
+body.theme-amber .border-indigo-500\/20 {
+  border-color: rgba(245, 158, 11, 0.2) !important;
+}
+body.theme-amber .bg-indigo-600 {
+  background-color: #f59e0b !important;
+}
+body.theme-amber .text-indigo-600 {
+  color: #d97706 !important;
+}
+body.theme-amber .focus\:ring-indigo-500:focus {
+  --tw-ring-color: #f59e0b !important;
+}
+body.theme-amber .shadow-indigo-600\/10 {
+  box-shadow: 0 4px 6px -1px rgba(245, 158, 11, 0.1), 0 2px 4px -1px rgba(245, 158, 11, 0.06) !important;
+}

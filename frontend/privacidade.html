@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Política de Privacidade - Agendamente</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Custom Premium Styles -->
+  <link rel="stylesheet" href="/css/style.css">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body {
+      background-attachment: fixed;
+    }
+  </style>
+</head>
+<body class="bg-gradient min-h-screen flex items-center justify-center p-4 sm:p-8 text-slate-100">
+
+  <div class="w-full max-w-3xl animate-fade-in my-8">
+    <div class="glass-card p-6 sm:p-10 rounded-3xl space-y-6">
+      
+      <!-- HEADER -->
+      <div class="flex items-center justify-between border-b border-white/5 pb-4">
+        <div class="flex items-center gap-3">
+          <div class="p-2.5 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400">
+            <i data-lucide="shield-check" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <h1 class="text-xl sm:text-2xl font-black text-white">Política de Privacidade</h1>
+            <p class="text-[10px] sm:text-xs text-slate-400 font-medium">Última atualização: 13 de Junho de 2026</p>
+          </div>
+        </div>
+        <button onclick="window.close()" class="text-slate-400 hover:text-white transition-all text-xs font-bold bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-xl border border-white/5">
+          Fechar Aba
+        </button>
+      </div>
+
+      <!-- CONTENT -->
+      <div class="space-y-6 text-sm text-slate-300 leading-relaxed text-left max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
+        
+        <section class="space-y-2">
+          <h2 class="text-base font-bold text-white flex items-center gap-1.5">
+            <span class="text-indigo-400">1.</span> Coleta de Informações
+          </h2>
+          <p class="text-xs">
+            Coletamos apenas as informações estritamente necessárias para a prestação do serviço de agendamentos. Para os **profissionais**, coletamos: Nome Completo, Nome do Estabelecimento, E-mail, WhatsApp, CPF, Chave Pix, informações de login e senhas criptografadas. Para os **clientes finais**, coletamos: Nome e WhatsApp (para notificações).
+          </p>
+        </section>
+
+        <section class="space-y-2">
+          <h2 class="text-base font-bold text-white flex items-center gap-1.5">
+            <span class="text-indigo-400">2.</span> Uso das Informações
+          </h2>
+          <p class="text-xs">
+            Os dados coletados são usados exclusivamente para:
+          </p>
+          <ul class="list-disc pl-5 text-xs space-y-1">
+            <li>Gerenciar sua conta de administrador e as agendas vinculadas.</li>
+            <li>Gerar checkouts Pix para reservas de horários.</li>
+            <li>Enviar lembretes automáticos de agendamento via WhatsApp aos clientes.</li>
+            <li>Processar o faturamento da mensalidade do SaaS.</li>
+          </ul>
+        </section>
+
+        <section class="space-y-2">
+          <h2 class="text-base font-bold text-white flex items-center gap-1.5">
+            <span class="text-indigo-400">3.</span> Compartilhamento de Dados
+          </h2>
+          <p class="text-xs">
+            Não vendemos nem compartilhamos dados com anunciantes ou terceiros sem relação direta com os serviços. Os dados necessários para processamento financeiro são enviados de forma segura para o **Mercado Pago** (em integrações automáticas do profissional).
+          </p>
+        </section>
+
+        <section class="space-y-2">
+          <h2 class="text-base font-bold text-white flex items-center gap-1.5">
+            <span class="text-indigo-400">4.</span> Segurança e Criptografia
+          </h2>
+          <p class="text-xs">
+            Suas credenciais de acesso e senhas são criptografadas utilizando algoritmos de hash seguros (`bcrypt`). A plataforma é executada sob conexões seguras e criptografadas por protocolo HTTPS (SSL).
+          </p>
+        </section>
+
+        <section class="space-y-2">
+          <h2 class="text-base font-bold text-white flex items-center gap-1.5">
+            <span class="text-indigo-400">5.</span> Direitos do Usuário (LGPD)
+          </h2>
+          <p class="text-xs">
+            De acordo com a Lei Geral de Proteção de Dados (LGPD) brasileira, você tem o direito de solicitar o acesso, a retificação, a portabilidade ou a exclusão definitiva dos seus dados da nossa base de dados a qualquer momento, por meio do suporte administrativo oficial do sistema.
+          </p>
+        </section>
+
+      </div>
+
+      <!-- FOOTER -->
+      <div class="border-t border-white/5 pt-4 text-center">
+        <p class="text-[10px] text-slate-500">Agendamente © 2026. Todos os direitos reservados.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>

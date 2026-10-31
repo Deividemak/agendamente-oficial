@@ -1,0 +1,2323 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agendamente - Agendamento Inteligente & Gestão de Alta Conversão</title>
+  
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="A única plataforma de agendamento online com cobrança Pix automática e lembretes Anti-Furo via WhatsApp. Blinde sua agenda, reduza faltas e controle o caixa.">
+  <meta name="keywords" content="agendamento, salao de beleza, barbearia, psicologo, pilates, personal trainer, agenda online, checkout pix, erp, comissao">
+  <meta name="author" content="Agendamente">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Custom Premium Styles -->
+  <link rel="stylesheet" href="./css/style.css">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="/manifest.json">
+  <!-- iOS Meta Tags -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Agendamente">
+  <link rel="apple-touch-icon" href="/app_logo.png">
+  
+  <!-- Global Settings & Maintenance Interceptor -->
+  <script src="/js/global.js" defer></script>
+  <style>
+    :root {
+      --co-primary: #6366f1;
+      --co-accent: #a855f7;
+      --co-success: #10b981;
+      --co-bg: #07080d;
+      --co-card: rgba(13, 16, 26, 0.45);
+      --co-border: rgba(255, 255, 255, 0.05);
+      --co-text: #f8fafc;
+      --co-muted: #94a3b8;
+    }
+    body {
+      background-color: var(--co-bg) !important;
+      color: var(--co-text) !important;
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Plus Jakarta Sans', sans-serif !important;
+      color: #ffffff !important;
+    }
+    .bg-gradient-cosmic {
+      background: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.15) 0%, rgba(168, 85, 247, 0.08) 35%, transparent 70%),
+                  radial-gradient(circle at 0% 100%, rgba(10, 185, 129, 0.05) 0%, transparent 50%),
+                  #07080d;
+    }
+    /* Ambient Glows */
+    .cosmic-glow-top {
+      position: absolute;
+      top: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80%;
+      height: 600px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, rgba(168, 85, 247, 0.05) 60%, transparent 100%);
+      filter: blur(100px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .cosmic-glow-mid {
+      position: absolute;
+      top: 1200px;
+      right: -10%;
+      width: 50%;
+      height: 500px;
+      background: radial-gradient(circle, rgba(168, 85, 247, 0.06) 0%, rgba(99, 102, 241, 0.02) 60%, transparent 100%);
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .glass-card-dark {
+      background: var(--co-card);
+      border: 1px solid var(--co-border);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 24px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .glass-card-dark:hover {
+      border-color: rgba(99, 102, 241, 0.3);
+      box-shadow: 0 30px 60px -10px rgba(99, 102, 241, 0.12), 0 0 45px rgba(168, 85, 247, 0.05);
+      transform: translateY(-2px);
+    }
+    .gradient-text-cosmic {
+      background: linear-gradient(135deg, #a855f7 0%, #6366f1 50%, #10b981 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .btn-cosmic-primary {
+      background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+      color: #ffffff !important;
+      box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.4), 0 8px 10px -6px rgba(168, 85, 247, 0.4);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .btn-cosmic-primary:hover {
+      filter: brightness(1.1);
+      box-shadow: 0 15px 30px -3px rgba(99, 102, 241, 0.5), 0 10px 15px -4px rgba(168, 85, 247, 0.5);
+      transform: translateY(-1px);
+    }
+    .btn-cosmic-secondary {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #f8fafc !important;
+      transition: all 0.3s ease;
+    }
+    .btn-cosmic-secondary:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.15);
+      transform: translateY(-1px);
+    }
+  </style>
+</head>
+<body class="bg-gradient-cosmic min-h-screen text-slate-200 pb-16 relative overflow-x-hidden">
+  <!-- Glowing effects -->
+  <div class="cosmic-glow-top"></div>
+  <div class="cosmic-glow-mid"></div>
+
+  <!-- TOP NAV -->
+  <nav class="border-b border-white/5 bg-[#07080c]/80 backdrop-blur-md sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center gap-3">
+          <div class="p-2 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400">
+            <i data-lucide="calendar" class="w-6 h-6"></i>
+          </div>
+          <span class="text-xl font-bold tracking-tight gradient-text-cosmic font-black dynamic-system-name">Agendamente</span>
+        </div>
+        
+        <!-- Links de Navegação Central (Desktop) -->
+        <div class="hidden md:flex items-center gap-6 text-xs font-bold text-slate-450">
+          <a href="#niche-btn-saude" class="hover:text-white transition-all">Ramos de Atuação</a>
+          <a href="#ajuda-suporte-section" class="hover:text-white transition-all">Diferenciais</a>
+          <a href="#ajuda-suporte-section" onclick="openHelpWidget();" class="hover:text-white transition-all flex items-center gap-1"><i data-lucide="help-circle" class="w-3.5 h-3.5 text-indigo-400"></i> Central de Ajuda</a>
+        </div>
+
+        <div class="flex items-center gap-3 sm:gap-4">
+          <button id="btn-install-nav" class="hidden btn border border-white/10 bg-white/5 hover:bg-white/10 text-slate-200 py-1.5 px-3 rounded-lg text-xs font-bold items-center gap-1.5 transition-all">
+            <i data-lucide="download" class="w-3.5 h-3.5 text-indigo-400"></i> Instalar App
+          </button>
+          <a href="/admin-login" class="text-xs font-bold text-slate-400 hover:text-white transition-all">Entrar</a>
+          <a href="/admin-login?register=true" class="btn btn-cosmic-primary py-2 px-4 text-xs font-black rounded-xl shadow-lg">
+            Experimentar Grátis
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO SECTION -->
+  <header class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 sm:mt-16 text-center space-y-6 relative">
+    <div class="space-y-4 max-w-3xl mx-auto">
+      <span class="inline-flex items-center gap-1.5 bg-indigo-500/10 border border-indigo-500/25 text-indigo-400 text-[10px] font-extrabold uppercase px-3 py-1 rounded-full tracking-wider">
+        <i data-lucide="sparkles" class="w-3.5 h-3.5 text-indigo-400"></i> AGENDA CHEIA, ZERO PREJUÍZO
+      </span>
+      <h1 class="text-4xl sm:text-6xl lg:text-7xl font-black text-white leading-tight tracking-tight max-w-4xl mx-auto">
+        Transforme tempo ocioso em <span class="gradient-text-cosmic">faturamento líquido</span>.
+      </h1>
+      <p class="text-slate-400 text-sm sm:text-base lg:text-lg font-medium max-w-2xl mx-auto">
+        O único sistema de agendamento online que combina cobrança Pix automática no checkout e confirmações obrigatórias por WhatsApp para reduzir furos a zero.
+      </p>
+    </div>
+
+    <!-- CTAS -->
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-sm mx-auto pt-2">
+      <a href="/admin-login?register=true" class="btn btn-cosmic-primary w-full sm:w-auto py-3.5 px-8 text-xs font-black rounded-xl flex items-center justify-center gap-2">
+        Começar Meu Teste Grátis <i data-lucide="arrow-right" class="w-4 h-4"></i>
+      </a>
+      <button id="btn-install-hero" class="hidden btn btn-cosmic-secondary w-full sm:w-auto py-3.5 px-6 text-xs font-bold rounded-xl flex items-center justify-center gap-2">
+        <i data-lucide="download" class="w-4 h-4 text-indigo-400"></i> Instalar no Celular/PC
+      </button>
+    </div>
+
+    <!-- SEÇÃO DE VÍDEO EXPLICATIVO -->
+    <div class="pt-16 max-w-4xl mx-auto space-y-4 text-center">
+      <div class="space-y-1">
+        <h2 class="text-xl sm:text-2xl font-black text-white flex items-center justify-center gap-1.5">
+          <i data-lucide="play-circle" class="w-5 h-5 text-indigo-400"></i>
+          Apresentação da Plataforma
+        </h2>
+        <p class="text-slate-400 text-xs max-w-lg mx-auto">Assista ao vídeo e veja como a nossa apresentadora virtual de Inteligência Artificial explica os diferenciais na prática.</p>
+      </div>
+
+      <div class="relative max-w-3xl mx-auto select-none rounded-3xl overflow-hidden border border-white/10 shadow-2xl shadow-indigo-950/20 bg-slate-900 aspect-video">
+        <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('/video_thumbnail.png');"></div>
+        <div class="absolute inset-0 bg-slate-950/45 backdrop-blur-[1px] flex flex-col items-center justify-center space-y-4 p-4 transition-all hover:bg-slate-950/35">
+          <button onclick="playAIPresentationVideo()" class="w-16 h-16 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white flex items-center justify-center cursor-pointer transition-all scale-100 hover:scale-105 active:scale-95 shadow-xl shadow-indigo-600/30 relative">
+            <span class="absolute inset-0 rounded-full bg-indigo-500/30 animate-ping"></span>
+            <i data-lucide="play" class="w-8 h-8 fill-current ml-1"></i>
+          </button>
+          <div class="text-center max-w-sm">
+            <span class="bg-indigo-500/20 text-indigo-300 text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full border border-indigo-500/30">Narração Virtual</span>
+            <h3 class="text-sm font-bold text-white mt-1.5 drop-shadow-md">Por que contratar o Agendamente para a sua empresa?</h3>
+          </div>
+        </div>
+        <div id="ai-video-player-container" class="absolute inset-0 bg-slate-950 hidden z-20 flex items-center justify-center overflow-hidden">
+          <video id="real-ai-video" src="/video.mp4" class="absolute h-full w-[178%] max-w-none object-cover hidden z-10 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" playsinline></video>
+        </div>
+      </div>
+    </div>
+
+    <!-- SIMULADOR INTERATIVO -->
+    <div class="pt-12 max-w-5xl mx-auto relative select-none">
+      <div class="absolute -inset-2 bg-gradient-to-r from-indigo-500/20 via-purple-500/20 to-emerald-500/20 rounded-[40px] blur-2xl opacity-45"></div>
+      <div class="relative glass-card-dark border border-white/10 rounded-[32px] p-4 sm:p-6 bg-[#0c0d16]/75 shadow-2xl overflow-hidden text-left">
+        <div class="absolute -top-40 -right-40 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 border-b border-white/5 pb-4 mb-6 text-center text-xs">
+          <button onclick="setDemoStep(0)" id="demo-tab-0" class="pb-2.5 border-b-2 border-indigo-500 text-indigo-400 font-bold transition-all flex flex-col sm:flex-row items-center justify-center gap-1.5 cursor-pointer">
+            <span class="w-5 h-5 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 flex items-center justify-center text-[10px] font-bold animate-pulse">1</span>
+            <span class="truncate">Agendamento & Pix</span>
+          </button>
+          <button onclick="setDemoStep(1)" id="demo-tab-1" class="pb-2.5 border-b-2 border-transparent text-slate-500 hover:text-white font-medium transition-all flex flex-col sm:flex-row items-center justify-center gap-1.5 cursor-pointer">
+            <span class="w-5 h-5 rounded-full bg-white/5 border border-white/10 text-slate-500 flex items-center justify-center text-[10px]">2</span>
+            <span class="truncate">WhatsApp Anti-Furo</span>
+          </button>
+          <button onclick="setDemoStep(2)" id="demo-tab-2" class="pb-2.5 border-b-2 border-transparent text-slate-500 hover:text-white font-medium transition-all flex flex-col sm:flex-row items-center justify-center gap-1.5 cursor-pointer">
+            <span class="w-5 h-5 rounded-full bg-white/5 border border-white/10 text-slate-500 flex items-center justify-center text-[10px]">3</span>
+            <span class="truncate">Painel & Finanças</span>
+          </button>
+          <button onclick="setDemoStep(3)" id="demo-tab-3" class="pb-2.5 border-b-2 border-transparent text-slate-500 hover:text-white font-medium transition-all flex flex-col sm:flex-row items-center justify-center gap-1.5 cursor-pointer">
+            <span class="w-5 h-5 rounded-full bg-white/5 border border-white/10 text-slate-500 flex items-center justify-center text-[10px]">4</span>
+            <span class="truncate">Equipes & Repasse</span>
+          </button>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-stretch min-h-[460px] pb-4">
+          <div class="md:col-span-5 flex flex-col items-center justify-center relative">
+            <div class="w-[260px] h-[460px] rounded-[36px] border-[8px] border-slate-800 bg-[#0c0d12] shadow-2xl relative overflow-hidden flex flex-col">
+              <div class="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-5 bg-slate-800 rounded-b-xl z-30 flex items-center justify-center gap-1"><span class="w-10 h-0.5 bg-black rounded-full block"></span><span class="w-1.5 h-1.5 bg-black rounded-full block"></span></div>
+              <div class="flex-1 pt-6 px-3 pb-3 overflow-y-auto flex flex-col text-left select-none text-[10px] relative bg-slate-50">
+                <!-- Celular - Tela 0: Checkout de Agendamento com Pix -->
+                <div id="phone-screen-0" class="flex-1 flex flex-col justify-between text-slate-800">
+                  <div class="space-y-3">
+                    <!-- Header do Salão -->
+                    <div class="flex items-center gap-2 border-b border-slate-200 pb-2">
+                      <div class="w-7 h-7 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-black text-xs">S</div>
+                      <div>
+                        <h4 class="font-bold text-[9px] text-slate-800">Studio & Estética Premium</h4>
+                        <p class="text-[7px] text-slate-500">Agendamento Online</p>
+                      </div>
+                    </div>
+                    
+                    <!-- Detalhe do Serviço -->
+                    <div class="bg-white p-2 rounded-xl border border-slate-150 space-y-1">
+                      <div class="flex justify-between items-start">
+                        <span class="font-bold text-[9px]">Corte Degradê + Barba</span>
+                        <span class="text-indigo-600 font-bold text-[9px]">R$ 70,00</span>
+                      </div>
+                      <p class="text-[7px] text-slate-500">Profissional: Thiago Silva | Duração: 45 min</p>
+                      <div class="flex items-center gap-1 text-[7px] text-slate-650 pt-1">
+                        <i data-lucide="calendar" class="w-2.5 h-2.5 text-slate-400"></i>
+                        <span>Hoje às 15:30</span>
+                      </div>
+                    </div>
+
+                    <!-- Mensagem de Reserva Garantida -->
+                    <div class="bg-indigo-50 border border-indigo-100 p-2 rounded-xl text-slate-700 text-[7px] space-y-0.5">
+                      <p class="font-bold text-indigo-700">🔒 Reserva Garantida no Pix</p>
+                      <p>Pague o Pix de garantia nas próximas etapas para bloquear o horário na agenda.</p>
+                    </div>
+                  </div>
+
+                  <!-- Ações de Checkout -->
+                  <div class="pt-2">
+                    <!-- Botão de Pagar (Fica visível no início) -->
+                    <button id="phone-btn-checkout" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 rounded-xl shadow-lg shadow-indigo-600/10 text-center flex items-center justify-center gap-1.5 transition-all">
+                      Confirmar & Pagar Pix (R$ 70,00) <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                    </button>
+
+                    <!-- QR Code Pix (Fica visível no passo do Pix) -->
+                    <div id="phone-pix-qr" class="hidden space-y-2 text-center bg-white p-3 rounded-2xl border border-slate-200">
+                      <p class="text-[7px] font-bold text-slate-700">Escaneie ou Copie o Código Pix</p>
+                      <div class="w-24 h-24 mx-auto bg-slate-100 border border-slate-200 flex items-center justify-center rounded-xl p-1 relative">
+                        <div class="w-full h-full bg-cover bg-center" style="background-image: url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%23f1f5f9%22/><path d=%22M10 10h30v30H10zm10 10v10h10V20zM60 10h30v30H60zm10 10v10h10V20zM10 60h30v30H10zm10 10v10h10V20zM50 50h10v10H50zm10 10h10v10H60zm10-10h10v10H70zm10 10h10v10H80zm-10 10h10v10H70zm-20 0h10v10H50z%22 fill=%22%23334155%22/></svg>')"></div>
+                        <!-- Efeito escâner legal -->
+                        <div class="absolute inset-x-0 top-0 h-0.5 bg-indigo-500 animate-bounce"></div>
+                      </div>
+                      <div class="bg-slate-50 p-1 rounded-lg border border-slate-200 flex items-center justify-between gap-1">
+                        <span class="truncate text-[6px] text-slate-500 text-left font-mono">00020101021226830014br.gov.bcb.pix2561api.agendamente.com/v2/pix/qr/deivid...</span>
+                        <span class="bg-indigo-100 text-indigo-600 font-bold px-1.5 py-0.5 rounded text-[5px] shrink-0">Copiar</span>
+                      </div>
+                      <p class="text-[6px] text-amber-600 animate-pulse">⏱ Expira em 10 minutos</p>
+                    </div>
+
+                    <!-- Sucesso Pix (Fica visível após pagamento) -->
+                    <div id="phone-pix-success" class="hidden text-center p-4 space-y-2 bg-emerald-50 border border-emerald-150 rounded-2xl">
+                      <div class="w-8 h-8 rounded-full bg-emerald-500 text-white flex items-center justify-center mx-auto shadow-md animate-scale-in">
+                        <i data-lucide="check" class="w-4 h-4"></i>
+                      </div>
+                      <div>
+                        <h4 class="font-black text-emerald-800 text-[10px]">Agendamento Confirmado!</h4>
+                        <p class="text-[7px] text-emerald-600 mt-0.5">O pagamento Pix de R$ 70,00 foi compensado instantaneamente.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Celular - Tela 1: WhatsApp Anti-Furo -->
+                <div id="phone-screen-1" class="hidden flex-1 flex flex-col bg-[#efeae2] relative rounded-b-[24px]">
+                  <!-- WhatsApp Header -->
+                  <div class="bg-[#075e54] text-white p-2 flex items-center gap-1.5">
+                    <i data-lucide="arrow-left" class="w-3 h-3 text-slate-200"></i>
+                    <div class="w-5 h-5 rounded-full bg-slate-300 flex items-center justify-center text-[8px] font-bold text-slate-750">A</div>
+                    <div>
+                      <h4 class="font-bold text-[8px] leading-tight">Agendamente Notificação</h4>
+                      <p class="text-[5px] text-slate-200">online</p>
+                    </div>
+                  </div>
+
+                  <!-- WhatsApp Chat Area -->
+                  <div class="flex-1 p-2 space-y-2 overflow-y-auto">
+                    <div class="text-center"><span class="bg-white/80 text-slate-500 text-[5px] px-1 py-0.5 rounded shadow-sm">HOJE</span></div>
+                    
+                    <!-- Balão de Lembrete -->
+                    <div class="max-w-[85%] bg-white rounded-lg p-2 shadow-sm text-slate-800 space-y-1">
+                      <p class="font-bold text-[7px] text-indigo-600">🔔 Lembrete de Agendamento</p>
+                      <p class="leading-normal text-[7px]">Olá, <b>Deivid Silva</b>!<br>Seu horário para <b>Corte Degradê + Barba</b> com Thiago Silva é <b>Hoje às 15:30</b>.</p>
+                      <p class="text-[6px] text-red-500 font-bold bg-red-50 p-1 rounded">⚠️ Confirmação obrigatória: Se não confirmar até as 11:30 (4h antes), seu horário será liberado automaticamente.</p>
+                      <div class="pt-1 border-t border-slate-100 flex flex-col gap-1">
+                        <button id="wa-btn-confirm" class="w-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-bold py-1 rounded text-[7px] flex items-center justify-center gap-1 shadow-sm transition-all">
+                          <i data-lucide="check" class="w-2.5 h-2.5 text-emerald-500"></i> Confirmar Presença
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- Resposta Automática do WhatsApp (Fica visível após clicar) -->
+                    <div id="phone-wa-reply" class="hidden ml-auto max-w-[80%] bg-[#dcf8c6] rounded-lg p-2 shadow-sm text-slate-800">
+                      <p class="text-[7px]">✅ Presença Confirmada! Estou a caminho.</p>
+                      <span class="text-[5px] text-slate-500 block text-right mt-0.5">11:02</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="md:col-span-7 flex flex-col justify-center">
+            <div class="border border-white/10 rounded-2xl bg-white overflow-hidden shadow-2xl flex flex-col h-full">
+              <div class="flex items-center justify-between border-b border-slate-200/60 px-3 py-2 bg-slate-50"><div class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-red-400"></span><span class="w-1.5 h-1.5 rounded-full bg-yellow-400"></span><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span></div><span class="text-[8px] text-slate-400 font-mono">admin.agendamente.com/dashboard</span></div>
+              
+              <!-- Dashboard ERP -->
+              <div class="flex-1 bg-slate-50 p-3 sm:p-4 text-slate-800 text-[9px] flex flex-col justify-between overflow-y-auto">
+                <div class="space-y-4">
+                  <!-- Dashboard Header -->
+                  <div class="flex justify-between items-center">
+                    <div>
+                      <h4 class="font-black text-slate-900 text-xs">Painel Administrativo</h4>
+                      <p class="text-[7px] text-slate-500">Controle total da sua empresa em um só lugar</p>
+                    </div>
+                    <span class="bg-indigo-100 text-indigo-700 font-extrabold text-[7px] px-2 py-0.5 rounded-full">Dono</span>
+                  </div>
+
+                  <!-- Cards Financeiros -->
+                  <div class="grid grid-cols-3 gap-2">
+                    <div class="bg-white p-2 rounded-xl border border-slate-200 shadow-sm">
+                      <p class="text-[6px] text-slate-500 font-bold uppercase tracking-wider">Faturamento Hoje</p>
+                      <p class="text-xs font-black text-slate-900 mt-0.5">R$ <span id="dashboard-faturamento">1.250,00</span></p>
+                    </div>
+                    <div class="bg-white p-2 rounded-xl border border-slate-200 shadow-sm">
+                      <p class="text-[6px] text-slate-500 font-bold uppercase tracking-wider">Comissões Equipe</p>
+                      <p class="text-xs font-black text-slate-900 mt-0.5">R$ <span id="dashboard-comissoes">625,00</span></p>
+                    </div>
+                    <div class="bg-white p-2 rounded-xl border border-slate-200 shadow-sm">
+                      <p class="text-[6px] text-slate-500 font-bold uppercase tracking-wider">Ocupação Agenda</p>
+                      <p class="text-xs font-black text-emerald-600 mt-0.5">94% <span class="text-[6px] text-slate-400 font-normal">alto</span></p>
+                    </div>
+                  </div>
+
+                  <!-- Tabela de Agendamentos do Dia -->
+                  <div class="space-y-1.5">
+                    <p class="font-bold text-[8px] text-slate-700 uppercase tracking-wider">Próximos Agendamentos</p>
+                    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+                      <table class="w-full text-left border-collapse">
+                        <thead>
+                          <tr class="bg-slate-50 border-b border-slate-100 text-[7px] text-slate-500 font-bold">
+                            <th class="p-1.5">Cliente</th>
+                            <th class="p-1.5">Serviço</th>
+                            <th class="p-1.5">Profissional</th>
+                            <th class="p-1.5">Horário</th>
+                            <th class="p-1.5">Status</th>
+                          </tr>
+                        </thead>
+                        <tbody class="text-[7px]">
+                          <tr class="border-b border-slate-50">
+                            <td class="p-1.5 font-bold">Deivid Silva</td>
+                            <td class="p-1.5 text-slate-600">Corte + Barba</td>
+                            <td class="p-1.5">Thiago Silva</td>
+                            <td class="p-1.5">15:30</td>
+                            <td class="p-1.5">
+                              <span id="status-pill-deivid" class="px-1.5 py-0.5 rounded-full text-[6px] font-black uppercase tracking-wider bg-amber-50 border border-amber-200 text-amber-600">Pendente</span>
+                            </td>
+                          </tr>
+                          <tr class="border-b border-slate-50">
+                            <td class="p-1.5 font-bold">Julio Cesar</td>
+                            <td class="p-1.5 text-slate-600">Degradê Social</td>
+                            <td class="p-1.5">Thiago Silva</td>
+                            <td class="p-1.5">16:30</td>
+                            <td class="p-1.5"><span class="px-1.5 py-0.5 rounded-full text-[6px] font-black uppercase tracking-wider bg-emerald-50 border border-emerald-200 text-emerald-600">Confirmado</span></td>
+                          </tr>
+                          <tr>
+                            <td class="p-1.5 font-bold">Felipe Pires</td>
+                            <td class="p-1.5 text-slate-600">Corte Tesoura</td>
+                            <td class="p-1.5">Bruno Costa</td>
+                            <td class="p-1.5">17:15</td>
+                            <td class="p-1.5"><span class="px-1.5 py-0.5 rounded-full text-[6px] font-black uppercase tracking-wider bg-emerald-50 border border-emerald-200 text-emerald-600">Confirmado</span></td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Feed/Log System -->
+                <div class="mt-4 pt-2 border-t border-slate-200 flex items-center justify-between">
+                  <div class="flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
+                    <span id="dashboard-feed-text" class="text-[7px] text-slate-500 font-bold">Aguardando pagamento Pix do cliente Deivid Silva...</span>
+                  </div>
+                  <span class="text-[6px] font-mono text-slate-400">v1.2.4</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="border-t border-white/5 pt-3 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+          <div class="flex items-center gap-3 w-full sm:w-auto">
+            <button onclick="toggleDemoPlay()" id="demo-play-btn" class="w-8 h-8 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white flex items-center justify-center transition-all cursor-pointer shadow-lg shrink-0"><i id="demo-play-icon" data-lucide="pause" class="w-3.5 h-3.5"></i></button>
+            <button onclick="playAIPresentationVideo()" class="btn border border-indigo-500/30 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 py-1.5 px-3 rounded-lg text-[10px] font-bold flex items-center gap-1.5 transition-all animate-pulse"><i data-lucide="play-circle" class="w-3.5 h-3.5"></i> Ver Apresentação IA</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- NICHES -->
+  <section class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mt-28 space-y-8 text-center">
+    <div class="space-y-2 max-w-2xl mx-auto">
+      <h2 class="text-2xl sm:text-4xl font-extrabold text-white">Criado sob medida para o seu setor</h2>
+    </div>
+    <div class="flex gap-2 justify-start md:justify-center border-b border-white/5 pb-2 overflow-x-auto select-none px-4 md:px-0">
+      <button onclick="switchNicheTab('beleza')" id="niche-btn-beleza" class="btn px-5 py-3 text-xs font-bold rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white flex items-center gap-2 shrink-0 shadow-lg shadow-indigo-600/20 border border-indigo-500/30 transition-all">
+        <i data-lucide="scissors" class="w-4 h-4"></i> Beleza & Estética
+      </button>
+      <button onclick="switchNicheTab('saude')" id="niche-btn-saude" class="btn px-5 py-3 text-xs font-bold rounded-xl text-slate-400 hover:text-white border border-white/5 bg-white/5 flex items-center gap-2 shrink-0 transition-all">
+        <i data-lucide="activity" class="w-4 h-4 text-indigo-400"></i> Saúde & Terapias
+      </button>
+      <button onclick="switchNicheTab('esporte')" id="niche-btn-esporte" class="btn px-5 py-3 text-xs font-bold rounded-xl text-slate-400 hover:text-white border border-white/5 bg-white/5 flex items-center gap-2 shrink-0 transition-all">
+        <i data-lucide="dumbbell" class="w-4 h-4 text-indigo-400"></i> Studios & Personal
+      </button>
+    </div>
+    <div class="glass-card-dark p-6 sm:p-8 border border-white/10 rounded-3xl bg-[#0d101a]/60 shadow-2xl text-left">
+      <!-- Beleza & Estética -->
+      <div id="niche-content-beleza" class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+        <div class="space-y-5">
+          <span class="inline-flex items-center gap-1.5 bg-indigo-500/10 border border-indigo-500/25 text-indigo-400 text-[10px] font-extrabold uppercase px-3 py-1 rounded-full tracking-wider">
+            Para Barbearias, Salões e Estética
+          </span>
+          <h3 class="text-2xl sm:text-3xl font-black text-white leading-tight">Gestão inteligente e comissões automáticas</h3>
+          <p class="text-slate-400 text-sm font-medium">
+            Acabe com a confusão mental nas contas de sábado à noite. O Agendamente cuida do faturamento prévio com Pix e calcula instantaneamente a comissão de cada profissional parceiro, dando baixa física nos insumos usados de forma justa.
+          </p>
+          <ul class="space-y-2.5 pt-2">
+            <li class="flex items-center gap-2 text-xs text-slate-350">
+              <i data-lucide="check-circle" class="w-4 h-4 text-indigo-400 shrink-0"></i>
+              <span><b>Comissão Descomplicada:</b> Repasses de 50%, 40% ou taxas fixas calculadas no ato do fechamento.</span>
+            </li>
+            <li class="flex items-center gap-2 text-xs text-slate-350">
+              <i data-lucide="check-circle" class="w-4 h-4 text-indigo-400 shrink-0"></i>
+              <span><b>Estoque Inteligente:</b> Baixa automática de pomadas, toalhas e shampoos ao concluir o serviço.</span>
+            </li>
+            <li class="flex items-center gap-2 text-xs text-slate-350">
+              <i data-lucide="check-circle" class="w-4 h-4 text-indigo-400 shrink-0"></i>
+              <span><b>Checkout Pix Anti-Furo:</b> O cliente paga a garantia ou o valor total antes de agendar.</span>
+            </li>
+          </ul>
+        </div>
+        <div class="bg-indigo-950/20 border border-indigo-500/10 rounded-2xl p-5 relative overflow-hidden space-y-4">
+          <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full blur-2xl"></div>
+          <div class="flex items-center justify-between border-b border-white/5 pb-3">
+            <div class="flex items-center gap-2">
+              <i data-lucide="scissors" class="w-4 h-4 text-indigo-400"></i>
+              <span class="text-xs font-bold text-white">Cálculo de Repasse de Equipe</span>
+            </div>
+            <span class="text-[9px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-full">Automático</span>
+          </div>
+          <div class="space-y-3">
+            <div class="flex justify-between items-center bg-white/5 p-2.5 rounded-xl border border-white/5">
+              <div>
+                <p class="text-[9px] text-slate-400">Profissional Parceiro</p>
+                <p class="text-xs font-bold text-white">Thiago Silva (Cabeleireiro)</p>
+              </div>
+              <div class="text-right">
+                <p class="text-[9px] text-slate-400">Repasse (50%)</p>
+                <p class="text-xs font-bold text-emerald-400">+ R$ 35,00</p>
+              </div>
+            </div>
+            <div class="flex justify-between items-center bg-white/5 p-2.5 rounded-xl border border-white/5">
+              <div>
+                <p class="text-[9px] text-slate-400">Insumos Deduzidos</p>
+                <p class="text-xs font-bold text-white">Pomada Matte Premium</p>
+              </div>
+              <div class="text-right">
+                <p class="text-[9px] text-slate-400">Qtd.</p>
+                <p class="text-xs font-bold text-indigo-400">- 1 unid.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Saúde & Terapias -->
+      <div id="niche-content-saude" class="hidden grid-cols-1 md:grid-cols-2 gap-8 items-center">
+        <div class="space-y-5">
+          <span class="inline-flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 text-[10px] font-extrabold uppercase px-3 py-1 rounded-full tracking-wider">
+            Para Psicólogos, Terapeutas e Clínicas
+          </span>
+          <h3 class="text-2xl sm:text-3xl font-black text-white leading-tight">Consultório blindado de faltas e furos</h3>
+          <p class="text-slate-400 text-sm font-medium">
+            Evite janelas vazias na sua tarde de atendimentos. Nossa confirmação ativa de WhatsApp obriga o paciente a confirmar a presença. Se ele não fizer a tempo, o sistema cancela automaticamente e notifica a fila de espera.
+          </p>
+          <ul class="space-y-2.5 pt-2">
+            <li class="flex items-center gap-2 text-xs text-slate-350">
+              <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+              <span><b>Confirmação Inteligente:</b> Mensagens WhatsApp interativas com prazo limite de até 24h ou 4h antes.</span>
+            </li>
+            <li class="flex items-center gap-2 text-xs text-slate-350">
+              <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+              <span><b>Fila de Espera Digital:</b> O sistema detecta a vaga liberada e avisa pacientes na fila no automático.</span>
+            </li>
+            <li class="flex items-center gap-2 text-xs text-slate-350">
+              <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+              <span><b>Prontuário e Histórico:</b> Ficha completa de atendimentos e perfil financeiro de cada paciente.</span>
+            </li>
+          </ul>
+        </div>
+        <div class="bg-emerald-950/20 border border-emerald-500/10 rounded-2xl p-5 relative overflow-hidden space-y-4">
+          <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-2xl"></div>
+          <div class="flex items-center justify-between border-b border-white/5 pb-3">
+            <div class="flex items-center gap-2">
+              <i data-lucide="activity" class="w-4 h-4 text-emerald-400"></i>
+              <span class="text-xs font-bold text-white">Status de Confirmação Ativa</span>
+            </div>
+            <span class="text-[9px] bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-2 py-0.5 rounded-full">WhatsApp</span>
+          </div>
+          <div class="space-y-3">
+            <div class="flex items-center justify-between bg-white/5 p-2.5 rounded-xl border border-white/5">
+              <div>
+                <p class="text-[9px] text-slate-400">Paciente</p>
+                <p class="text-xs font-bold text-white">Paciente Silva (Sessão de Psicoterapia)</p>
+              </div>
+              <span class="text-[8px] bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 px-2 py-0.5 rounded-full font-black uppercase">Presença Confirmada</span>
+            </div>
+            <div class="flex items-center justify-between bg-white/5 p-2.5 rounded-xl border border-white/5">
+              <div>
+                <p class="text-[9px] text-slate-400">Próximo da Fila de Espera</p>
+                <p class="text-xs font-bold text-white">Roberto Nunes (Notificar)</p>
+              </div>
+              <span class="text-[8px] bg-slate-500/20 border border-white/10 text-slate-400 px-2 py-0.5 rounded-full uppercase">Enviar Alerta</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Studios & Personal -->
+      <div id="niche-content-esporte" class="hidden grid-cols-1 md:grid-cols-2 gap-8 items-center">
+        <div class="space-y-5">
+          <span class="inline-flex items-center gap-1.5 bg-purple-500/10 border border-purple-500/25 text-purple-400 text-[10px] font-extrabold uppercase px-3 py-1 rounded-full tracking-wider">
+            Para Studios, Personal e Aulas
+          </span>
+          <h3 class="text-2xl sm:text-3xl font-black text-white leading-tight">Controle de turmas, créditos e mensalidades</h3>
+          <p class="text-slate-400 text-sm font-medium">
+            Gerencie mensalidades recorrentes, pacotes de horas e a ocupação máxima de suas turmas de pilates, funcional ou yoga. O próprio aluno agenda e gerencia suas aulas respeitando suas regras de horário limite.
+          </p>
+          <ul class="space-y-2.5 pt-2">
+            <li class="flex items-center gap-2 text-xs text-slate-350">
+              <i data-lucide="check-circle" class="w-4 h-4 text-purple-400 shrink-0"></i>
+              <span><b>Pacotes de Créditos:</b> Os alunos compram pacotes de 10, 20 ou 30 aulas e agendam quando quiserem.</span>
+            </li>
+            <li class="flex items-center gap-2 text-xs text-slate-350">
+              <i data-lucide="check-circle" class="w-4 h-4 text-purple-400 shrink-0"></i>
+              <span><b>Políticas Anti-Falta:</b> Defina prazos para desmarcar (ex: até 12 horas antes) para não perder o crédito.</span>
+            </li>
+            <li class="flex items-center gap-2 text-xs text-slate-350">
+              <i data-lucide="check-circle" class="w-4 h-4 text-purple-400 shrink-0"></i>
+              <span><b>Links Rápidos de Check-in:</b> O aluno realiza o agendamento em segundos sem criar contas chatas.</span>
+            </li>
+          </ul>
+        </div>
+        <div class="bg-purple-950/20 border border-purple-500/10 rounded-2xl p-5 relative overflow-hidden space-y-4">
+          <div class="absolute top-0 right-0 w-32 h-32 bg-purple-500/5 rounded-full blur-2xl"></div>
+          <div class="flex items-center justify-between border-b border-white/5 pb-3">
+            <div class="flex items-center gap-2">
+              <i data-lucide="dumbbell" class="w-4 h-4 text-purple-400"></i>
+              <span class="text-xs font-bold text-white">Controle de Créditos de Aluno</span>
+            </div>
+            <span class="text-[9px] bg-purple-500/10 text-purple-400 border border-purple-500/20 px-2 py-0.5 rounded-full">Estúdio</span>
+          </div>
+          <div class="space-y-3">
+            <div class="flex justify-between items-center bg-white/5 p-2.5 rounded-xl border border-white/5">
+              <div>
+                <p class="text-[9px] text-slate-400">Aluno</p>
+                <p class="text-xs font-bold text-white">Gabriel Castro (Studio Pilates)</p>
+              </div>
+              <div class="text-right">
+                <p class="text-[9px] text-slate-400">Créditos Restantes</p>
+                <p class="text-xs font-bold text-indigo-400">8 de 12 aulas</p>
+              </div>
+            </div>
+            <div class="flex justify-between items-center bg-white/5 p-2.5 rounded-xl border border-white/5">
+              <div>
+                <p class="text-[9px] text-slate-400">Regra de Cancelamento</p>
+                <p class="text-xs font-bold text-white">Desmarcação Limite</p>
+              </div>
+              <div class="text-right">
+                <p class="text-[9px] text-slate-400">Prazo</p>
+                <p class="text-xs font-bold text-amber-400">Até 12h antes</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PILARES DE VALOR (DIFERENCIAIS) -->
+  <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-32 space-y-12 text-center relative animate-fade-in">
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-indigo-500/5 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="space-y-3 max-w-3xl mx-auto">
+      <span class="inline-flex items-center gap-1.5 bg-indigo-500/10 border border-indigo-500/25 text-indigo-400 text-[10px] font-extrabold uppercase px-3 py-1 rounded-full tracking-wider">
+        Tecnologia Blindada Contra Faltas
+      </span>
+      <h2 class="text-3xl sm:text-5xl font-black text-white leading-tight">Por que o Agendamente é diferente de qualquer outro sistema?</h2>
+      <p class="text-slate-400 text-sm sm:text-base max-w-xl mx-auto">Nós não somos apenas uma agenda digital. Nós focamos na saúde financeira do seu negócio: mais faturamento, zero furos e menos trabalho manual.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-left">
+      <!-- Card 1 -->
+      <div class="glass-card-dark p-6 bg-[#0d101a]/40 border border-white/5 rounded-3xl space-y-4 hover:border-indigo-500/30 transition-all">
+        <div class="w-10 h-10 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center shadow-lg">
+          <i data-lucide="zap" class="w-5 h-5"></i>
+        </div>
+        <div class="space-y-2">
+          <h3 class="text-base font-bold text-white">Garantia Pix Antecipado</h3>
+          <p class="text-slate-400 text-xs leading-relaxed">
+            Acabe com clientes fantasma. O sistema gera cobrança automática via Pix dinâmico no checkout. O horário só é bloqueado após a aprovação do pagamento pelo banco.
+          </p>
+        </div>
+      </div>
+      <!-- Card 2 -->
+      <div class="glass-card-dark p-6 bg-[#0d101a]/40 border border-white/5 rounded-3xl space-y-4 hover:border-purple-500/30 transition-all">
+        <div class="w-10 h-10 rounded-2xl bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center justify-center shadow-lg">
+          <i data-lucide="message-square" class="w-5 h-5"></i>
+        </div>
+        <div class="space-y-2">
+          <h3 class="text-base font-bold text-white">Lembretes WhatsApp Anti-Furo</h3>
+          <p class="text-slate-400 text-xs leading-relaxed">
+            O sistema envia notificações de confirmação ativas. Se o cliente não confirmar até o prazo determinado (ex: 4h antes), a vaga é liberada automaticamente para outro.
+          </p>
+        </div>
+      </div>
+      <!-- Card 3 -->
+      <div class="glass-card-dark p-6 bg-[#0d101a]/40 border border-white/5 rounded-3xl space-y-4 hover:border-emerald-500/30 transition-all">
+        <div class="w-10 h-10 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center shadow-lg">
+          <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
+        </div>
+        <div class="space-y-2">
+          <h3 class="text-base font-bold text-white">Mini-ERP & Fluxo de Caixa</h3>
+          <p class="text-slate-400 text-xs leading-relaxed">
+            Substitua planilhas complexas por um painel simples de faturamento, despesas fixas/variáveis e acompanhe seu Lucro Líquido Real mensal em tempo real.
+          </p>
+        </div>
+      </div>
+      <!-- Card 4 -->
+      <div class="glass-card-dark p-6 bg-[#0d101a]/40 border border-white/5 rounded-3xl space-y-4 hover:border-amber-500/30 transition-all">
+        <div class="w-10 h-10 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center shadow-lg">
+          <i data-lucide="users" class="w-5 h-5"></i>
+        </div>
+        <div class="space-y-2">
+          <h3 class="text-base font-bold text-white">Comissões & Equipes</h3>
+          <p class="text-slate-400 text-xs leading-relaxed">
+            Configure taxas de comissão personalizadas para cada profissional parceiro da sua equipe. O sistema divide os valores e atualiza o caixa na mesma hora.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SEÇÃO COMO FUNCIONA -->
+  <section class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mt-32 space-y-16">
+    <div class="text-center space-y-3 max-w-2xl mx-auto">
+      <span class="inline-flex items-center gap-1.5 bg-indigo-500/10 border border-indigo-500/25 text-indigo-400 text-[10px] font-extrabold uppercase px-3 py-1 rounded-full tracking-wider">
+        Simplicidade na Prática
+      </span>
+      <h2 class="text-3xl sm:text-4xl font-extrabold text-white">Como funciona na prática?</h2>
+      <p class="text-slate-400 text-sm">A jornada do seu cliente desde o primeiro clique até a fidelização.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+      <!-- Linha conectora nas telas grandes -->
+      <div class="hidden md:block absolute top-16 left-[15%] right-[15%] h-[2px] bg-gradient-to-r from-indigo-500/20 via-purple-500/20 to-emerald-500/20 z-0"></div>
+      
+      <!-- Passo 1 -->
+      <div class="text-center space-y-4 relative z-10">
+        <div class="w-14 h-14 rounded-2xl bg-[#0d101a] border border-white/10 flex items-center justify-center text-indigo-400 text-lg font-black mx-auto shadow-xl">1</div>
+        <h3 class="text-base font-bold text-white">Cliente agenda e paga</h3>
+        <p class="text-slate-400 text-xs max-w-xs mx-auto leading-relaxed">
+          O cliente acessa seu link exclusivo no celular, escolhe o horário livre e realiza o pagamento no checkout via Pix dinâmico seguro.
+        </p>
+      </div>
+      <!-- Passo 2 -->
+      <div class="text-center space-y-4 relative z-10">
+        <div class="w-14 h-14 rounded-2xl bg-[#0d101a] border border-white/10 flex items-center justify-center text-purple-400 text-lg font-black mx-auto shadow-xl">2</div>
+        <h3 class="text-base font-bold text-white">Confirmação via WhatsApp</h3>
+        <p class="text-slate-400 text-xs max-w-xs mx-auto leading-relaxed">
+          Nosso robô envia mensagens automáticas de véspera ou horas antes. Se ele clicar em "Confirmar", a vaga está garantida. Caso não confirme, cancelamos e liberamos a vaga.
+        </p>
+      </div>
+      <!-- Passo 3 -->
+      <div class="text-center space-y-4 relative z-10">
+        <div class="w-14 h-14 rounded-2xl bg-[#0d101a] border border-white/10 flex items-center justify-center text-emerald-400 text-lg font-black mx-auto shadow-xl">3</div>
+        <h3 class="text-base font-bold text-white">Controle financeiro automático</h3>
+        <p class="text-slate-400 text-xs max-w-xs mx-auto leading-relaxed">
+          O faturamento cai na sua conta, a comissão do profissional parceiro é creditada e os insumos de estoque são deduzidos automaticamente.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- OUTROS RECURSOS -->
+  <section class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mt-32 space-y-12">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+      <div class="space-y-6">
+        <h2 class="text-3xl font-extrabold text-white leading-tight">Um sistema completo de ponta a ponta</h2>
+        <p class="text-slate-400 text-sm font-medium">
+          Diga adeus à complicação de usar 3 aplicativos diferentes para gerenciar sua empresa. O Agendamente centraliza tudo o que você precisa em um painel responsivo que funciona lindamente no computador e celular.
+        </p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="flex gap-2.5">
+            <i data-lucide="smartphone" class="w-5 h-5 text-indigo-400 shrink-0"></i>
+            <div>
+              <h4 class="text-xs font-bold text-white">Aplicativo PWA Instalável</h4>
+              <p class="text-slate-500 text-[10px] leading-relaxed">Instale na tela inicial do celular ou PC sem passar por lojas de aplicativos.</p>
+            </div>
+          </div>
+          <div class="flex gap-2.5">
+            <i data-lucide="package" class="w-5 h-5 text-indigo-400 shrink-0"></i>
+            <div>
+              <h4 class="text-xs font-bold text-white">Catálogo & Fotos de Produtos</h4>
+              <p class="text-slate-500 text-[10px] leading-relaxed">Cadastre fotos de seus produtos para controle de estoque e vendas rápidas.</p>
+            </div>
+          </div>
+          <div class="flex gap-2.5">
+            <i data-lucide="sliders" class="w-5 h-5 text-indigo-400 shrink-0"></i>
+            <div>
+              <h4 class="text-xs font-bold text-white">Módulos Customizáveis</h4>
+              <p class="text-slate-500 text-[10px] leading-relaxed">Esconda ou mostre recursos (equipe, estoque, despesas) conforme seu perfil.</p>
+            </div>
+          </div>
+          <div class="flex gap-2.5">
+            <i data-lucide="history" class="w-5 h-5 text-indigo-400 shrink-0"></i>
+            <div>
+              <h4 class="text-xs font-bold text-white">Histórico de Clientes</h4>
+              <p class="text-slate-500 text-[10px] leading-relaxed">Saiba exatamente quantas vezes cada cliente comprou e quanto ele gastou.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-indigo-500/5 border border-white/5 rounded-3xl p-6 relative overflow-hidden shadow-2xl">
+        <div class="absolute -top-12 -left-12 w-48 h-48 bg-indigo-500/10 rounded-full blur-3xl"></div>
+        <div class="relative space-y-4">
+          <div class="flex justify-between items-center bg-white/5 p-3 rounded-2xl border border-white/5 shadow-sm">
+            <div class="flex items-center gap-2">
+              <i data-lucide="user-check" class="w-4 h-4 text-emerald-400"></i>
+              <div>
+                <h4 class="text-[10px] font-bold text-white">Faturamento Líquido Real</h4>
+                <p class="text-[8px] text-slate-400">Diferença entre entradas e saídas de caixa</p>
+              </div>
+            </div>
+            <span class="text-xs font-extrabold text-emerald-400">R$ 4.870,00</span>
+          </div>
+          <div class="flex justify-between items-center bg-white/5 p-3 rounded-2xl border border-white/5 shadow-sm">
+            <div class="flex items-center gap-2">
+              <i data-lucide="trending-up" class="w-4 h-4 text-indigo-400"></i>
+              <div>
+                <h4 class="text-[10px] font-bold text-white">Taxa de Confirmação Ativa</h4>
+                <p class="text-[8px] text-slate-400">Confirmados pelo lembrete WhatsApp</p>
+              </div>
+            </div>
+            <span class="text-xs font-extrabold text-indigo-400">98,2%</span>
+          </div>
+          <div class="flex justify-between items-center bg-white/5 p-3 rounded-2xl border border-white/5 shadow-sm">
+            <div class="flex items-center gap-2">
+              <i data-lucide="clock" class="w-4 h-4 text-purple-400"></i>
+              <div>
+                <h4 class="text-[10px] font-bold text-white">Horas Recuperadas</h4>
+                <p class="text-[8px] text-slate-400">Por automatizar disparos de mensagens</p>
+              </div>
+            </div>
+            <span class="text-xs font-extrabold text-purple-400">32h / mês</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING (PLANOS) -->
+  <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-32 space-y-12 text-center relative">
+    <div class="absolute -top-12 left-1/2 -translate-x-1/2 w-80 h-80 bg-purple-500/5 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="space-y-3 max-w-2xl mx-auto">
+      <span class="inline-flex items-center gap-1.5 bg-purple-500/10 border border-purple-500/25 text-purple-400 text-[10px] font-extrabold uppercase px-3 py-1 rounded-full tracking-wider">
+        Planos & Investimento
+      </span>
+      <h2 class="text-3xl sm:text-4xl font-extrabold text-white">Investimento pequeno. Retorno gigante.</h2>
+      <p class="text-slate-400 text-sm">Sem taxas ocultas, contratos de fidelidade ou multas de cancelamento.</p>
+    </div>
+
+    <div class="max-w-md mx-auto">
+      <div class="glass-card-dark border-2 border-indigo-500/40 bg-[#0d101a]/70 p-8 rounded-3xl space-y-6 relative shadow-2xl">
+        <!-- Badge Destaque -->
+        <span class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-[9px] font-extrabold px-3 py-1 rounded-full border border-indigo-400/25 uppercase tracking-wider shadow-md">Mais Vendido</span>
+        
+        <div class="space-y-2">
+          <h3 class="text-xl font-bold text-white">Plano Pro Completo</h3>
+          <p class="text-slate-400 text-xs">Acesso total a todos os recursos e inteligência anti-furo</p>
+        </div>
+        
+        <div class="py-3 space-y-3 bg-white/[0.02] border border-white/5 rounded-2xl p-4 my-2">
+          <p class="text-[10px] text-slate-500 line-through">De R$ 69,90</p>
+          <div class="space-y-2">
+            <span class="bg-indigo-500/10 text-indigo-400 border border-indigo-500/25 text-[9px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider inline-block">
+              🎁 <span id="dias-trial-badge">7</span> Dias Grátis + Preço Especial
+            </span>
+            <div class="flex items-baseline justify-center gap-1">
+              <span class="text-slate-400 text-lg font-bold">R$</span>
+              <span id="preco-primeiro-mes-site" class="text-6xl font-black text-white tracking-tight">14,90</span>
+              <span class="text-slate-450 text-xs font-bold ml-1">no 1º mês</span>
+            </div>
+            <p class="text-[11px] text-slate-400">
+              Após esse período: <b class="text-slate-200">R$ <span id="preco-mensalidade-site">21,90</span>/mês</b>
+            </p>
+          </div>
+          <div class="pt-1.5 border-t border-white/5">
+            <p class="text-[10px] text-emerald-400 font-extrabold flex items-center justify-center gap-1">
+              <i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-400"></i> Sem fidelidade. Cancele quando quiser.
+            </p>
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-white/5 space-y-3.5 text-left text-xs text-slate-300">
+          <div class="flex items-center gap-2.5">
+            <i data-lucide="check" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+            <span>Agendamentos Online Ilimitados</span>
+          </div>
+          <div class="flex items-center gap-2.5">
+            <i data-lucide="check" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+            <span>Notificações de Lembrete WhatsApp Inclusas</span>
+          </div>
+          <div class="flex items-center gap-2.5">
+            <i data-lucide="check" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+            <span>Cobrança Pix Dinâmico no Checkout</span>
+          </div>
+          <div class="flex items-center gap-2.5">
+            <i data-lucide="check" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+            <span>Gestão de Equipes & Comissões</span>
+          </div>
+          <div class="flex items-center gap-2.5">
+            <i data-lucide="check" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+            <span>Fluxo de Caixa, Despesas & Relatórios DRE</span>
+          </div>
+          <div class="flex items-center gap-2.5">
+            <i data-lucide="check" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+            <span>Catálogo de Produtos & Controle de Estoque</span>
+          </div>
+        </div>
+
+        <div class="pt-4">
+          <a href="/admin-login?register=true" class="btn btn-cosmic-primary w-full py-3.5 rounded-xl font-black text-xs shadow-lg text-center flex items-center justify-center gap-2">
+            Iniciar Meu Teste Grátis Agora <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DEPOIMENTOS -->
+  <section class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mt-32 space-y-12 text-center">
+    <div class="space-y-3 max-w-2xl mx-auto">
+      <span class="inline-flex items-center gap-1.5 bg-indigo-500/10 border border-indigo-500/25 text-indigo-400 text-[10px] font-extrabold uppercase px-3 py-1 rounded-full tracking-wider">
+        Prova Real de Sucesso
+      </span>
+      <h2 class="text-3xl sm:text-4xl font-extrabold text-white">Quem usa, aprova e lucra mais</h2>
+      <p class="text-slate-400 text-sm">Empresas e profissionais de todos os setores que transformaram a gestão da sua agenda.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
+      <!-- Depoimento 1 -->
+      <div class="glass-card-dark p-6 bg-[#0d101a]/30 border border-white/5 rounded-2xl flex flex-col justify-between space-y-6">
+        <div class="space-y-3">
+          <div class="flex text-amber-400 gap-0.5">
+            <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
+            <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
+            <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
+            <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
+            <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
+          </div>
+          <p class="text-slate-300 text-xs leading-relaxed italic">
+            "No meu salão de beleza as faltas no sábado eram recorrentes. Com o Pix antecipado obrigatório e os lembretes do WhatsApp, zeramos as faltas no primeiro mês. O sistema se pagou em 2 dias."
+          </p>
+        </div>
+        <div class="flex items-center gap-2.5 pt-2">
+          <div class="w-8 h-8 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-xs">J</div>
+          <div>
+            <h4 class="text-[10px] font-bold text-white">Juliana Vieira</h4>
+            <p class="text-[8px] text-slate-500">Dona do Studio Jô Cabelos</p>
+          </div>
+        </div>
+      </div>
+      <!-- Depoimento 2 -->
+      <div class="glass-card-dark p-6 bg-[#0d101a]/30 border border-white/5 rounded-2xl flex flex-col justify-between space-y-6">
+        <div class="space-y-3">
+          <div class="flex text-amber-400 gap-0.5">
+            <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
+            <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
+            <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
+            <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
+            <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
+          </div>
+          <p class="text-slate-300 text-xs leading-relaxed italic">
+            "Como psicóloga, meus pacientes de primeira consulta costumavam furar muito. Cobrando o Pix de garantia pelo sistema, garanto meu horário de trabalho e a taxa de ocupação do meu consultório aumentou de 70% para 95%."
+          </p>
+        </div>
+        <div class="flex items-center gap-2.5 pt-2">
+          <div class="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-xs">A</div>
+          <div>
+            <h4 class="text-[10px] font-bold text-white">Dra. Amanda Costa</h4>
+            <p class="text-[8px] text-slate-500">Psicóloga Clínica</p>
+          </div>
+        </div>
+      </div>
+      <!-- Depoimento 3 -->
+      <div class="glass-card-dark p-6 bg-[#0d101a]/30 border border-white/5 rounded-2xl flex flex-col justify-between space-y-6">
+        <div class="space-y-3">
+          <div class="flex text-amber-400 gap-0.5">
+            <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
+            <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
+            <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
+            <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
+            <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
+          </div>
+          <p class="text-slate-300 text-xs leading-relaxed italic">
+            "A comissão automática mudou nossa rotina. Thiago e Bruno sempre sabem o valor exato a receber, e eu controlo o fluxo de caixa de forma limpa. O catálogo com fotos facilitou o estoque."
+          </p>
+        </div>
+        <div class="flex items-center gap-2.5 pt-2">
+          <div class="w-8 h-8 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center font-bold text-xs">R</div>
+          <div>
+            <h4 class="text-[10px] font-bold text-white">Rodrigo Barbosa</h4>
+            <p class="text-[8px] text-slate-500">Dono de Barbearia Premium</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  <!-- CENTRAL DE AJUDA & SUPORTE -->
+  <section id="ajuda-suporte-section" class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mt-32 space-y-12">
+    <div class="text-center space-y-3">
+      <span class="inline-flex items-center gap-1.5 bg-indigo-500/10 border border-indigo-500/25 text-indigo-400 text-[10px] font-extrabold uppercase px-3 py-1 rounded-full tracking-wider">
+        Central de Ajuda
+      </span>
+      <h2 class="text-2xl sm:text-4xl font-extrabold text-white">Precisa de suporte ou tem dúvidas?</h2>
+      <p class="text-slate-400 text-sm">Escolha a melhor forma de falar conosco ou consulte nossos guias rápidos.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
+      <!-- Coluna 1: Tutoriais Rápidos -->
+      <div class="glass-card-dark p-6 bg-[#0d101a]/30 border border-white/5 rounded-2xl flex flex-col justify-between space-y-6">
+        <div class="space-y-4">
+          <div class="w-10 h-10 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center shadow-lg">
+            <i data-lucide="book-open" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-white">Guias e Tutoriais</h3>
+            <p class="text-slate-400 text-xs leading-relaxed mt-1">
+              Aprenda a configurar seu Pix de recebimento, cadastrar serviços e gerenciar sua equipe em menos de 5 minutos.
+            </p>
+          </div>
+        </div>
+        <button onclick="openHelpWidget('tutoriais')" class="btn border border-white/10 bg-white/5 hover:bg-white/10 text-white py-2.5 px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all">
+          Ver Tutoriais <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+        </button>
+      </div>
+
+      <!-- Coluna 2: WhatsApp Direto -->
+      <div class="glass-card-dark p-6 bg-[#0d101a]/40 border-2 border-indigo-500/20 rounded-2xl flex flex-col justify-between space-y-6 relative shadow-lg shadow-indigo-950/20">
+        <div class="absolute -top-3 right-4 bg-indigo-600 text-white text-[8px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider">Mais Rápido</div>
+        <div class="space-y-4">
+          <div class="w-10 h-10 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center shadow-lg">
+            <i data-lucide="message-circle" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-white">Suporte via WhatsApp</h3>
+            <p class="text-slate-400 text-xs leading-relaxed mt-1">
+              Fale diretamente com nossa equipe de suporte para tirar dúvidas de integração ou configuração da conta de forma humanizada.
+            </p>
+          </div>
+        </div>
+        <a href="https://wa.me/5562984055306?text=Ol%C3%A1!%20Gostaria%20de%20ajuda%20com%20o%20Agendamente." target="_blank" class="btn btn-cosmic-primary py-2.5 px-4 rounded-xl text-xs font-black flex items-center justify-center gap-2 shadow-lg dynamic-support-phone">
+          Chamar no WhatsApp <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+        </a>
+      </div>
+
+      <!-- Coluna 3: E-mail e Chamados -->
+      <div class="glass-card-dark p-6 bg-[#0d101a]/30 border border-white/5 rounded-2xl flex flex-col justify-between space-y-6">
+        <div class="space-y-4">
+          <div class="w-10 h-10 rounded-2xl bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center justify-center shadow-lg">
+            <i data-lucide="mail" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-white">E-mail Comercial</h3>
+            <p class="text-slate-400 text-xs leading-relaxed mt-1">
+              Para dúvidas comerciais, parcerias, redefinição de contas ou questões corporativas complexas. Resposta em até 2 horas.
+            </p>
+          </div>
+        </div>
+        <a href="mailto:suporte@agendamente.com?subject=Ajuda%20com%20o%20Agendamente" class="btn border border-white/10 bg-white/5 hover:bg-white/10 text-white py-2.5 px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all dynamic-support-email">
+          Enviar E-mail <i data-lucide="mail-open" class="w-3.5 h-3.5"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ (PERGUNTAS FREQUENTES) -->
+  <section class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 mt-32 space-y-12">
+    <div class="text-center space-y-3">
+      <span class="inline-flex items-center gap-1.5 bg-indigo-500/10 border border-indigo-500/25 text-indigo-400 text-[10px] font-extrabold uppercase px-3 py-1 rounded-full tracking-wider">
+        Central de Dúvidas
+      </span>
+      <h2 class="text-2xl sm:text-4xl font-extrabold text-white">Dúvidas Frequentes</h2>
+      <p class="text-slate-400 text-sm">Tem alguma pergunta sobre o Agendamente? Encontre a resposta abaixo.</p>
+    </div>
+
+    <div class="space-y-4">
+      <!-- Item 1 -->
+      <details class="glass-card-dark bg-[#0d101a]/30 border border-white/5 rounded-2xl p-5 group cursor-pointer">
+        <summary class="flex justify-between items-center text-xs font-bold text-white select-none">
+          <span>Preciso que meus clientes baixem algum aplicativo para agendar?</span>
+          <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition-all group-open:rotate-180"></i>
+        </summary>
+        <p class="text-slate-400 text-[11px] leading-relaxed mt-3 pt-3 border-t border-white/5">
+          Não! O Agendamente é totalmente web. Seus clientes podem agendar de forma simples acessando seu link pelo navegador do celular deles, sem precisar preencher cadastros chatos ou baixar aplicativos.
+        </p>
+      </details>
+      <!-- Item 2 -->
+      <details class="glass-card-dark bg-[#0d101a]/30 border border-white/5 rounded-2xl p-5 group cursor-pointer">
+        <summary class="flex justify-between items-center text-xs font-bold text-white select-none">
+          <span>Como funciona a cobrança automática via Pix?</span>
+          <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition-all group-open:rotate-180"></i>
+        </summary>
+        <p class="text-slate-400 text-[11px] leading-relaxed mt-3 pt-3 border-t border-white/5">
+          No ato do agendamento, o sistema gera dinamicamente um QR code Pix e chave de Copia e Cola. O cliente tem o tempo que você determinar (ex: 10 minutos) para efetuar o pagamento. A confirmação é instantânea e o horário é bloqueado na agenda do profissional assim que o Pix é compensado.
+        </p>
+      </details>
+      <!-- Item 3 -->
+      <details class="glass-card-dark bg-[#0d101a]/30 border border-white/5 rounded-2xl p-5 group cursor-pointer">
+        <summary class="flex justify-between items-center text-xs font-bold text-white select-none">
+          <span>Como o sistema gerencia as comissões da minha equipe?</span>
+          <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition-all group-open:rotate-180"></i>
+        </summary>
+        <p class="text-slate-400 text-[11px] leading-relaxed mt-3 pt-3 border-t border-white/5">
+          Você pode cadastrar profissionais e definir a taxa de comissão de cada um (ex: 50% para Thiago, 40% para Bruno). Quando um serviço de R$ 100,00 é agendado e pago, o sistema creditará R$ 50,00 no repasse virtual do profissional e lançará o restante na receita da empresa automaticamente.
+        </p>
+      </details>
+      <!-- Item 4 -->
+      <details class="glass-card-dark bg-[#0d101a]/30 border border-white/5 rounded-2xl p-5 group cursor-pointer">
+        <summary class="flex justify-between items-center text-xs font-bold text-white select-none">
+          <span>O que acontece se eu desmarcar ou o cliente não confirmar?</span>
+          <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition-all group-open:rotate-180"></i>
+        </summary>
+        <p class="text-slate-400 text-[11px] leading-relaxed mt-3 pt-3 border-t border-white/5">
+          Se o cliente não responder a confirmação do WhatsApp até as 4 horas antes estabelecidas, o status passa a cancelado e o horário é liberado de volta na página de agendamento, com reembolso ou não do Pix, a depender da política do seu estabelecimento.
+        </p>
+      </details>
+      <!-- Item 5 -->
+      <details class="glass-card-dark bg-[#0d101a]/30 border border-white/5 rounded-2xl p-5 group cursor-pointer">
+        <summary class="flex justify-between items-center text-xs font-bold text-white select-none">
+          <span>Posso testar a plataforma de graça antes de assinar?</span>
+          <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition-all group-open:rotate-180"></i>
+        </summary>
+        <p class="text-slate-400 text-[11px] leading-relaxed mt-3 pt-3 border-t border-white/5">
+          Sim! Oferecemos <span id="dias-trial-faq">7</span> dias de teste grátis com acesso a todos os recursos. Não é necessário cadastrar cartão de crédito para testar.
+        </p>
+      </details>
+    </div>
+  </section>
+
+  <!-- FOOTER (RODAPÉ) -->
+  <footer class="border-t border-white/5 mt-32 bg-[#07080c] py-12 text-slate-500 text-xs">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8 text-left">
+      <div class="space-y-4">
+        <div class="flex items-center gap-2">
+          <div class="p-1.5 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-400">
+            <i data-lucide="calendar" class="w-5 h-5"></i>
+          </div>
+          <span class="text-base font-bold text-white tracking-tight gradient-text-cosmic font-black">Agendamente</span>
+        </div>
+        <p class="text-[10px] text-slate-500 leading-relaxed">
+          Blinde sua agenda, reduza faltas a zero e automatize o fluxo de caixa da sua empresa. A solução definitiva de agendamento online e gestão.
+        </p>
+      </div>
+      <div>
+        <h4 class="font-bold text-white text-xs mb-3">Segmentos</h4>
+        <ul class="space-y-2 text-[10px]">
+          <li><a href="#" class="hover:text-white transition-all">Barbearias & Salões</a></li>
+          <li><a href="#" class="hover:text-white transition-all">Clínicas de Estética</a></li>
+          <li><a href="#" class="hover:text-white transition-all">Consultórios & Psicologia</a></li>
+          <li><a href="#" class="hover:text-white transition-all">Estúdios de Pilates & Yoga</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-bold text-white text-xs mb-3">Recursos</h4>
+        <ul class="space-y-2 text-[10px]">
+          <li><a href="#" class="hover:text-white transition-all">Confirmações via WhatsApp</a></li>
+          <li><a href="#" class="hover:text-white transition-all">Checkout Pix Dinâmico</a></li>
+          <li><a href="#" class="hover:text-white transition-all">Gestão de Equipe & Comissões</a></li>
+          <li><a href="#" class="hover:text-white transition-all">Estoque & Caixa Integrados</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-bold text-white text-xs mb-3">Legal</h4>
+        <ul class="space-y-2 text-[10px]">
+          <li><a href="#" class="hover:text-white transition-all">Termos de Uso</a></li>
+          <li><a href="#" class="hover:text-white transition-all">Política de Privacidade</a></li>
+          <li><a href="mailto:suporte@agendamente.com" class="hover:text-white transition-all dynamic-support-email">Contato: suporte@agendamente.com</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 pt-6 border-t border-white/5 text-center text-[10px] text-slate-600">
+      <p>© 2026 Agendamente. Todos os direitos reservados. Feito com paixão para impulsionar o seu negócio.</p>
+    </div>
+  </footer>
+
+  <script>
+    lucide.createIcons();
+    window.switchNicheTab = function(niche) {
+      const niches = ['beleza', 'saude', 'esporte'];
+      niches.forEach(n => {
+        const content = document.getElementById(`niche-content-${n}`);
+        const btn = document.getElementById(`niche-btn-${n}`);
+        if (n === niche) {
+          if (content) content.classList.remove('hidden');
+          if (btn) btn.className = "btn px-5 py-3 text-xs font-bold rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white flex items-center gap-2 shrink-0 shadow-lg shadow-indigo-600/20 border border-indigo-500/30 transition-all";
+        } else {
+          if (content) content.classList.add('hidden');
+          if (btn) btn.className = "btn px-5 py-3 text-xs font-bold rounded-xl text-slate-400 hover:text-white border border-white/5 bg-white/5 flex items-center gap-2 shrink-0 transition-all";
+        }
+      });
+      lucide.createIcons();
+    };
+    let demoTime = 0;
+    let demoIsPlaying = true;
+    let demoInterval = null;
+    let demoTotalTime = 180; // 180 segundos (3 minutos)
+    let isMuted = true; // Mutado por padrão para cumprir políticas de som do navegador
+    let lastSpokenStep = -1;
+
+    // Elementos do player
+    const demoPlayBtn = document.getElementById('demo-play-btn');
+    const demoPlayIcon = document.getElementById('demo-play-icon');
+    const demoMuteBtn = document.getElementById('demo-mute-btn');
+    const demoMuteIcon = document.getElementById('demo-mute-icon');
+    const demoVoiceBadge = document.getElementById('demo-voice-badge');
+    const demoProgressBar = document.getElementById('demo-progress-bar');
+    const demoProgressHandle = document.getElementById('demo-progress-handle');
+    const demoTimeElapsed = document.getElementById('demo-time-elapsed');
+    const demoSubtitleStep = document.getElementById('demo-subtitle-step');
+    const demoCaptionText = document.getElementById('demo-caption-text');
+    const demoCursor = document.getElementById('demo-cursor');
+
+    // Phone elements
+    const phoneScreen0 = document.getElementById('phone-screen-0');
+    const phoneScreen1 = document.getElementById('phone-screen-1');
+    const phoneBtnCheckout = document.getElementById('phone-btn-checkout');
+    const phonePixQr = document.getElementById('phone-pix-qr');
+    const phonePixSuccess = document.getElementById('phone-pix-success');
+    const phoneWaReply = document.getElementById('phone-wa-reply');
+    const waBtnConfirm = document.getElementById('wa-btn-confirm');
+
+    // Dashboard elements
+    const dbFaturamento = document.getElementById('dashboard-faturamento');
+    const dbComissoes = document.getElementById('dashboard-comissoes');
+    const dbStatusPill = document.getElementById('status-pill-deivid');
+    const dbFeedText = document.getElementById('dashboard-feed-text');
+
+    // Textos de Narração da Voz Explicativa (4 passos, totalizando 180 segundos)
+    const stepTexts = [
+      "Bem-vindo ao Agendamente. Vamos começar demonstrando o agendamento online na prática. O seu cliente acessa a sua página exclusiva diretamente do celular, sem precisar instalar nada. Ele seleciona o serviço, escolhe o profissional de preferência e seleciona o dia e horário livre no calendário, que se atualiza em tempo real. Para garantir a vaga e evitar agendamentos falsos, o sistema gera na mesma hora um Pix dinâmico de cobrança. O cliente realiza o pagamento instantâneo pelo banco, o sistema valida a transação e o horário é bloqueado de forma automática na sua agenda, com a garantia do dinheiro no seu bolso antes mesmo do atendimento.",
+      "Após a reserva, a mágica da automação acontece. O Agendamente envia uma notificação inteligente direto no WhatsApp do seu cliente com botões interativos para ele confirmar ou cancelar a presença. O cliente é avisado de que tem um prazo limite, como por exemplo, até quatro horas antes do atendimento, para confirmar a presença. Se ele clicar em \"Confirmar\", o status no seu painel muda na hora. Caso ele não confirme até o prazo estabelecido, o sistema cancela o horário de forma automatizada e libera a vaga de volta no seu site para outro cliente agendar. É o fim dos furos por esquecimento e das horas perdidas mandando mensagens manuais.",
+      "E tudo isso fica centralizado em um painel administrativo poderoso e de fácil utilização. Assim que o serviço é pago ou confirmado, nosso Mini-ERP integrado entra em ação, registrando cada receita no seu faturamento diário. Além de monitorar os agendamentos automáticos, o painel do Agendamente permite controlar todo o seu fluxo de caixa: você pode lançar despesas fixas, como aluguel, luz e internet, e registrar compras de mercadorias. No final do mês, o sistema consolida tudo e gera um relatório de faturamento sem planilhas, exibindo com precisão matemática o seu Lucro Líquido Real, para você saber exatamente quanto sobrou no seu bolso.",
+      "Por fim, o Agendamente resolve a parte mais complexa da gestão de equipes: a divisão de comissões e o controle de estoque. Ao concluir qualquer serviço, o sistema calcula na hora a comissão do profissional parceiro — com suporte a repasses personalizados como comissão de cinquenta por cento — e credita o valor na conta virtual dele. Simultaneamente, o sistema dá baixa física automática no estoque dos produtos e insumos utilizados durante aquele atendimento. Você elimina erros de contas, disputas por repasses manuais e desvios de produtos de forma justa e transparente. Comece hoje mesmo seu teste grátis de sete dias e transforme a gestão do seu negócio!"
+    ];
+
+    let synth = window.speechSynthesis;
+    let speechQueue = [];
+    let currentQueueIndex = 0;
+    let isSpeakingActive = false;
+    let currentUtterance = null;
+
+    function speakText(text) {
+      // Desativado para remover completamente a voz robótica do simulador e manter a apresentação 100% profissional
+      return;
+    }
+
+    function playSpeechQueue() {
+      if (isMuted || !synth || currentQueueIndex >= speechQueue.length) {
+        isSpeakingActive = false;
+        return;
+      }
+
+      const phrase = speechQueue[currentQueueIndex].trim();
+      if (!phrase) {
+        currentQueueIndex++;
+        playSpeechQueue();
+        return;
+      }
+
+      isSpeakingActive = true;
+      currentUtterance = new SpeechSynthesisUtterance(phrase);
+      currentUtterance.lang = 'pt-BR';
+
+      const voices = synth.getVoices();
+      let selectedVoice = voices.find(voice => 
+        voice.lang.includes('pt') && 
+        (voice.name.toLowerCase().includes('google') || 
+         voice.name.toLowerCase().includes('female') || 
+         voice.name.toLowerCase().includes('maria') || 
+         voice.name.toLowerCase().includes('francisca') || 
+         voice.name.toLowerCase().includes('luciana'))
+      );
+      if (!selectedVoice) {
+        selectedVoice = voices.find(voice => voice.lang.includes('pt'));
+      }
+      if (selectedVoice) {
+        currentUtterance.voice = selectedVoice;
+      }
+
+      currentUtterance.rate = 1.02;
+      currentUtterance.pitch = 1.05;
+
+      currentUtterance.onend = () => {
+        if (isSpeakingActive) {
+          currentQueueIndex++;
+          playSpeechQueue();
+        }
+      };
+
+      currentUtterance.onerror = (e) => {
+        console.warn("SpeechSynthesis utterance error:", e);
+        if (isSpeakingActive) {
+          currentQueueIndex++;
+          playSpeechQueue();
+        }
+      };
+
+      synth.speak(currentUtterance);
+    }
+
+    function stopSpeaking() {
+      isSpeakingActive = false;
+      if (synth) {
+        synth.cancel();
+      }
+    }
+
+    function speakCurrentStepText(stepIndex) {
+      if (!isMuted) {
+        speakText(stepTexts[stepIndex]);
+      }
+    }
+
+    window.toggleMute = function() {
+      isMuted = !isMuted;
+      
+      if (demoVoiceBadge) {
+        demoVoiceBadge.classList.add('hidden');
+      }
+
+      if (isMuted) {
+        if (demoMuteIcon) demoMuteIcon.setAttribute('data-lucide', 'volume-x');
+        stopSpeaking();
+      } else {
+        if (demoMuteIcon) demoMuteIcon.setAttribute('data-lucide', 'volume-2');
+        if (demoIsPlaying) {
+          speakCurrentStepText(Math.floor(demoTime / 45));
+        }
+      }
+      lucide.createIcons();
+    };
+
+    if (synth && synth.onvoiceschanged !== undefined) {
+      synth.onvoiceschanged = () => {
+        synth.getVoices();
+      };
+    }
+
+    function updateDemoUI() {
+      const stepDuration = demoTotalTime / 4;
+      const step = Math.min(3, Math.floor(demoTime / stepDuration));
+      const relativeTime = demoTime % stepDuration;
+
+      // Atualiza abas dos passos (4 abas)
+      for (let i = 0; i < 4; i++) {
+        const tabBtn = document.getElementById(`demo-tab-${i}`);
+        if (tabBtn) {
+          const tabNumber = tabBtn.querySelector('span:first-child');
+          if (i === step) {
+            tabBtn.className = "pb-2.5 border-b-2 border-indigo-500 text-indigo-400 font-bold transition-all flex flex-col sm:flex-row items-center justify-center gap-1.5 cursor-pointer";
+            if (tabNumber) tabNumber.className = "w-5 h-5 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 flex items-center justify-center text-[10px] font-bold animate-pulse";
+          } else {
+            tabBtn.className = "pb-2.5 border-b-2 border-transparent text-slate-500 hover:text-white font-medium transition-all flex flex-col sm:flex-row items-center justify-center gap-1.5 cursor-pointer";
+            if (tabNumber) tabNumber.className = "w-5 h-5 rounded-full bg-white/5 border border-white/10 text-slate-500 flex items-center justify-center text-[10px]";
+          }
+        }
+      }
+
+      // Barra de progresso e tempo
+      const progressPercent = (demoTime / demoTotalTime) * 100;
+      if (demoProgressBar) demoProgressBar.style.width = `${progressPercent}%`;
+      if (demoProgressHandle) demoProgressHandle.style.left = `${progressPercent}%`;
+      
+      const mins = Math.floor(demoTime / 60);
+      const secs = Math.floor(demoTime % 60);
+      if (demoTimeElapsed) demoTimeElapsed.innerText = `${mins}:${secs.toString().padStart(2, '0')}`;
+
+      if (demoIsPlaying && step !== lastSpokenStep) {
+        lastSpokenStep = step;
+      }
+
+      // Gerencia visualizações dependendo do passo
+      if (step === 0) {
+        // Passo 1: Agendamento & Checkout Pix
+        if (phoneScreen0) phoneScreen0.classList.remove('hidden');
+        if (phoneScreen1) phoneScreen1.classList.add('hidden');
+        if (demoSubtitleStep) demoSubtitleStep.innerText = "Passo 1";
+        if (demoCaptionText) demoCaptionText.innerText = "Cliente agenda no celular e realiza o pagamento adiantado via Pix.";
+
+        // Estado do Pix (0s a 45s)
+        if (relativeTime < 10) {
+          if (phoneBtnCheckout) phoneBtnCheckout.classList.remove('hidden');
+          if (phonePixQr) phonePixQr.classList.add('hidden');
+          if (phonePixSuccess) phonePixSuccess.classList.add('hidden');
+          if (demoCursor) {
+            demoCursor.classList.remove('hidden');
+            demoCursor.style.top = '72%';
+            demoCursor.style.left = '48%';
+            demoCursor.style.transform = 'scale(1)';
+          }
+        } else if (relativeTime >= 10 && relativeTime < 13) {
+          if (demoCursor) demoCursor.style.transform = 'scale(0.8)';
+          if (phoneBtnCheckout) phoneBtnCheckout.classList.add('hidden');
+          if (phonePixQr) phonePixQr.classList.remove('hidden');
+        } else if (relativeTime >= 13 && relativeTime < 35) {
+          if (demoCursor) demoCursor.classList.add('hidden');
+          if (phoneBtnCheckout) phoneBtnCheckout.classList.add('hidden');
+          if (phonePixQr) phonePixQr.classList.remove('hidden');
+          if (phonePixSuccess) phonePixSuccess.classList.add('hidden');
+        } else {
+          if (demoCursor) demoCursor.classList.add('hidden');
+          if (phonePixQr) phonePixQr.classList.add('hidden');
+          if (phonePixSuccess) phonePixSuccess.classList.remove('hidden');
+        }
+
+        // Dashboard permanece padrão inicial
+        if (dbStatusPill) {
+          dbStatusPill.className = "px-1.5 py-0.5 rounded-full text-[7px] font-black uppercase tracking-wider bg-amber-50 border border-amber-200 text-amber-600";
+          dbStatusPill.innerText = "Pendente";
+        }
+        if (dbFaturamento) dbFaturamento.innerText = "1.250,00";
+        if (dbComissoes) dbComissoes.innerText = "625,00";
+        if (dbFeedText) dbFeedText.innerText = "Aguardando pagamento Pix do cliente Deivid Silva...";
+
+      } else if (step === 1) {
+        // Passo 2: WhatsApp Lembrete
+        if (phoneScreen0) phoneScreen0.classList.add('hidden');
+        if (phoneScreen1) phoneScreen1.classList.remove('hidden');
+        if (demoSubtitleStep) demoSubtitleStep.innerText = "Passo 2";
+        if (demoCaptionText) demoCaptionText.innerText = "Lembrete enviado. Se o cliente não confirmar até 4h antes, o horário cancela.";
+
+        // Estado do WhatsApp
+        if (relativeTime < 15) {
+          if (phoneWaReply) phoneWaReply.classList.add('hidden');
+          if (waBtnConfirm) {
+            waBtnConfirm.className = "w-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-bold py-1.5 rounded-lg text-center text-[9px] flex items-center justify-center gap-1 shadow-sm transition-all";
+            waBtnConfirm.innerHTML = `<i data-lucide="check" class="w-3 h-3 text-emerald-500"></i> Confirmar Presença`;
+          }
+          if (demoCursor) {
+            demoCursor.classList.remove('hidden');
+            demoCursor.style.top = '78%';
+            demoCursor.style.left = '45%';
+            demoCursor.style.transform = 'scale(1)';
+          }
+        } else if (relativeTime >= 15 && relativeTime < 18) {
+          if (demoCursor) demoCursor.style.transform = 'scale(0.8)';
+          if (waBtnConfirm) waBtnConfirm.className = "w-full bg-indigo-600 border border-indigo-500 text-white font-bold py-1.5 rounded-lg text-center text-[9px] flex items-center justify-center gap-1 shadow-md shadow-indigo-600/10";
+        } else {
+          if (demoCursor) demoCursor.classList.add('hidden');
+          if (phoneWaReply) phoneWaReply.classList.remove('hidden');
+          if (waBtnConfirm) {
+            waBtnConfirm.className = "w-full bg-slate-100 border border-slate-100 text-slate-400 font-medium py-1.5 rounded-lg text-center text-[9px] flex items-center justify-center gap-1 cursor-not-allowed";
+            waBtnConfirm.innerHTML = `Presença Confirmada!`;
+          }
+        }
+
+        // Dashboard continua aguardando confirmação
+        if (dbStatusPill) {
+          dbStatusPill.className = "px-1.5 py-0.5 rounded-full text-[7px] font-black uppercase tracking-wider bg-amber-50 border border-amber-200 text-amber-600";
+          dbStatusPill.innerText = "Pendente";
+        }
+        if (dbFaturamento) dbFaturamento.innerText = "1.250,00";
+        if (dbComissoes) dbComissoes.innerText = "625,00";
+        if (dbFeedText) dbFeedText.innerText = "Lembrete enviado. Aguardando confirmação ativa do cliente...";
+
+      } else if (step === 2) {
+        // Passo 3: Painel & ERP
+        if (phoneScreen0) phoneScreen0.classList.add('hidden');
+        if (phoneScreen1) phoneScreen1.classList.remove('hidden');
+        if (phoneWaReply) phoneWaReply.classList.remove('hidden');
+        if (waBtnConfirm) {
+          waBtnConfirm.className = "w-full bg-slate-100 border border-slate-100 text-slate-400 font-medium py-1.5 rounded-lg text-center text-[9px] flex items-center justify-center gap-1 cursor-not-allowed";
+          waBtnConfirm.innerHTML = `Presença Confirmada!`;
+        }
+        if (demoCursor) demoCursor.classList.add('hidden');
+
+        if (demoSubtitleStep) demoSubtitleStep.innerText = "Passo 3";
+        if (demoCaptionText) demoCaptionText.innerText = "Veja em segundos quanto você faturou hoje e controle as finanças sem planilhas.";
+
+        // Dashboard Atualizado (Faturamento)
+        if (dbStatusPill) {
+          dbStatusPill.className = "px-1.5 py-0.5 rounded-full text-[7px] font-black uppercase tracking-wider bg-emerald-50 border border-emerald-200 text-emerald-500";
+          dbStatusPill.innerText = "Confirmado";
+        }
+        if (dbFaturamento) dbFaturamento.innerText = "1.320,00";
+        if (dbComissoes) dbComissoes.innerText = "625,00";
+        if (dbFeedText) dbFeedText.innerText = "Presença confirmada! Faturamento de R$ 70,00 lançado no caixa.";
+
+      } else if (step === 3) {
+        // Passo 4: Equipe & Comissões
+        if (phoneScreen0) phoneScreen0.classList.add('hidden');
+        if (phoneScreen1) phoneScreen1.classList.remove('hidden');
+        if (phoneWaReply) phoneWaReply.classList.remove('hidden');
+        if (waBtnConfirm) {
+          waBtnConfirm.className = "w-full bg-slate-100 border border-slate-100 text-slate-400 font-medium py-1.5 rounded-lg text-center text-[9px] flex items-center justify-center gap-1 cursor-not-allowed";
+          waBtnConfirm.innerHTML = `Presença Confirmada!`;
+        }
+        if (demoCursor) demoCursor.classList.add('hidden');
+
+        if (demoSubtitleStep) demoSubtitleStep.innerText = "Passo 4";
+        if (demoCaptionText) demoCaptionText.innerText = "O sistema calcula a comissão dos parceiros da equipe e dá baixa no estoque.";
+
+        // Dashboard Completo
+        if (dbStatusPill) {
+          dbStatusPill.className = "px-1.5 py-0.5 rounded-full text-[7px] font-black uppercase tracking-wider bg-emerald-50 border border-emerald-200 text-emerald-500";
+          dbStatusPill.innerText = "Confirmado";
+        }
+        if (dbFaturamento) dbFaturamento.innerText = "1.320,00";
+        if (dbComissoes) dbComissoes.innerText = "660,00";
+        if (dbFeedText) dbFeedText.innerText = "Comissão de R$ 35,00 creditada para Thiago Silva. Insumos deduzidos do estoque.";
+      }
+      lucide.createIcons();
+    }
+
+    function tickDemo() {
+      if (!demoIsPlaying) return;
+      demoTime += 0.25;
+      if (demoTime > demoTotalTime) {
+        demoTime = 0;
+      }
+      updateDemoUI();
+    }
+
+    window.toggleDemoPlay = function() {
+      demoIsPlaying = !demoIsPlaying;
+      if (demoPlayIcon) {
+        if (demoIsPlaying) {
+          demoPlayIcon.setAttribute('data-lucide', 'pause');
+        } else {
+          demoPlayIcon.setAttribute('data-lucide', 'play');
+        }
+      }
+      stopSpeaking();
+      lucide.createIcons();
+    };
+
+    window.setDemoStep = function(stepIndex) {
+      demoTime = stepIndex * (demoTotalTime / 4);
+      lastSpokenStep = stepIndex;
+      updateDemoUI();
+      stopSpeaking();
+    };
+
+    window.seekDemo = function(e) {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const width = rect.width;
+      const clickedPercent = clickX / width;
+      demoTime = Math.min(demoTotalTime, Math.max(0, clickedPercent * demoTotalTime));
+      lastSpokenStep = Math.floor(demoTime / (demoTotalTime / 4));
+      updateDemoUI();
+      stopSpeaking();
+    };
+
+    // Inicia a simulação
+    demoInterval = setInterval(tickDemo, 250);
+    updateDemoUI();
+
+    window.adjustDemoDuration = function(duration) {
+      if (duration && duration > 30) {
+        demoTotalTime = duration;
+        aiVideoTotalTime = duration;
+        
+        const totalTimeSpan = document.getElementById('demo-time-total');
+        if (totalTimeSpan) {
+          const totalMins = Math.floor(duration / 60);
+          const totalSecs = Math.floor(duration % 60);
+          totalTimeSpan.innerText = `${totalMins}:${totalSecs.toString().padStart(2, '0')}`;
+        }
+        console.log(`Duração do simulador sincronizada para o tempo real: ${duration}s`);
+      }
+    };
+
+    window.syncDemoWithAIVideo = function(videoTime) {
+      demoTime = videoTime;
+      if (demoInterval) {
+        clearInterval(demoInterval);
+        demoInterval = null;
+      }
+      demoIsPlaying = false;
+      if (demoPlayIcon) demoPlayIcon.setAttribute('data-lucide', 'play');
+      stopSpeaking();
+      updateDemoUI();
+    };
+
+    window.pauseDemoOnAIPause = function() {
+      demoIsPlaying = false;
+      if (demoPlayIcon) demoPlayIcon.setAttribute('data-lucide', 'play');
+      stopSpeaking();
+    };
+
+    window.resumeDemoIndependentPlay = function() {
+      if (!demoInterval) {
+        demoIsPlaying = true;
+        if (demoPlayIcon) demoPlayIcon.setAttribute('data-lucide', 'pause');
+        demoInterval = setInterval(tickDemo, 250);
+      }
+      lucide.createIcons();
+    };
+
+    // ----------------------------------------------------
+    // LÓGICA DO VÍDEO DE APRESENTAÇÃO IA (MODAL APRESENTADORA)
+    // ----------------------------------------------------
+    let aiVideoTime = 0;
+    let aiVideoIsPlaying = false;
+    let aiVideoInterval = null;
+    let aiVideoTotalTime = 180;
+    
+    let useRealVideo = false;
+    let useRealAudio = false;
+
+    const realVideo = document.getElementById('real-ai-video');
+    const realAudio = document.getElementById('real-narracao-audio');
+    const aiAvatarContainer = document.getElementById('ai-avatar-container');
+    const aiVideoStatusText = document.getElementById('ai-video-status-text');
+    const aiVideoSimulatorInterface = document.getElementById('ai-video-simulator-interface');
+
+    const aiSpeechSteps = [
+      { start: 0, end: 5, text: "Bem-vindo ao Agendamente. Vamos começar demonstrando o agendamento online na prática." },
+      { start: 5, end: 11, text: "O seu cliente acessa a sua página exclusiva diretamente do celular, sem precisar instalar nada." },
+      { start: 11, end: 17, text: "Ele seleciona o serviço, escolhe o profissional de preferência e seleciona o dia e horário livre no calendário." },
+      { start: 17, end: 22, text: "O calendário se atualiza em tempo real." },
+      { start: 22, end: 28, text: "Para garantir a vaga e evitar agendamentos falsos, o sistema gera na mesma hora um Pix dinâmico de cobrança." },
+      { start: 28, end: 34, text: "O cliente realiza o pagamento instantâneo pelo banco, o sistema valida a transação..." },
+      { start: 34, end: 40, text: "...e o horário é bloqueado de forma automática na sua agenda." },
+      { start: 40, end: 45, text: "Com a garantia do dinheiro no seu bolso antes mesmo do atendimento." },
+      
+      { start: 45, end: 50, text: "Após a reserva, a mágica da automação acontece." },
+      { start: 50, end: 56, text: "O Agendamente envia uma notificação inteligente direto no WhatsApp do seu cliente..." },
+      { start: 56, end: 61, text: "...com botões interativos para ele confirmar ou cancelar a presença." },
+      { start: 61, end: 68, text: "O cliente é avisado de que tem um prazo limite, como por exemplo, até quatro horas antes do atendimento." },
+      { start: 68, end: 73, text: "Se ele clicar em \"Confirmar\", o status no seu painel muda na hora." },
+      { start: 73, end: 80, text: "Caso ele não confirme até o prazo estabelecido, o sistema cancela o horário de forma automatizada..." },
+      { start: 80, end: 85, text: "...e libera a vaga de volta no seu site para outro cliente agendar." },
+      { start: 85, end: 90, text: "É o fim dos furos por esquecimento e das horas perdidas mandando mensagens manuais." },
+      
+      { start: 90, end: 95, text: "E tudo isso fica centralizado em um painel administrativo poderoso e de fácil utilização." },
+      { start: 95, end: 102, text: "Assim que o serviço é pago ou confirmado, nosso Mini-ERP integrado entra em ação..." },
+      { start: 102, end: 107, text: "...registrando cada receita no seu faturamento diário." },
+      { start: 107, end: 113, text: "Além disso, o painel do Agendamente permite controlar todo o seu fluxo de caixa." },
+      { start: 113, end: 120, text: "Você pode lançar despesas fixas como aluguel e luz, e registrar compras de mercadorias." },
+      { start: 120, end: 127, text: "No final do mês, o sistema consolida tudo e ajuda você a gerenciar e lucrar mais." },
+      { start: 127, end: 135, text: "Exibindo com precisão matemática o seu Lucro Líquido Real, para você saber exatamente quanto sobrou." },
+      
+      { start: 135, end: 141, text: "Por fim, o Agendamente resolve a divisão de comissões e o controle de estoque." },
+      { start: 141, end: 148, text: "Ao concluir o serviço, o sistema calcula na hora a comissão do profissional parceiro..." },
+      { start: 148, end: 154, text: "...com suporte a repasses personalizados como comissão de cinquenta por cento." },
+      { start: 154, end: 160, text: "Simultaneamente, o sistema dá baixa física automática no estoque dos produtos e insumos." },
+      { start: 160, end: 166, text: "Você elimina erros de contas, disputas por repasses manuais e desvios de produtos de forma justa." },
+      { start: 166, end: 173, text: "Comece hoje mesmo seu teste grátis de sete dias..." },
+      { start: 173, end: 180, text: "...e transforme a gestão do seu negócio!" }
+    ];
+
+    const aiVideoPlayerContainer = document.getElementById('ai-video-player-container');
+    const aiVideoSubtitles = document.getElementById('ai-video-subtitles');
+    const aiVideoTimeText = document.getElementById('ai-video-time');
+    const aiVideoPlayIcon = document.getElementById('ai-video-play-icon');
+    const aiAvatarPing1 = document.getElementById('ai-avatar-ping-1');
+    const aiAvatarPing2 = document.getElementById('ai-avatar-ping-2');
+    const aiVoiceWave = document.getElementById('ai-voice-wave');
+
+    if (realVideo) {
+      realVideo.addEventListener('canplay', () => {
+        useRealVideo = true;
+        if (realVideo.duration && !isNaN(realVideo.duration)) {
+          adjustDemoDuration(realVideo.duration);
+        }
+        console.log("Vídeo real (video.mp4) carregado e pronto.");
+      });
+      realVideo.addEventListener('loadedmetadata', () => {
+        if (realVideo.duration && !isNaN(realVideo.duration)) {
+          adjustDemoDuration(realVideo.duration);
+        }
+      });
+      realVideo.addEventListener('error', () => {
+        useRealVideo = false;
+        realVideo.classList.add('hidden');
+        if (aiAvatarContainer) aiAvatarContainer.classList.remove('hidden');
+      });
+      realVideo.addEventListener('timeupdate', () => {
+        if (useRealVideo && aiVideoIsPlaying) {
+          aiVideoTime = realVideo.currentTime;
+          updateAIVideoProgressUI();
+          if (typeof syncDemoWithAIVideo === 'function') {
+            syncDemoWithAIVideo(aiVideoTime);
+          }
+        }
+      });
+      realVideo.addEventListener('ended', () => {
+        closeAIPresentationVideo();
+      });
+    }
+
+    if (realAudio) {
+      realAudio.addEventListener('canplay', () => {
+        useRealAudio = true;
+        if (realAudio.duration && !isNaN(realAudio.duration)) {
+          adjustDemoDuration(realAudio.duration);
+        }
+        console.log("Áudio real (narracao.mp3) carregado e pronto.");
+      });
+      realAudio.addEventListener('loadedmetadata', () => {
+        if (realAudio.duration && !isNaN(realAudio.duration)) {
+          adjustDemoDuration(realAudio.duration);
+        }
+      });
+      realAudio.addEventListener('error', () => {
+        useRealAudio = false;
+      });
+      realAudio.addEventListener('timeupdate', () => {
+        if (useRealAudio && !useRealVideo && aiVideoIsPlaying) {
+          aiVideoTime = realAudio.currentTime;
+          updateAIVideoProgressUI();
+          if (typeof syncDemoWithAIVideo === 'function') {
+            syncDemoWithAIVideo(aiVideoTime);
+          }
+        }
+      });
+      realAudio.addEventListener('ended', () => {
+        closeAIPresentationVideo();
+      });
+    }
+
+    window.playAIPresentationVideo = function() {
+      if (demoIsPlaying) {
+        window.toggleDemoPlay();
+      }
+      if (aiVideoPlayerContainer) aiVideoPlayerContainer.classList.remove('hidden');
+      
+      aiVideoTime = 0;
+      aiVideoIsPlaying = true;
+      if (aiVideoPlayIcon) aiVideoPlayIcon.setAttribute('data-lucide', 'pause');
+
+      setTimeout(() => {
+        if (useRealVideo && realVideo) {
+          realVideo.classList.remove('hidden');
+          if (aiAvatarContainer) aiAvatarContainer.classList.add('hidden');
+          if (aiVideoSimulatorInterface) {
+            aiVideoSimulatorInterface.classList.remove('bg-slate-950');
+            aiVideoSimulatorInterface.classList.add('bg-transparent');
+          }
+          if (aiVideoStatusText) aiVideoStatusText.innerText = "Vídeo Real MP4";
+          
+          realVideo.play().catch(err => {
+            console.warn("Erro ao reproduzir vídeo real:", err);
+            useRealVideo = false;
+            fallbackToSimulation();
+          });
+        } else {
+          fallbackToSimulation();
+        }
+      }, 300);
+
+      lucide.createIcons();
+    };
+
+    function fallbackToSimulation() {
+      if (realVideo) realVideo.classList.add('hidden');
+      if (aiAvatarContainer) aiAvatarContainer.classList.remove('hidden');
+      if (aiVideoSimulatorInterface) {
+        aiVideoSimulatorInterface.classList.remove('bg-transparent');
+        aiVideoSimulatorInterface.classList.add('bg-slate-950');
+      }
+      if (aiVideoStatusText) aiVideoStatusText.innerText = useRealAudio ? "Áudio Premium MP3" : "Apresentação Ativa";
+      
+      if (useRealAudio && realAudio) {
+        realAudio.play().catch(err => {
+          console.warn("Erro ao tocar áudio real, usando simulador:", err);
+          useRealAudio = false;
+          startAIVideoEngine();
+        });
+        startAIVideoEngine();
+      } else {
+        startAIVideoEngine();
+      }
+    }
+
+    window.closeAIPresentationVideo = function() {
+      stopAIVideoEngine();
+      if (realVideo) realVideo.pause();
+      if (realAudio) realAudio.pause();
+      if (aiVideoPlayerContainer) aiVideoPlayerContainer.classList.add('hidden');
+      if (aiVideoSimulatorInterface) {
+        aiVideoSimulatorInterface.classList.remove('bg-transparent');
+        aiVideoSimulatorInterface.classList.add('bg-slate-950');
+      }
+      stopSpeaking();
+      if (typeof resumeDemoIndependentPlay === 'function') {
+        resumeDemoIndependentPlay();
+      }
+    };
+
+    window.toggleAIVideoPlay = function() {
+      aiVideoIsPlaying = !aiVideoIsPlaying;
+      
+      if (aiVideoPlayIcon) {
+        if (aiVideoIsPlaying) {
+          aiVideoPlayIcon.setAttribute('data-lucide', 'pause');
+          if (useRealVideo && realVideo) {
+            realVideo.play();
+          } else if (useRealAudio && realAudio) {
+            realAudio.play();
+            startAIVideoEngine();
+          } else {
+            startAIVideoEngine();
+          }
+          if (aiVoiceWave) aiVoiceWave.classList.remove('hidden');
+          if (aiAvatarPing1) aiAvatarPing1.classList.remove('hidden');
+          if (aiAvatarPing2) aiAvatarPing2.classList.remove('hidden');
+        } else {
+          aiVideoPlayIcon.setAttribute('data-lucide', 'play');
+          if (realVideo) realVideo.pause();
+          if (realAudio) realAudio.pause();
+          stopSpeaking();
+          if (aiVoiceWave) aiVoiceWave.classList.add('hidden');
+          if (aiAvatarPing1) aiAvatarPing1.classList.add('hidden');
+          if (aiAvatarPing2) aiAvatarPing2.classList.add('hidden');
+          if (typeof pauseDemoOnAIPause === 'function') {
+            pauseDemoOnAIPause();
+          }
+        }
+      }
+      lucide.createIcons();
+    };
+
+    function getCurrentAISpeechText() {
+      const step = aiSpeechSteps.find(s => aiVideoTime >= s.start && aiVideoTime < s.end);
+      return step ? step.text : "";
+    }
+
+    let lastAISpokeText = "";
+
+    function updateAIVideoProgressUI() {
+      const mins = Math.floor(aiVideoTime / 60);
+      const secs = Math.floor(aiVideoTime % 60);
+      if (aiVideoTimeText) aiVideoTimeText.innerText = `${mins}:${secs.toString().padStart(2, '0')} / 3:00`;
+
+      const currentText = getCurrentAISpeechText();
+      if (aiVideoSubtitles) aiVideoSubtitles.innerText = currentText;
+
+      if (!useRealVideo && !useRealAudio && aiVideoIsPlaying) {
+        if (currentText !== lastAISpokeText) {
+          lastAISpokeText = currentText;
+          speakText(currentText);
+        }
+      }
+    }
+
+    function tickAIVideo() {
+      if (!aiVideoIsPlaying) return;
+      if (!useRealVideo && !useRealAudio) {
+        aiVideoTime += 1;
+        if (aiVideoTime >= aiVideoTotalTime) {
+          aiVideoTime = 0;
+          lastAISpokeText = "";
+        }
+        updateAIVideoProgressUI();
+      }
+    }
+
+    function startAIVideoEngine() {
+      clearInterval(aiVideoInterval);
+      aiVideoInterval = setInterval(tickAIVideo, 1000);
+      const currentText = getCurrentAISpeechText();
+      if (aiVideoSubtitles) aiVideoSubtitles.innerText = currentText;
+      lastAISpokeText = currentText;
+      if (aiVoiceWave) aiVoiceWave.classList.remove('hidden');
+      if (aiAvatarPing1) aiAvatarPing1.classList.remove('hidden');
+      if (aiAvatarPing2) aiAvatarPing2.classList.remove('hidden');
+    }
+
+    function stopAIVideoEngine() {
+      aiVideoIsPlaying = false;
+      clearInterval(aiVideoInterval);
+    }
+
+    // ----------------------------------------------------
+    // LÓGICA DE INSTALAÇÃO PWA
+    // ----------------------------------------------------
+    let deferredPrompt = null;
+    const installBanner = document.getElementById('pwa-install-banner');
+    const btnInstallNav = document.getElementById('btn-install-nav');
+    const btnInstallHero = document.getElementById('btn-install-hero');
+    const btnInstallBanner = document.getElementById('btn-pwa-install-banner');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      
+      const isDesktop = window.innerWidth >= 768;
+      if (btnInstallNav && isDesktop) {
+        btnInstallNav.classList.remove('hidden');
+        btnInstallNav.classList.add('inline-flex');
+      }
+      if (btnInstallHero) btnInstallHero.classList.remove('hidden');
+      
+      const hasDismissed = localStorage.getItem('pwa_banner_dismissed') === 'true';
+      if (installBanner && !hasDismissed) {
+        setTimeout(() => {
+          installBanner.classList.remove('hidden');
+          // Trigger animations
+          setTimeout(() => {
+            installBanner.classList.remove('translate-y-20', 'opacity-0');
+            installBanner.classList.add('translate-y-0', 'opacity-100');
+          }, 50);
+        }, 3000);
+      }
+    });
+
+    window.addEventListener('appinstalled', (e) => {
+      console.log('Aplicativo instalado com sucesso!');
+      hidePwaBanner();
+      if (btnInstallNav) btnInstallNav.classList.add('hidden');
+      if (btnInstallHero) btnInstallHero.classList.add('hidden');
+      deferredPrompt = null;
+    });
+
+    async function triggerPWAInstall() {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      console.log(`User choice outcome: ${outcome}`);
+      deferredPrompt = null;
+      hidePwaBanner();
+    }
+
+    function hidePwaBanner() {
+      if (installBanner) {
+        installBanner.classList.remove('translate-y-0', 'opacity-100');
+        installBanner.classList.add('translate-y-20', 'opacity-0');
+        setTimeout(() => {
+          installBanner.classList.add('hidden');
+        }, 350);
+      }
+    }
+
+    if (btnInstallNav) btnInstallNav.addEventListener('click', triggerPWAInstall);
+    if (btnInstallHero) btnInstallHero.addEventListener('click', triggerPWAInstall);
+    if (btnInstallBanner) btnInstallBanner.addEventListener('click', triggerPWAInstall);
+
+    window.dismissInstallBanner = function() {
+      hidePwaBanner();
+      localStorage.setItem('pwa_banner_dismissed', 'true');
+    };
+
+    // iOS and Android Fallback detection
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    const isStandalone = window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches;
+    const isWebview = /Instagram|FBAN|FBAV/i.test(navigator.userAgent);
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Registra o Service Worker para PWA
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js')
+          .then(reg => console.log('Service Worker registrado:', reg.scope))
+          .catch(err => console.error('Erro ao registrar Service Worker:', err));
+      }
+
+      // 1.5. Instagram/Facebook Webview Instructions fallback
+      if (isWebview && !isStandalone) {
+        const hasDismissed = localStorage.getItem('pwa_banner_dismissed') === 'true';
+        if (installBanner && !hasDismissed) {
+          const instructionsText = document.getElementById('pwa-instructions-text');
+          if (instructionsText) {
+            instructionsText.innerHTML = 'Para baixar o aplicativo: clique nos <b>três pontinhos</b> no canto superior direito e selecione <b>"Abrir no navegador"</b>.';
+          }
+          const btnInstallBannerEl = document.getElementById('btn-pwa-install-banner');
+          if (btnInstallBannerEl) {
+            btnInstallBannerEl.classList.add('hidden');
+          }
+          setTimeout(() => {
+            installBanner.classList.remove('hidden');
+            setTimeout(() => {
+              installBanner.classList.remove('translate-y-20', 'opacity-0');
+              installBanner.classList.add('translate-y-0', 'opacity-100');
+              if (window.lucide) lucide.createIcons();
+            }, 50);
+          }, 3000);
+        }
+        return;
+      }
+
+      // 2. iOS Instructions fallback
+      if (isIOS && !isStandalone) {
+        const hasDismissed = localStorage.getItem('pwa_banner_dismissed') === 'true';
+        if (installBanner && !hasDismissed) {
+          const instructionsText = document.getElementById('pwa-instructions-text');
+          if (instructionsText) {
+            instructionsText.innerHTML = 'Para baixar no iPhone: clique no botão de <b>Compartilhar</b> <i data-lucide="share-2" class="inline w-3 h-3 text-indigo-400"></i> na barra inferior e selecione <b>Adicionar à Tela de Início</b> <i data-lucide="plus-square" class="inline w-3 h-3 text-indigo-400"></i>.';
+          }
+          const btnInstallBannerEl = document.getElementById('btn-pwa-install-banner');
+          if (btnInstallBannerEl) {
+            btnInstallBannerEl.classList.add('hidden'); // Oculta botão de prompt automático
+          }
+          
+          setTimeout(() => {
+            installBanner.classList.remove('hidden');
+            setTimeout(() => {
+              installBanner.classList.remove('translate-y-20', 'opacity-0');
+              installBanner.classList.add('translate-y-0', 'opacity-100');
+              if (window.lucide) lucide.createIcons();
+            }, 50);
+          }, 3000);
+        }
+      }
+
+      // 3. Android/General Mobile Fallback se o prompt automático não disparar
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      if (isMobile && !isIOS && !isStandalone) {
+        setTimeout(() => {
+          if (!deferredPrompt) {
+            const hasDismissed = localStorage.getItem('pwa_banner_dismissed') === 'true';
+            if (installBanner && !hasDismissed) {
+              const instructionsText = document.getElementById('pwa-instructions-text');
+              if (instructionsText) {
+                instructionsText.innerHTML = 'Para baixar no Android: clique nos <b>três pontinhos</b> <i data-lucide="more-vertical" class="inline w-3.5 h-3.5 text-indigo-400"></i> no canto superior do Chrome e escolha <b>Instalar aplicativo</b>.';
+              }
+              const btnInstallBannerEl = document.getElementById('btn-pwa-install-banner');
+              if (btnInstallBannerEl) {
+                btnInstallBannerEl.classList.add('hidden');
+              }
+              installBanner.classList.remove('hidden');
+              setTimeout(() => {
+                installBanner.classList.remove('translate-y-20', 'opacity-0');
+                installBanner.classList.add('translate-y-0', 'opacity-100');
+                if (window.lucide) lucide.createIcons();
+              }, 50);
+            }
+          }
+        }, 8000);
+      }
+    });
+
+    // ----------------------------------------------------
+    // LÓGICA DO WIDGET DE AJUDA & CHAT DE SUPORTE
+    // ----------------------------------------------------
+    let helpChatBox = null;
+    let helpChatMessages = null;
+    let helpWidgetIcon = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      helpChatBox = document.getElementById('help-chat-box');
+      helpChatMessages = document.getElementById('help-chat-messages');
+      helpWidgetIcon = document.getElementById('help-widget-icon');
+    });
+    
+    window.toggleHelpWidget = function() {
+      if (!helpChatBox) return;
+      
+      const isHidden = helpChatBox.classList.contains('hidden');
+      if (isHidden) {
+        helpChatBox.classList.remove('hidden');
+        setTimeout(() => {
+          helpChatBox.classList.remove('opacity-0', 'scale-90', 'translate-y-10');
+          helpChatBox.classList.add('opacity-100', 'scale-100', 'translate-y-0');
+        }, 10);
+        if (helpWidgetIcon) helpWidgetIcon.setAttribute('data-lucide', 'x');
+      } else {
+        helpChatBox.classList.remove('opacity-100', 'scale-100', 'translate-y-0');
+        helpChatBox.classList.add('opacity-0', 'scale-90', 'translate-y-10');
+        setTimeout(() => {
+          helpChatBox.classList.add('hidden');
+        }, 300);
+        if (helpWidgetIcon) helpWidgetIcon.setAttribute('data-lucide', 'help-circle');
+      }
+      lucide.createIcons();
+    };
+
+    window.openHelpWidget = function(initialQuery) {
+      if (helpChatBox && helpChatBox.classList.contains('hidden')) {
+        toggleHelpWidget();
+      }
+      if (initialQuery) {
+        setTimeout(() => {
+          sendHelpQuery(initialQuery);
+        }, 400);
+      }
+    };
+
+    const helpResponses = {
+      pix: "O checkout Pix é integrado e 100% automático. Quando o cliente seleciona um horário, o sistema gera na hora um Pix do valor do serviço ou da garantia de reserva. Assim que o cliente paga, o banco avisa o sistema em segundos e o horário é bloqueado na agenda do profissional parceiro. Sem conciliação bancária manual e sem furos!",
+      lembretes: "Os disparos de lembretes via WhatsApp já estão inclusos no Plano Pro Completo do Agendamente (R$ 21,90/mês). Você não paga nada a mais por mensagem e não precisa contratar nenhuma API externa de disparo. O sistema cuida de tudo no automático!",
+      teste: "Você pode testar todos os recursos do Agendamente por 7 dias inteiramente grátis. Não precisa de cartão de crédito. Basta se cadastrar, configurar o perfil do seu negócio e começar a usar. Se gostar, após os 7 dias você decide assinar o Plano Pro.",
+      tutoriais: "Preparamos um guia interativo para você! Veja os passos:<br>1. <b>Configurações da Conta</b>: Defina seu nicho e nome da empresa.<br>2. <b>Catálogo de Serviços</b>: Cadastre seus serviços, preços e durações.<br>3. <b>Profissionais</b>: Cadastre sua equipe e suas respectivas comissões.<br>4. <b>Divulgação</b>: Copie seu link de agendamento e coloque na Bio do Instagram ou envie para seus clientes!"
+    };
+
+    window.sendHelpQuery = function(type) {
+      if (!helpChatMessages) return;
+      
+      let userText = "";
+      if (type === 'pix') userText = "Como funciona o Pix?";
+      else if (type === 'lembretes') userText = "O lembrete de WhatsApp tem custo?";
+      else if (type === 'teste') userText = "Como funciona o teste de 7 dias?";
+      else if (type === 'tutoriais') userText = "Ver tutoriais passo a passo";
+
+      // Adiciona mensagem do usuário
+      const userMsg = document.createElement('div');
+      userMsg.className = "flex gap-2 items-start max-w-[85%] ml-auto justify-end";
+      userMsg.innerHTML = `
+        <div class="bg-indigo-600 rounded-2xl p-2.5 text-white">
+          <p>${userText}</p>
+        </div>
+      `;
+      helpChatMessages.appendChild(userMsg);
+      helpChatMessages.scrollTop = helpChatMessages.scrollHeight;
+
+      // Cria estado de digitando
+      const typingMsg = document.createElement('div');
+      typingMsg.className = "flex gap-2 items-start max-w-[85%] typing-indicator-msg";
+      typingMsg.innerHTML = `
+        <div class="w-6 h-6 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center shrink-0 text-[8px]"><i data-lucide="bot" class="w-3.5 h-3.5"></i></div>
+        <div class="bg-white/5 border border-white/5 rounded-2xl p-2.5 flex items-center gap-1">
+          <span class="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce"></span>
+          <span class="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce delay-75"></span>
+          <span class="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce delay-150"></span>
+        </div>
+      `;
+      helpChatMessages.appendChild(typingMsg);
+      helpChatMessages.scrollTop = helpChatMessages.scrollHeight;
+      lucide.createIcons();
+
+      // Resposta do bot com atraso simulado
+      setTimeout(() => {
+        const indicator = helpChatMessages.querySelector('.typing-indicator-msg');
+        if (indicator) indicator.remove();
+
+        const botMsg = document.createElement('div');
+        botMsg.className = "flex gap-2 items-start max-w-[85%] animate-scale-in";
+        botMsg.innerHTML = `
+          <div class="w-6 h-6 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center shrink-0 text-[8px]"><i data-lucide="bot" class="w-3.5 h-3.5"></i></div>
+          <div class="bg-white/5 border border-white/5 rounded-2xl p-2.5">
+            <p>${helpResponses[type]}</p>
+          </div>
+        `;
+        helpChatMessages.appendChild(botMsg);
+        helpChatMessages.scrollTop = helpChatMessages.scrollHeight;
+        lucide.createIcons();
+      }, 1000);
+    };
+
+    function showToast(message) {
+      let container = document.getElementById('toast-container');
+      if (!container) {
+        container = document.createElement('div');
+        container.id = 'toast-container';
+        container.className = 'fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none';
+        
+        // Injeta o estilo CSS do toast
+        const style = document.createElement('style');
+        style.innerHTML = `
+          .custom-toast {
+            background: rgba(15, 23, 42, 0.95);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 12px 16px;
+            border-radius: 12px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            pointer-events: auto;
+            opacity: 0;
+            transform: scale(0.9) translateY(10px);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+          }
+          .custom-toast.show {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+          }
+        `;
+        document.head.appendChild(style);
+        document.body.appendChild(container);
+      }
+
+      const toast = document.createElement('div');
+      toast.className = 'custom-toast';
+      toast.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+        <span>${message}</span>
+      `;
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.classList.add('show');
+      }, 10);
+
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => {
+          toast.remove();
+        }, 300);
+      }, 3500);
+    }
+
+    // Busca o preço da mensalidade de forma dinâmica e atualiza no site
+    async function loadDynamicPrice() {
+      try {
+        const response = await fetch('/api/public/configuracoes');
+        if (response.ok) {
+          const data = await response.json();
+          const preco = parseFloat(data.preco_mensalidade || 21.90);
+          const promo = parseFloat(data.preco_primeiro_mes || 14.90);
+          const trial = parseInt(data.dias_gratis_teste || 7, 10);
+          
+          const precoFormatado = preco.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+          const promoFormatado = promo.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+          
+          // Atualiza os preços principais no HTML
+          const elPrice = document.getElementById('preco-mensalidade-site');
+          if (elPrice) elPrice.innerText = precoFormatado;
+          
+          const elPromo = document.getElementById('preco-primeiro-mes-site');
+          if (elPromo) elPromo.innerText = promoFormatado;
+          
+          const elTrialBadge = document.getElementById('dias-trial-badge');
+          if (elTrialBadge) elTrialBadge.innerText = trial;
+          
+          const elTrialTexto = document.getElementById('dias-trial-texto');
+          if (elTrialTexto) elTrialTexto.innerText = trial;
+          
+          const elTrialFaq = document.getElementById('dias-trial-faq');
+          if (elTrialFaq) elTrialFaq.innerText = trial;
+          
+          // Atualiza as respostas do chat FAQ
+          if (helpResponses) {
+            helpResponses.lembretes = `Os disparos de lembretes via WhatsApp já estão inclusos no Plano Pro Completo do Agendamente. Você não paga nada a mais por mensagem e não precisa contratar nenhuma API externa de disparo. O sistema cuida de tudo no automático!`;
+            
+            helpResponses.teste = `Você pode testar todos os recursos do Agendamente por <b>${trial} dias totalmente grátis</b>. Não precisa de cartão de crédito para testar. Se você gostar, após os ${trial} dias o primeiro mês da sua assinatura custa apenas <b>R$ ${promoFormatado}</b>, e os meses seguintes assumem o valor regular de <b>R$ ${precoFormatado}/mês</b>. Tudo sem contrato de fidelidade!`;
+          }
+
+          // Atualiza dados de suporte
+          const email = data.suporte_email || 'suporte@agendamente.com.br';
+          const whatsapp = data.suporte_whatsapp || '11999999999';
+
+          const emailElements = document.querySelectorAll('.dynamic-support-email');
+          emailElements.forEach(el => {
+            el.href = `mailto:${email}?subject=Ajuda%20com%20o%20Agendamente`;
+            if (el.tagName === 'A' && el.innerText.includes('Contato:')) {
+              el.innerText = `Contato: ${email}`;
+            }
+          });
+
+          const whatsappElements = document.querySelectorAll('.dynamic-support-phone');
+          whatsappElements.forEach(el => {
+            el.href = `https://wa.me/55${whatsapp}?text=Ol%C3%A1!%20Gostaria%20de%20ajuda%20com%20o%20Agendamente.`;
+          });
+
+          // Adiciona ação de cópia ao clicar no link de e-mail
+          emailElements.forEach(el => {
+            el.addEventListener('click', (e) => {
+              // Copia para área de transferência
+              navigator.clipboard.writeText(email).then(() => {
+                showToast(`E-mail (${email}) copiado! Caso seu aplicativo não abra, cole (Ctrl+V) no seu provedor.`);
+              }).catch(err => {
+                console.error('Erro ao copiar e-mail:', err);
+              });
+            });
+          });
+        }
+      } catch (err) {
+        console.error('Erro ao carregar preço dinâmico do site:', err);
+      }
+    }
+    // Registrar visita única na sessão para o site principal (landing page)
+    if (!sessionStorage.getItem('visited_landing')) {
+      fetch('/api/public/visit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pagina: 'landing_page' })
+      })
+      .then(res => {
+        if (res.ok) sessionStorage.setItem('visited_landing', 'true');
+      })
+      .catch(err => console.error('Erro ao registrar visita:', err));
+    }
+
+    loadDynamicPrice();
+  </script>
+
+  <!-- WIDGET DE AJUDA FLUTUANTE -->
+  <div id="help-widget-container" class="fixed bottom-6 right-6 z-50 flex flex-col items-end pointer-events-none select-none">
+    
+    <!-- Janela de Chat (Oculta por padrão) -->
+    <div id="help-chat-box" class="w-[320px] h-[450px] rounded-[24px] border border-white/10 bg-[#0d0f19]/95 backdrop-blur-xl shadow-2xl flex flex-col justify-between overflow-hidden opacity-0 scale-90 translate-y-10 transition-all duration-300 pointer-events-auto hidden">
+      <!-- Chat Header -->
+      <div class="bg-gradient-to-r from-indigo-600 to-purple-600 p-4 text-white flex items-center justify-between shadow-md">
+        <div class="flex items-center gap-2">
+          <div class="relative">
+            <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white"><i data-lucide="sparkles" class="w-4 h-4 text-indigo-200"></i></div>
+            <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-[#0d0f19] rounded-full"></span>
+          </div>
+          <div>
+            <h4 class="text-xs font-black leading-tight">Suporte Inteligente</h4>
+            <p class="text-[8px] text-indigo-200">Online | Resposta instantânea</p>
+          </div>
+        </div>
+        <button onclick="toggleHelpWidget()" class="text-white/80 hover:text-white transition-all"><i data-lucide="x" class="w-4 h-4"></i></button>
+      </div>
+
+      <!-- Chat Messages Area -->
+      <div id="help-chat-messages" class="flex-1 p-4 overflow-y-auto space-y-3 text-[10px] text-slate-200 scrollbar-thin">
+        <!-- Mensagem de Boas-vindas -->
+        <div class="flex gap-2 items-start max-w-[85%]">
+          <div class="w-6 h-6 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center shrink-0 text-[8px]"><i data-lucide="bot" class="w-3.5 h-3.5"></i></div>
+          <div class="bg-white/5 border border-white/5 rounded-2xl p-2.5 space-y-1">
+            <p>Olá! Sou o <b>Assistente Virtual do Agendamente</b>. 😊</p>
+            <p>Como posso te ajudar hoje? Escolha uma das dúvidas rápidas abaixo ou me chame no WhatsApp:</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chat Shortcuts/Atalhos -->
+      <div class="p-3 border-t border-white/5 bg-[#080911]/55 space-y-2">
+        <div id="help-chat-options" class="flex flex-col gap-1.5 max-h-[120px] overflow-y-auto pr-1">
+          <button onclick="sendHelpQuery('pix')" class="w-full text-left bg-white/5 hover:bg-indigo-600/20 border border-white/5 hover:border-indigo-500/30 text-slate-300 hover:text-white px-2.5 py-1.5 rounded-lg transition-all text-[9px] font-bold flex items-center gap-1.5"><i data-lucide="qr-code" class="w-3.5 h-3.5 text-indigo-400"></i> Como funciona o Pix?</button>
+          <button onclick="sendHelpQuery('lembretes')" class="w-full text-left bg-white/5 hover:bg-indigo-600/20 border border-white/5 hover:border-indigo-500/30 text-slate-300 hover:text-white px-2.5 py-1.5 rounded-lg transition-all text-[9px] font-bold flex items-center gap-1.5"><i data-lucide="message-square" class="w-3.5 h-3.5 text-indigo-400"></i> O lembrete de WhatsApp tem custo?</button>
+          <button onclick="sendHelpQuery('teste')" class="w-full text-left bg-white/5 hover:bg-indigo-600/20 border border-white/5 hover:border-indigo-500/30 text-slate-300 hover:text-white px-2.5 py-1.5 rounded-lg transition-all text-[9px] font-bold flex items-center gap-1.5"><i data-lucide="sparkles" class="w-3.5 h-3.5 text-indigo-400"></i> Como funciona o teste grátis?</button>
+          <button onclick="sendHelpQuery('tutoriais')" class="w-full text-left bg-white/5 hover:bg-indigo-600/20 border border-white/5 hover:border-indigo-500/30 text-slate-300 hover:text-white px-2.5 py-1.5 rounded-lg transition-all text-[9px] font-bold flex items-center gap-1.5"><i data-lucide="book-open" class="w-3.5 h-3.5 text-indigo-400"></i> Ver tutoriais passo a passo</button>
+        </div>
+        <div class="flex items-center gap-2 pt-2 border-t border-white/5 justify-between">
+          <span class="text-[8px] text-slate-500">Agendamente Suporte</span>
+          <a href="https://wa.me/5562984055306?text=Ol%C3%A1!%20Gostaria%20de%20ajuda%20com%20o%20Agendamente." target="_blank" class="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold px-3 py-1 rounded-lg text-[9px] flex items-center gap-1 transition-all dynamic-support-phone"><i data-lucide="message-circle" class="w-3.5 h-3.5"></i> Suporte Humano</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botão Flutuante Principal (Trigger) -->
+    <button onclick="toggleHelpWidget()" id="help-widget-trigger" class="w-12 h-12 rounded-full btn-cosmic-primary text-white flex items-center justify-center transition-all duration-300 shadow-xl pointer-events-auto cursor-pointer relative mt-3 scale-100 hover:scale-105 active:scale-95">
+      <span class="absolute inset-0 rounded-full bg-indigo-500/20 animate-ping"></span>
+      <i id="help-widget-icon" data-lucide="help-circle" class="w-6 h-6"></i>
+    </button>
+  </div>
+
+  <!-- PWA Install Banner -->
+  <div id="pwa-install-banner" class="hidden fixed bottom-6 left-6 right-6 md:left-auto md:max-w-sm z-50 glass-card-dark bg-[#0d0f19]/95 backdrop-blur-xl border border-white/10 p-5 rounded-2xl shadow-2xl flex flex-col gap-3 text-left transition-all duration-300 transform translate-y-20 opacity-0">
+    <div class="flex items-start gap-3">
+      <div class="p-2.5 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 shrink-0">
+        <i data-lucide="download" class="w-6 h-6"></i>
+      </div>
+      <div class="space-y-1">
+        <h4 class="text-xs font-black text-white">Instalar o Agendamente</h4>
+        <p id="pwa-instructions-text" class="text-[10px] text-slate-400 leading-normal">Adicione o aplicativo à sua tela inicial para gerenciar sua agenda em tempo real.</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2" id="pwa-action-buttons">
+      <button id="btn-pwa-install-banner" class="flex-1 btn btn-cosmic-primary py-2 px-4 rounded-xl text-xs font-black shadow-lg text-center flex items-center justify-center gap-1.5 cursor-pointer">
+        <i data-lucide="plus" class="w-3.5 h-3.5"></i> Instalar
+      </button>
+      <button onclick="dismissInstallBanner()" class="px-3 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-all bg-white/5 border border-white/5 hover:border-white/10">
+        Depois
+      </button>
+    </div>
+  </div>
+  <script src="/js/demo-banner.js" defer></script>
+</body>
+</html>
